@@ -38,7 +38,7 @@ class CliConfigurationTest {
         assertEquals("https://example.org", cliConfiguration.getServer());
         assertFalse(cliConfiguration.isTrustAll());
         assertTrue(cliConfiguration.hasProxyServer());
-        assertEquals("https://proxy.example.org", cliConfiguration.getProxyServer());
+        assertEquals("proxy.example.org", cliConfiguration.getProxyServer());
         assertEquals(8080, cliConfiguration.getProxyPort());
         assertFalse(cliConfiguration.hasProxyServerCredentials());
     }
@@ -51,7 +51,7 @@ class CliConfigurationTest {
         assertEquals("https://example.org", cliConfiguration.getServer());
         assertFalse(cliConfiguration.isTrustAll());
         assertTrue(cliConfiguration.hasProxyServer());
-        assertEquals("https://proxy.example.org", cliConfiguration.getProxyServer());
+        assertEquals("proxy.example.org", cliConfiguration.getProxyServer());
         assertEquals(8080, cliConfiguration.getProxyPort());
         assertTrue(cliConfiguration.hasProxyServerCredentials());
         assertEquals("dummy", cliConfiguration.getProxyServerUser());
