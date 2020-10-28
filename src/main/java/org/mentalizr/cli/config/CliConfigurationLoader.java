@@ -51,8 +51,6 @@ public class CliConfigurationLoader {
         return cliConfiguration;
     }
 
-
-
     private static void bindConfigFile(ConfigurationFactory configurationFactory, File configFile) {
         try {
             configurationFactory.addConfigurationFileFromFilesystem(configFile);
@@ -60,6 +58,5 @@ public class CliConfigurationLoader {
             throw new CliException("CliConfiguration file not found: " + configFile.getAbsolutePath());
         }
     }
-
 
 }

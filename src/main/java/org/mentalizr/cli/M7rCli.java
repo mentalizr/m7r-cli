@@ -4,6 +4,9 @@ import org.mentalizr.cli.config.CliConfiguration;
 import org.mentalizr.cli.config.CliConfigurationLoader;
 import org.mentalizr.cli.httpClient.HttpClientCreator;
 import org.mentalizr.cli.httpClient.HttpRequestCreator;
+import org.mentalizr.cli.restService.Login;
+import org.mentalizr.cli.restService.Noop;
+import org.mentalizr.cli.restService.RestService;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
@@ -29,8 +32,11 @@ public class M7rCli {
 
     private static void execute(CliConfiguration cliConfiguration) throws IOException, InterruptedException {
 
+//        RestService restService = new Noop();
+        RestService restService = new Login("dummy", "secret");
+
         HttpClient client = HttpClientCreator.create(cliConfiguration);
-        HttpRequest httpRequest = HttpRequestCreator.create(cliConfiguration);
+        HttpRequest httpRequest = HttpRequestCreator.create(restService, cliConfiguration);
 
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
@@ -38,6 +44,5 @@ public class M7rCli {
         System.out.println(response.body());
 
     }
-
 
 }
