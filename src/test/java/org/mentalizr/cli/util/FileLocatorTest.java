@@ -1,21 +1,18 @@
-package org.mentalizr.cli.helper;
+package org.mentalizr.cli.util;
 
 import org.junit.jupiter.api.Test;
-
-import java.net.URISyntaxException;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.mentalizr.cli.util.fileLocator.FileLocator;
+import org.mentalizr.cli.util.fileLocator.FileLocatorException;
 
 class FileLocatorTest {
 
     @Test
     void fromClasspath() {
-
         try {
             FileLocator.fromClasspath("test.txt");
         } catch (FileLocatorException e) {
             e.printStackTrace();
         }
-
     }
+
 }

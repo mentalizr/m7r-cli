@@ -1,4 +1,4 @@
-package org.mentalizr.cli.helper;
+package org.mentalizr.cli.util.fileLocator;
 
 import de.arthurpicht.utils.core.assertion.AssertMethodPrecondition;
 
@@ -9,6 +9,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class FileLocator {
 
@@ -32,9 +34,7 @@ public class FileLocator {
 
     public static FileLocator fromClasspath(String filename) throws FileLocatorException {
         URL url = FileLocator.class.getClassLoader().getResource(filename);
-
         if (url == null) throw new FileNotLocalizedException(filename);
-
         return new FileLocator(url);
     }
 
@@ -48,9 +48,7 @@ public class FileLocator {
      */
     public static FileLocator fromObjectClasspath(String fileName, Object object) throws FileLocatorException {
         URL url = object.getClass().getResource(fileName);
-        if (url == null) {
-            throw new FileNotLocalizedException(fileName, object);
-        }
+        if (url == null) throw new FileNotLocalizedException(fileName, object);
         return new FileLocator(url);
     }
 
@@ -60,7 +58,15 @@ public class FileLocator {
         return new FileLocator(file.toURI());
     }
 
-    public InputStream getInputStream() throws FileLocatorException {
+    public File asFile() {
+        return new File(this.uri);
+    }
+
+    public Path asPath() {
+        return Paths.get(this.uri);
+    }
+
+    public InputStream asInputStream() throws FileLocatorException {
         URL url;
         try {
             url = this.uri.toURL();
@@ -73,5 +79,8 @@ public class FileLocator {
             throw new FileLocatorException(e);
         }
     }
+
+
+
 
 }
