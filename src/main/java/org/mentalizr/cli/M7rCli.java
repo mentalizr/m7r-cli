@@ -2,6 +2,7 @@ package org.mentalizr.cli;
 
 import org.mentalizr.cli.config.CliConfiguration;
 import org.mentalizr.cli.config.CliConfigurationLoader;
+import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.cli.httpClient.HttpClientCreator;
 import org.mentalizr.cli.httpClient.HttpRequestCreator;
 import org.mentalizr.cli.restService.Login;
@@ -16,6 +17,14 @@ import java.net.http.HttpResponse;
 public class M7rCli {
 
     public static void main(String[] args) {
+
+        try {
+            Init.init();
+        } catch (CliException e) {
+            e.printStackTrace();
+        }
+
+        System.exit(0);
 
         CliConfiguration cliConfiguration = CliConfigurationLoader.load();
         System.out.println(cliConfiguration.toString());
