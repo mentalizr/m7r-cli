@@ -10,14 +10,33 @@ public class Const {
     public static final String M7R_CONFIG_DIR = ".m7r";
     public static final String M7R_CLI_CONFIG_SUB_DIR = "cli";
     public static final String M7R_CLI_CONFIG_FILE = "cli.config";
+    public static final String M7R_COOKIE_FILE = ".cookie";
 
-    public static Path getCliConfigPath() {
+//    public static Path getCliConfigDir() {
+//        return Paths.get(
+//                System.getProperty("user.home"),
+//                M7R_CONFIG_DIR,
+//                M7R_CLI_CONFIG_SUB_DIR
+//        );
+//    }
+//
+//    public static Path getCliConfigPath() {
+//        return Paths.get(getCliConfigDir().toString(), M7R_CLI_CONFIG_FILE);
+////                System.getProperty("user.home"),
+////                M7R_CONFIG_DIR,
+////                M7R_CLI_CONFIG_SUB_DIR,
+////                M7R_CLI_CONFIG_FILE
+////        );
+//    }
+
+    public static Path getCookieFilePath() {
         return Paths.get(
                 System.getProperty("user.home"),
                 M7R_CONFIG_DIR,
                 M7R_CLI_CONFIG_SUB_DIR,
-                M7R_CLI_CONFIG_FILE
+                M7R_COOKIE_FILE
         );
+
     }
 
 }

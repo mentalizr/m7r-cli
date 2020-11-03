@@ -1,13 +1,13 @@
 package org.mentalizr.cli.httpClient;
 
 import org.mentalizr.cli.config.CliConfiguration;
+import org.mentalizr.cli.cookieHandler.CookieStoreM7r;
 import org.mentalizr.cli.exceptions.CliException;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.net.InetSocketAddress;
-import java.net.ProxySelector;
+import java.net.*;
 import java.net.http.HttpClient;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -19,10 +19,13 @@ public class HttpClientCreator {
 
     public static HttpClient create(CliConfiguration cliConfiguration) {
 
+        CookieHandler.setDefault(new CookieManager(new CookieStoreM7r(), CookiePolicy.ACCEPT_ORIGINAL_SERVER));
+
         HttpClient.Builder httpClientBuilder = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .followRedirects(HttpClient.Redirect.NORMAL)
-                .connectTimeout(Duration.ofSeconds(20));
+                .connectTimeout(Duration.ofSeconds(20))
+                .cookieHandler(CookieHandler.getDefault());
 //                .authenticator(Authenticator.getDefault())
 
         if (cliConfiguration.isTrustAll()) {
@@ -34,7 +37,6 @@ public class HttpClientCreator {
         }
 
         return httpClientBuilder.build();
-
     }
 
 

@@ -9,7 +9,7 @@ class FileLocatorTest {
     @Test
     void fromClasspath() {
         try {
-            FileLocator.fromClasspath("test.txt");
+            FileLocator.fromClasspath("fileLocator/test.txt");
         } catch (FileLocatorException e) {
             e.printStackTrace();
         }

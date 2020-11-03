@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +33,7 @@ class StringFilePersisterTest {
     void simple() throws IOException {
 
         String test = "test";
-        Path path = Paths.get(TEMP_TEST_DIR, "test.txt");
+        Path path = Paths.get(TEMP_TEST_DIR, "fileLocator/test.txt");
 
         StringFilePersister stringFilePersister = new StringFilePersister(path);
         stringFilePersister.write(test);
@@ -50,7 +49,7 @@ class StringFilePersisterTest {
     void rewrite() throws IOException {
 
         String test = "test";
-        Path path = Paths.get(TEMP_TEST_DIR, "test.txt");
+        Path path = Paths.get(TEMP_TEST_DIR, "fileLocator/test.txt");
 
         StringFilePersister stringFilePersister = new StringFilePersister(path);
         stringFilePersister.write("0000000000000");
@@ -72,6 +71,18 @@ class StringFilePersisterTest {
         assertTrue(stringFilePersister.exists());
         stringFilePersister.delete();
         assertFalse(stringFilePersister.exists());
+    }
+
+    @Test
+    void readFromNonExistingFile() throws IOException {
+        Path path = Paths.get(TEMP_TEST_DIR, "not_existing.txt");
+        StringFilePersister stringFilePersister = new StringFilePersister(path);
+        try {
+            stringFilePersister.read();
+            fail("IllegalStateException expected.");
+        } catch (IllegalStateException e) {
+            // intentionally do nothing
+        }
     }
 
 }
