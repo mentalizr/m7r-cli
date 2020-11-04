@@ -30,9 +30,15 @@ test {
     useJUnitPlatform()
 }
 
-jar {
-    from 'version'
+//jar {
+//    from 'version'
+//}
+
+task copyVersion(type: Copy) {
+    from "version"
+    into "src/main/resources"
 }
+build.dependsOn copyVersion
 
 task extractDependencies(type: Copy, dependsOn: jar) {
     from configurations.runtimeClasspath
@@ -42,6 +48,7 @@ task extractDependencies(type: Copy, dependsOn: jar) {
 task fatJar(type: Jar, dependsOn: extractDependencies) {
     manifest {
         attributes 'Main-Class': 'org.mentalizr.cli.M7rCli'
+        attributes 'Version': project.property("version")
     }
     from {
         file("$buildDir/dependencies").listFiles().collect { zipTree(it) }
@@ -51,3 +58,5 @@ task fatJar(type: Jar, dependsOn: extractDependencies) {
     }
     destinationDirectory.set(file("$buildDir/fatjar"))
 }
+
+
