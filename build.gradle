@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'org.mentalizr'
-version '0.0.1-SNAPSHOT'
+version = rootProject.file('version').text.trim()
 
 repositories {
     mavenCentral()
@@ -12,7 +12,6 @@ repositories {
 }
 
 dependencies {
-
     implementation 'com.github.arthurpicht:utils-core:1.2.1'
     implementation 'com.github.arthurpicht:utils-io:0.0.1.4'
     implementation 'com.github.arthurpicht:AP-Configuration:0.1.0'
@@ -29,4 +28,26 @@ java {
 
 test {
     useJUnitPlatform()
+}
+
+jar {
+    from 'version'
+}
+
+task copyLibs(type: Copy, dependsOn: jar) {
+    from configurations.runtimeClasspath
+    into "$buildDir/dependencies"
+}
+
+task fatJar(type: Jar, dependsOn: copyLibs) {
+    manifest {
+        attributes 'Main-Class': 'org.mentalizr.cli.M7rCli'
+    }
+    from {
+        file("$buildDir/dependencies").listFiles().collect { zipTree(it) }
+    }
+    from {
+        file("$buildDir/libs").listFiles().collect { zipTree(it) }
+    }
+    destinationDirectory.set(file("$buildDir/fatjar"))
 }
