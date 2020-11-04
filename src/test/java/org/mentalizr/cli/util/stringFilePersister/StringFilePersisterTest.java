@@ -33,7 +33,7 @@ class StringFilePersisterTest {
     void simple() throws IOException {
 
         String test = "test";
-        Path path = Paths.get(TEMP_TEST_DIR, "fileLocator/test.txt");
+        Path path = Paths.get(TEMP_TEST_DIR, "test.txt");
 
         StringFilePersister stringFilePersister = new StringFilePersister(path);
         stringFilePersister.write(test);
@@ -49,7 +49,7 @@ class StringFilePersisterTest {
     void rewrite() throws IOException {
 
         String test = "test";
-        Path path = Paths.get(TEMP_TEST_DIR, "fileLocator/test.txt");
+        Path path = Paths.get(TEMP_TEST_DIR, "test2.txt");
 
         StringFilePersister stringFilePersister = new StringFilePersister(path);
         stringFilePersister.write("0000000000000");
