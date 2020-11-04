@@ -34,12 +34,12 @@ jar {
     from 'version'
 }
 
-task copyLibs(type: Copy, dependsOn: jar) {
+task extractDependencies(type: Copy, dependsOn: jar) {
     from configurations.runtimeClasspath
     into "$buildDir/dependencies"
 }
 
-task fatJar(type: Jar, dependsOn: copyLibs) {
+task fatJar(type: Jar, dependsOn: extractDependencies) {
     manifest {
         attributes 'Main-Class': 'org.mentalizr.cli.M7rCli'
     }
