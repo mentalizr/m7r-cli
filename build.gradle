@@ -30,10 +30,6 @@ test {
     useJUnitPlatform()
 }
 
-//jar {
-//    from 'version'
-//}
-
 task copyVersion(type: Copy) {
     from "version"
     into "src/main/resources"
@@ -49,6 +45,7 @@ task fatJar(type: Jar, dependsOn: extractDependencies) {
     manifest {
         attributes 'Main-Class': 'org.mentalizr.cli.M7rCli'
         attributes 'Version': project.property("version")
+        attributes 'Build' : new Date().format('yyyyMMddHHmmss')
     }
     from {
         file("$buildDir/dependencies").listFiles().collect { zipTree(it) }
