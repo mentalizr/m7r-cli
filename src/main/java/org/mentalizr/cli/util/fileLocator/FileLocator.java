@@ -52,6 +52,12 @@ public class FileLocator {
         return new FileLocator(url);
     }
 
+    public static FileLocator fromClasspath(String fileName, Class clazz) throws FileLocatorException {
+        URL url = clazz.getClassLoader().getResource(fileName);
+        if (url == null) throw new FileNotLocalizedException(fileName, clazz);
+        return new FileLocator(url);
+    }
+
     public static FileLocator fromFileSystem(String pathname) throws FileNotLocalizedException {
         File file = new File(pathname);
         if (!file.exists()) throw new FileNotLocalizedException(file.getAbsolutePath());
