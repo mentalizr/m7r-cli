@@ -1,7 +1,6 @@
-package org.mentalizr.cli.cookieHandler;
+package org.mentalizr.client.cookieHandler;
 
 import de.arthurpicht.utils.core.collection.Lists;
-import org.mentalizr.cli.config.CliConfiguration;
 
 import java.net.CookieStore;
 import java.net.HttpCookie;

@@ -1,13 +1,10 @@
-package org.mentalizr.cli.util.manifestReader;
+package org.mentalizr.util.manifestReader;
 
-import org.mentalizr.cli.M7rCli;
-import org.mentalizr.cli.util.fileLocator.FileLocator;
-import org.mentalizr.cli.util.fileLocator.FileLocatorException;
+import org.mentalizr.util.fileLocator.FileLocator;
+import org.mentalizr.util.fileLocator.FileLocatorException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 

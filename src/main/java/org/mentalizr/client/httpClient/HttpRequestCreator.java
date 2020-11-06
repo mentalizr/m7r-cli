@@ -1,10 +1,10 @@
-package org.mentalizr.cli.httpClient;
+package org.mentalizr.client.httpClient;
 
 import org.mentalizr.cli.config.CliConfiguration;
 import org.mentalizr.cli.exceptions.CliException;
-import org.mentalizr.cli.restService.HttpMethod;
-import org.mentalizr.cli.restService.RestService;
-import org.mentalizr.cli.restService.RestServiceHelper;
+import org.mentalizr.client.restService.HttpMethod;
+import org.mentalizr.client.restService.RestService;
+import org.mentalizr.client.restService.RestServiceHelper;
 
 import java.net.URI;
 import java.net.URISyntaxException;

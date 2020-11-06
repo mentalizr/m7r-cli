@@ -1,4 +1,4 @@
-package org.mentalizr.cli.util.stringFilePersister;
+package org.mentalizr.util.stringFilePersister;
 
 import java.io.IOException;
 import java.nio.charset.Charset;

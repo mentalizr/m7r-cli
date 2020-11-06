@@ -1,12 +1,12 @@
-package org.mentalizr.cli.util;
+package org.mentalizr.util;
 
 import de.arthurpicht.utils.core.strings.Strings;
 import org.mentalizr.cli.M7rCli;
-import org.mentalizr.cli.util.fileLocator.FileLocator;
-import org.mentalizr.cli.util.fileLocator.FileLocatorException;
-import org.mentalizr.cli.util.fileLocator.FileNotLocalizedException;
-import org.mentalizr.cli.util.manifestReader.ManifestReader;
-import org.mentalizr.cli.util.stringFilePersister.StringFilePersister;
+import org.mentalizr.util.fileLocator.FileLocator;
+import org.mentalizr.util.fileLocator.FileLocatorException;
+import org.mentalizr.util.fileLocator.FileNotLocalizedException;
+import org.mentalizr.util.manifestReader.ManifestReader;
+import org.mentalizr.util.stringFilePersister.StringFilePersister;
 
 import java.io.IOException;
 

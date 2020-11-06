@@ -1,8 +1,8 @@
-package org.mentalizr.cli.cookieHandler;
+package org.mentalizr.client.cookieHandler;
 
 import org.mentalizr.cli.ConfFiles;
 import org.mentalizr.cli.exceptions.CliException;
-import org.mentalizr.cli.util.stringFilePersister.StringFilePersister;
+import org.mentalizr.util.stringFilePersister.StringFilePersister;
 
 import java.io.IOException;
 import java.net.HttpCookie;

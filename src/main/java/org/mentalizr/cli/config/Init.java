@@ -1,8 +1,9 @@
-package org.mentalizr.cli;
+package org.mentalizr.cli.config;
 
+import org.mentalizr.cli.ConfFiles;
 import org.mentalizr.cli.exceptions.CliException;
-import org.mentalizr.cli.util.fileLocator.FileLocator;
-import org.mentalizr.cli.util.fileLocator.FileLocatorException;
+import org.mentalizr.util.fileLocator.FileLocator;
+import org.mentalizr.util.fileLocator.FileLocatorException;
 
 import java.io.IOException;
 import java.nio.file.Files;

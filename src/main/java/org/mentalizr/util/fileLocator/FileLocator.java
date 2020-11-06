@@ -1,4 +1,4 @@
-package org.mentalizr.cli.util.fileLocator;
+package org.mentalizr.util.fileLocator;
 
 import de.arthurpicht.utils.core.assertion.AssertMethodPrecondition;
 

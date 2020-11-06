@@ -1,4 +1,4 @@
-package org.mentalizr.cli.restService;
+package org.mentalizr.client.restService;
 
 import org.mentalizr.cli.Const;
 import org.mentalizr.cli.config.CliConfiguration;

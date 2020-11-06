@@ -1,4 +1,4 @@
-package org.mentalizr.cli.util.stringFilePersister;
+package org.mentalizr.util.stringFilePersister;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

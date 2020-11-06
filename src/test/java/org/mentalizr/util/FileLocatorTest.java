@@ -1,8 +1,8 @@
-package org.mentalizr.cli.util;
+package org.mentalizr.util;
 
 import org.junit.jupiter.api.Test;
-import org.mentalizr.cli.util.fileLocator.FileLocator;
-import org.mentalizr.cli.util.fileLocator.FileLocatorException;
+import org.mentalizr.util.fileLocator.FileLocator;
+import org.mentalizr.util.fileLocator.FileLocatorException;
 
 class FileLocatorTest {
 

@@ -1,4 +1,4 @@
-package org.mentalizr.cli.httpClient;
+package org.mentalizr.client.httpClient;
 
 import de.arthurpicht.utils.core.strings.Strings;
 

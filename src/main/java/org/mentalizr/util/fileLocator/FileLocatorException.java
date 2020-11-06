@@ -1,4 +1,4 @@
-package org.mentalizr.cli.util.fileLocator;
+package org.mentalizr.util.fileLocator;
 
 public class FileLocatorException extends Exception {
 

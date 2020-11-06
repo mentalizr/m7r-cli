@@ -1,4 +1,4 @@
-package org.mentalizr.cli.restService;
+package org.mentalizr.client.restService;
 
 public class Noop extends RestService {
 

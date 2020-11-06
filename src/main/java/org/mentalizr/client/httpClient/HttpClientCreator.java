@@ -1,7 +1,7 @@
-package org.mentalizr.cli.httpClient;
+package org.mentalizr.client.httpClient;
 
 import org.mentalizr.cli.config.CliConfiguration;
-import org.mentalizr.cli.cookieHandler.CookieStoreM7r;
+import org.mentalizr.client.cookieHandler.CookieStoreM7r;
 import org.mentalizr.cli.exceptions.CliException;
 
 import javax.net.ssl.SSLContext;
