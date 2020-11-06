@@ -11,10 +11,16 @@ import java.nio.file.Path;
 
 public class Init {
 
+    public static boolean isInitialized() {
+        Path cliConfigFile = ConfFiles.getCliConfigFile();
+        Path cookieDir = ConfFiles.getSessionDir();
+        return Files.exists(cliConfigFile) && Files.exists(cookieDir);
+    }
+
     public static void init() {
         try {
             createCliDir();
-            createCliConfigFile();
+            copyCliConfigFile();
             createSessionDir();
         } catch (IOException | FileLocatorException e) {
             throw new CliException(e);
@@ -26,7 +32,7 @@ public class Init {
         Files.createDirectories(cliDir);
     }
 
-    private static void createCliConfigFile() throws FileLocatorException, IOException {
+    private static void copyCliConfigFile() throws FileLocatorException, IOException {
         Path cliConfigFile = ConfFiles.getCliConfigFile();
         if (!Files.exists(cliConfigFile)) {
             FileLocator fileLocator = FileLocator.fromClasspath("cli.config");

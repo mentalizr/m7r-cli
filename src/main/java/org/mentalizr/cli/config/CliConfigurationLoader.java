@@ -34,7 +34,7 @@ public class CliConfigurationLoader {
 
         Configuration configuration = configurationFactory.getConfiguration();
 
-        String server = configuration.getString(PROPERTY__SERVER);
+        String server = configuration.getString(PROPERTY__SERVER, "");
         boolean trustAll = configuration.getBoolean(PROPERTY__TRUST_ALL, false);
         String proxyServer = configuration.getString(PROPERTY__PROXY_SERVER, "");
         int proxyPort = configuration.getInt(PROPERTY__PROXY_PORT, 0);

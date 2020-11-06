@@ -74,6 +74,7 @@ public class CliConfiguration {
         this.proxyServerPassword = proxyServerPassword;
     }
 
+    @Override
     public String toString() {
         return CliConfiguration.class.getSimpleName() + "[\n"
                 + "    server = " + this.server + "\n"
@@ -84,4 +85,9 @@ public class CliConfiguration {
                 + "    proxyServerPassword = " + this.proxyServerPassword + "\n"
                 + "]";
     }
+
+    public boolean isValid() {
+        return !this.server.equals("");
+    }
+
 }

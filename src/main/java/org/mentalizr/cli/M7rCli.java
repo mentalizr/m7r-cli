@@ -12,6 +12,7 @@ import de.arthurpicht.cli.option.Options;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
 import org.mentalizr.cli.config.CliConfiguration;
 import org.mentalizr.cli.config.CliConfigurationLoader;
+import org.mentalizr.cli.config.Init;
 import org.mentalizr.client.httpClient.HeaderHelper;
 import org.mentalizr.client.httpClient.HttpClientCreator;
 import org.mentalizr.client.httpClient.HttpRequestCreator;
@@ -41,7 +42,7 @@ public class M7rCli {
     private static final String ID_PASSWORD = "password";
 
     private static final String COMMAND_NOOP = "noop";
-
+    private static final String COMMAND_INIT = "init";
     private static final String COMMAND_CONFIG = "config";
     private static final String COMMAND_CONFIG_EDIT = "edit";
     private static final String COMMAND_CONFIG_SHOW = "show";
@@ -67,6 +68,7 @@ public class M7rCli {
                                 .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user").build(ID_USER))
                                 .add(new OptionBuilder().withLongName("password").withShortName('p').hasArgument().withDescription("password").build(ID_PASSWORD))
                         )
+                        .root().add(COMMAND_INIT)
                         .root().add("config").addOneOf("show", "edit")
                         .root().add("help")
                         .root().add("version")
@@ -155,6 +157,10 @@ public class M7rCli {
                 noop();
             }
 
+            if (commandList.get(0).equals(COMMAND_INIT)) {
+                Init.init();
+            }
+
             if (commandList.get(0).equals(COMMAND_CONFIG)) {
                 if (commandList.get(1).equals(COMMAND_CONFIG_SHOW)) {
                     showConfig();
@@ -198,8 +204,15 @@ public class M7rCli {
 
     private static void execute(RestService restService) {
 
+        if (!Init.isInitialized()) {
+            System.out.println("No configuration found! Consider calling 'm7r init'.");
+            System.exit(1);
+        }
+
         CliConfiguration cliConfiguration = CliConfigurationLoader.load();
-        System.out.println(cliConfiguration.toString());
+        if (!cliConfiguration.isValid()) {
+            System.out.println("Configuration not valid! Consider calling 'm7r config edit'.");
+        }
 
 //        RestService restService = new Noop();
 //        RestService restService = new Login("dummy", "secret");
