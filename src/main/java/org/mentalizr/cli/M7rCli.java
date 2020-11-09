@@ -9,51 +9,35 @@ import de.arthurpicht.cli.common.UnrecognizedArgumentException;
 import de.arthurpicht.cli.option.OptionBuilder;
 import de.arthurpicht.cli.option.OptionParserResult;
 import de.arthurpicht.cli.option.Options;
+import org.mentalizr.cli.commands.*;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
-import org.mentalizr.cli.config.CliConfiguration;
-import org.mentalizr.cli.config.CliConfigurationLoader;
-import org.mentalizr.cli.config.Init;
-import org.mentalizr.client.httpClient.HeaderHelper;
-import org.mentalizr.client.httpClient.HttpClientCreator;
-import org.mentalizr.client.httpClient.HttpRequestCreator;
-import org.mentalizr.client.restService.Login;
-import org.mentalizr.client.restService.Noop;
-import org.mentalizr.client.restService.RestService;
-import org.mentalizr.util.Version;
 
-import java.io.IOException;
-import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.List;
 
 public class M7rCli {
 
-    private static final String ID_DEBUG = "debug";
-    private static final String ID_STACKTRACE = "stacktrace";
-    private static final String ID_SILENT = "silent";
+    public static final String ID_DEBUG = "debug";
+    public static final String ID_STACKTRACE = "stacktrace";
+    public static final String ID_SILENT = "silent";
 
-    private static final String COMMAND_VERSION = "version";
-    private static final String COMMAND_HELP = "help";
+    public static final String LOGIN = "login";
+    public static final String ID_USER = "login";
+    public static final String ID_PASSWORD = "password";
 
-    private static final String COMMAND_LOGIN = "login";
-    private static final String ID_USER = "login";
-    private static final String ID_PASSWORD = "password";
+    public static final String NOOP = "noop";
+    public static final String INIT = "init";
+    public static final String CONFIG = "config";
+    public static final String EDIT = "edit";
+    public static final String SHOW = "show";
+    public static final String VERSION = "version";
+    public static final String HELP = "help";
 
-    private static final String COMMAND_NOOP = "noop";
-    private static final String COMMAND_INIT = "init";
-    private static final String COMMAND_CONFIG = "config";
-    private static final String COMMAND_CONFIG_EDIT = "edit";
-    private static final String COMMAND_CONFIG_SHOW = "show";
-
-
-    private static CliCallGlobalConfiguration cliCallGlobalConfiguration = new CliCallGlobalConfiguration();
-
-    private static void processParserResultGlobalOptions(OptionParserResult optionParserResult) {
+    private static CliCallGlobalConfiguration processParserResultGlobalOptions(OptionParserResult optionParserResult) {
+        CliCallGlobalConfiguration cliCallGlobalConfiguration = new CliCallGlobalConfiguration();
         if (optionParserResult.hasOption(ID_DEBUG)) cliCallGlobalConfiguration.setDebug(true);
         if (optionParserResult.hasOption(ID_SILENT)) cliCallGlobalConfiguration.setSilent(true);
         if (optionParserResult.hasOption(ID_STACKTRACE)) cliCallGlobalConfiguration.setStacktrace(true);
+        return cliCallGlobalConfiguration;
     }
 
     private static CommandLineInterface prepareCLI() {
@@ -68,104 +52,56 @@ public class M7rCli {
                                 .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user").build(ID_USER))
                                 .add(new OptionBuilder().withLongName("password").withShortName('p').hasArgument().withDescription("password").build(ID_PASSWORD))
                         )
-                        .root().add(COMMAND_INIT)
-                        .root().add("config").addOneOf("show", "edit")
-                        .root().add("help")
-                        .root().add("version")
-                        .root().add("noop")
+                        .root().add(INIT)
+                        .root().add(CONFIG).addOneOf(SHOW, EDIT)
+                        .root().add(HELP)
+                        .root().add(VERSION)
+                        .root().add(NOOP)
                 )
                 .build();
     }
-
-    private static void showVersion() {
-        System.out.println("m7r-cli");
-
-        Version version = Version.getInstance(M7rCli.class);
-        System.out.println("Version: " + version.getVersion());
-        System.out.println("build known? " + version.isBuildKnown());
-        System.out.println("Build: " + version.getBuild());
-    }
-
-    private static void showHelp() {
-        // TODO
-        System.out.println("help: not implemented yet!");
-    }
-
-    private static void login(OptionParserResult optionParserResultSpecific) {
-
-        String user = null;
-        if (optionParserResultSpecific.hasOption(ID_USER)) {
-            user = optionParserResultSpecific.getValue(ID_USER);
-        } else {
-            System.out.println("Error. No user specified.");
-            System.exit(1);
-        }
-
-        String password = "";
-        boolean hasPassword;
-        if (optionParserResultSpecific.hasOption(ID_PASSWORD)) {
-            password = optionParserResultSpecific.getValue(ID_PASSWORD);
-        } else {
-            hasPassword = false;
-        }
-
-        // TODO read password from console is not given as option
-        RestService restService = new Login(user, password);
-        execute(restService);
-
-    }
-
-    private static void noop() {
-        RestService restService = new Noop();
-        execute(restService);
-    }
-
-    private static void showConfig() {
-        CliConfiguration cliConfiguration = CliConfigurationLoader.load();
-        System.out.println(cliConfiguration.toString());
-    }
-
-    private static void editConfig() {
-        // TODO
-        System.out.println("Edit config. Not implemented yet.");
-    }
-
 
     public static void main(String[] args) {
 
         CommandLineInterface cli = prepareCLI();
         try {
             ParserResult parserResult = cli.parse(args);
-            processParserResultGlobalOptions(parserResult.getOptionParserResultGlobal());
+            CliCallGlobalConfiguration cliCallGlobalConfiguration = processParserResultGlobalOptions(parserResult.getOptionParserResultGlobal());
             List<String> commandList = parserResult.getCommandList();
+            OptionParserResult optionParserResultSpecific = parserResult.getOptionParserResultSpecific();
 
-            if (parserResult.getCommandList().get(0).equals(COMMAND_VERSION)) {
-                showVersion();
-                System.exit(0);
+            if (parserResult.getCommandList().get(0).equals(VERSION)) {
+                VersionCommand versionCommand = new VersionCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                versionCommand.execute();
             }
 
-            if (parserResult.getCommandList().get(0).equals(COMMAND_HELP)) {
-                showHelp();
-                System.exit(0);
+            if (parserResult.getCommandList().get(0).equals(HELP)) {
+                HelpCommand helpCommand = new HelpCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                helpCommand.execute();
             }
 
-            if (parserResult.getCommandList().get(0).equals(COMMAND_LOGIN)) {
-                login(parserResult.getOptionParserResultSpecific());
+            if (parserResult.getCommandList().get(0).equals(LOGIN)) {
+                LoginCommand loginCommand = new LoginCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                loginCommand.execute();
             }
 
-            if (parserResult.getCommandList().get(0).equals(COMMAND_NOOP)) {
-                noop();
+            if (parserResult.getCommandList().get(0).equals(NOOP)) {
+                NoopCommand noopCommand = new NoopCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                noopCommand.execute();
             }
 
-            if (commandList.get(0).equals(COMMAND_INIT)) {
-                Init.init();
+            if (commandList.get(0).equals(INIT)) {
+                InitCommand initCommand = new InitCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                initCommand.execute();
             }
 
-            if (commandList.get(0).equals(COMMAND_CONFIG)) {
-                if (commandList.get(1).equals(COMMAND_CONFIG_SHOW)) {
-                    showConfig();
+            if (commandList.get(0).equals(CONFIG)) {
+                if (commandList.get(1).equals(SHOW)) {
+                    ShowConfigCommand showConfigCommand = new ShowConfigCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                    showConfigCommand.execute();
                 } else {
-                    editConfig();
+                    EditConfigCommand editConfigCommand = new EditConfigCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                    editConfigCommand.execute();
                 }
             }
 
@@ -177,68 +113,6 @@ public class M7rCli {
 //            System.out.println(e.getArgumentIndex());
 
         }
-
-
-
-
-//        try {
-//            Init.init();
-//        } catch (CliException e) {
-//            e.printStackTrace();
-//        }
-//
-//        System.exit(0);
-//
-//
-//        try {
-//            execute(cliConfiguration);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-
-    }
-
-
-
-    private static void execute(RestService restService) {
-
-        if (!Init.isInitialized()) {
-            System.out.println("No configuration found! Consider calling 'm7r init'.");
-            System.exit(1);
-        }
-
-        CliConfiguration cliConfiguration = CliConfigurationLoader.load();
-        if (!cliConfiguration.isValid()) {
-            System.out.println("Configuration not valid! Consider calling 'm7r config edit'.");
-        }
-
-//        RestService restService = new Noop();
-//        RestService restService = new Login("dummy", "secret");
-
-        HttpClient client = HttpClientCreator.create(cliConfiguration);
-        HttpRequest httpRequest = HttpRequestCreator.create(restService, cliConfiguration);
-
-        HttpHeaders httpHeadersRequest = httpRequest.headers();
-        System.out.println("Request-Headers:");
-        HeaderHelper.showHeaders(httpHeadersRequest);
-
-        HttpResponse<String> response = null;
-        // TODO ErrorHandling optimieren
-        try {
-            response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Error: " + e.getMessage());
-
-        }
-
-        HttpHeaders httpHeaderResponse = response.headers();
-        System.out.println("Response-Headers:");
-        HeaderHelper.showHeaders(httpHeaderResponse);
-
-        System.out.println(response.statusCode());
-        System.out.println(response.body());
 
     }
 
