@@ -20,11 +20,13 @@ public class CliConfigurationLoader {
     private static final String PROPERTY__PROXY_PASSWORD = "proxy_password";
 
     public static CliConfiguration load() {
-
-        String configFileAsString = System.getProperty("user.home") + "/" + CONFIG_FILE;
-        File configFile = new File(configFileAsString);
-
+        File configFile = getDefaultConfigFile();
         return load(configFile);
+    }
+
+    public static File getDefaultConfigFile() {
+        String configFileAsString = System.getProperty("user.home") + "/" + CONFIG_FILE;
+        return new File(configFileAsString);
     }
 
     public static CliConfiguration load(File configFile) {

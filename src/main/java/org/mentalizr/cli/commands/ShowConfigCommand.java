@@ -11,6 +11,7 @@ public class ShowConfigCommand extends CommandExecutor {
 
     public ShowConfigCommand(CliCallGlobalConfiguration cliCallGlobalConfiguration, List<String> commandList, OptionParserResult optionParserResultSpecific) {
         super(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+        this.checkInitStatus();
     }
 
     @Override

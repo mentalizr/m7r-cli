@@ -14,6 +14,7 @@ public class LoginCommand extends CommandExecutor {
 
     public LoginCommand(CliCallGlobalConfiguration cliCallGlobalConfiguration,List<String> commandList, OptionParserResult optionParserResultSpecific) {
         super(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+        this.checkedInit();
     }
 
     @Override

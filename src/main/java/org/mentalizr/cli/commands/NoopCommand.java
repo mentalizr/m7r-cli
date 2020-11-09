@@ -12,6 +12,7 @@ public class NoopCommand extends CommandExecutor {
 
     public NoopCommand(CliCallGlobalConfiguration cliCallGlobalConfiguration, List<String> commandList, OptionParserResult optionParserResultSpecific) {
         super(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+        this.checkedInit();
     }
 
     @Override
