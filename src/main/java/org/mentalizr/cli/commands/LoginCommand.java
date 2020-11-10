@@ -24,22 +24,20 @@ public class LoginCommand extends CommandExecutor {
         if (optionParserResultSpecific.hasOption(ID_USER)) {
             user = optionParserResultSpecific.getValue(ID_USER);
         } else {
-            System.out.println("Error. No user specified.");
-            System.exit(1);
+            System.out.print("user: ");
+            user = System.console().readLine();
         }
 
         String password = "";
-        boolean hasPassword;
         if (optionParserResultSpecific.hasOption(ID_PASSWORD)) {
             password = optionParserResultSpecific.getValue(ID_PASSWORD);
         } else {
-            hasPassword = false;
+            System.out.print("password: ");
+            password = new String(System.console().readPassword());
         }
 
-        // TODO read password from console is not given as option
         RestService restService = new org.mentalizr.client.restService.Login(user, password);
         RestServiceCaller.call(restService);
-
 
     }
 }
