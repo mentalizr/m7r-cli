@@ -3,7 +3,6 @@ package org.mentalizr.cli.commands;
 import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.client.restService.RestService;
-import org.mentalizr.client.restService.RestServiceCaller;
 
 import static org.mentalizr.cli.M7rCli.ID_PASSWORD;
 import static org.mentalizr.cli.M7rCli.ID_USER;
@@ -37,7 +36,13 @@ public class LoginCommand extends CommandExecutor {
         }
 
         RestService restService = new org.mentalizr.client.restService.Login(user, password);
-        RestServiceCaller.call(restService, cliConfiguration);
+        String body = this.checkedCall(restService);
+
+        System.out.println("[OK] Successfully logged in to " + this.cliConfiguration.getServer());
+
+        if (this.cliContext.getCliCallGlobalConfiguration().isDebug()) {
+            System.out.println("body: " + body);
+        }
 
     }
 }
