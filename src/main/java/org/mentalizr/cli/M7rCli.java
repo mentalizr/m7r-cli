@@ -23,7 +23,7 @@ public class M7rCli {
     public static final String LOGIN = "login";
     public static final String ID_USER = "login";
     public static final String ID_PASSWORD = "password";
-
+    public static final String LOGOUT = "logout";
     public static final String NOOP = "noop";
     public static final String INIT = "init";
     public static final String CONFIG = "config";
@@ -48,10 +48,11 @@ public class M7rCli {
                         .add(new OptionBuilder().withLongName("stacktrace").build(ID_STACKTRACE))
                 )
                 .withCommands(new Commands()
-                        .add("login").withSpecificOptions(new Options()
+                        .add(LOGIN).withSpecificOptions(new Options()
                                 .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user").build(ID_USER))
                                 .add(new OptionBuilder().withLongName("password").withShortName('p').hasArgument().withDescription("password").build(ID_PASSWORD))
                         )
+                        .root().add(LOGOUT)
                         .root().add(INIT)
                         .root().add(CONFIG).addOneOf(SHOW, EDIT)
                         .root().add(HELP)
@@ -83,6 +84,11 @@ public class M7rCli {
             if (parserResult.getCommandList().get(0).equals(LOGIN)) {
                 LoginCommand loginCommand = new LoginCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
                 loginCommand.execute();
+            }
+
+            if (parserResult.getCommandList().get(0).equals(LOGOUT)) {
+                LogoutCommand logoutCommand = new LogoutCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                logoutCommand.execute();
             }
 
             if (parserResult.getCommandList().get(0).equals(NOOP)) {

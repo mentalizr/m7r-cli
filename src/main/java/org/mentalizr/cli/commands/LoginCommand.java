@@ -2,6 +2,8 @@ package org.mentalizr.cli.commands;
 
 import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
+import org.mentalizr.cli.config.CliConfiguration;
+import org.mentalizr.cli.config.CliConfigurationLoader;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restService.RestServiceCaller;
 
@@ -37,7 +39,7 @@ public class LoginCommand extends CommandExecutor {
         }
 
         RestService restService = new org.mentalizr.client.restService.Login(user, password);
-        RestServiceCaller.call(restService);
+        RestServiceCaller.call(restService, cliConfiguration);
 
     }
 }

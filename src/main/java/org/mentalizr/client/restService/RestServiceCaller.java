@@ -15,17 +15,17 @@ import java.net.http.HttpResponse;
 
 public class RestServiceCaller {
 
-    public static void call(RestService restService) {
+    public static void call(RestService restService, CliConfiguration cliConfiguration) {
 
-        if (!Init.isInitialized()) {
-            System.out.println("No configuration found! Consider calling 'm7r init'.");
-            System.exit(1);
-        }
-
-        CliConfiguration cliConfiguration = CliConfigurationLoader.load();
-        if (!cliConfiguration.isValid()) {
-            System.out.println("Configuration not valid! Consider calling 'm7r config edit'.");
-        }
+//        if (!Init.isInitialized()) {
+//            System.out.println("No configuration found! Consider calling 'm7r init'.");
+//            System.exit(1);
+//        }
+//
+//        CliConfiguration cliConfiguration = CliConfigurationLoader.load();
+//        if (!cliConfiguration.isValid()) {
+//            System.out.println("Configuration not valid! Consider calling 'm7r config edit'.");
+//        }
 
 //        RestService restService = new Noop();
 //        RestService restService = new Login("dummy", "secret");
