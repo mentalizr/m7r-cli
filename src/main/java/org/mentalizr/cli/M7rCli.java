@@ -11,6 +11,8 @@ import de.arthurpicht.cli.option.OptionParserResult;
 import de.arthurpicht.cli.option.Options;
 import org.mentalizr.cli.commands.*;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceCallerConnectionException;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceCallerHttpException;
 
 import java.util.List;
 
@@ -65,6 +67,7 @@ public class M7rCli {
     public static void main(String[] args) {
 
         CommandLineInterface cli = prepareCLI();
+        CliContext cliContext = null;
         try {
             ParserResult parserResult = cli.parse(args);
 
@@ -72,7 +75,7 @@ public class M7rCli {
             List<String> commandList = parserResult.getCommandList();
             OptionParserResult optionParserResultSpecific = parserResult.getOptionParserResultSpecific();
 
-            CliContext cliContext = new CliContext(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+            cliContext = new CliContext(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
 
             if (parserResult.getCommandList().get(0).equals(VERSION)) {
                 VersionCommand versionCommand = new VersionCommand(cliContext);
@@ -115,11 +118,28 @@ public class M7rCli {
             }
 
         } catch (UnrecognizedArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("[Error] m7r syntax error. " + e.getMessage());
             System.out.println("m7r " + ArgsHelper.getArgsString(args));
             System.out.println("    " + e.getArgumentPointerString());
+            System.exit(ExitStatus.M7R_SYNTAX_ERROR);
 
-//            System.out.println(e.getArgumentIndex());
+        } catch (RestServiceCallerHttpException e) {
+            switch (e.getStatusCode()) {
+                case 401:
+                    System.out.println("[ERROR] Authentication failed.");
+                    System.exit(ExitStatus.HTTP_AUTHENTICATION_ERROR);
+                default:
+                    System.out.println("[ERROR] HttpError " + e.getStatusCode());
+                    System.exit(ExitStatus.HTTP_OTHER_ERROR);
+            }
+
+        } catch (RestServiceCallerConnectionException e) {
+            System.out.println("[ERROR] " + e.getMessage());
+            System.out.println("Cause: " + e.getCause().getMessage());
+            if (cliContext.getCliCallGlobalConfiguration().isStacktrace()) {
+                e.printStackTrace();
+            }
+            System.exit(ExitStatus.CONNECTION_ERROR);
 
         }
 

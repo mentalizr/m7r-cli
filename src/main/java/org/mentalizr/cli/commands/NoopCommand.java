@@ -4,6 +4,8 @@ import org.mentalizr.cli.CliContext;
 import org.mentalizr.client.restService.Noop;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restServiceCaller.RestServiceCaller;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceCallerConnectionException;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceCallerHttpException;
 
 public class NoopCommand extends CommandExecutor {
 
@@ -13,10 +15,10 @@ public class NoopCommand extends CommandExecutor {
     }
 
     @Override
-    public void execute() {
+    public void execute() throws RestServiceCallerHttpException, RestServiceCallerConnectionException {
         RestService restService = new Noop();
 
-        String body = this.checkedCall(restService);
+        String body = RestServiceCaller.call(restService, this.cliConfiguration);
 
         System.out.println("[OK] noop");
 
