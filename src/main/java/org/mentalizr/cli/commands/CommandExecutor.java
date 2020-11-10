@@ -4,8 +4,8 @@ import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.config.CliConfiguration;
 import org.mentalizr.cli.config.CliConfigurationLoader;
 import org.mentalizr.cli.config.Init;
-import org.mentalizr.client.restServiceCaller.exception.RestServiceCallerConnectionException;
-import org.mentalizr.client.restServiceCaller.exception.RestServiceCallerHttpException;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
 public abstract class CommandExecutor {
 
@@ -37,6 +37,6 @@ public abstract class CommandExecutor {
         }
     }
 
-    public abstract void execute() throws RestServiceCallerHttpException, RestServiceCallerConnectionException;
+    public abstract void execute() throws RestServiceHttpException, RestServiceConnectionException;
 
 }

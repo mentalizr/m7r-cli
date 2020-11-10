@@ -11,8 +11,9 @@ import de.arthurpicht.cli.option.OptionParserResult;
 import de.arthurpicht.cli.option.Options;
 import org.mentalizr.cli.commands.*;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
-import org.mentalizr.client.restServiceCaller.exception.RestServiceCallerConnectionException;
-import org.mentalizr.client.restServiceCaller.exception.RestServiceCallerHttpException;
+import org.mentalizr.cli.exceptions.CliException;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
 import java.util.List;
 
@@ -123,7 +124,7 @@ public class M7rCli {
             System.out.println("    " + e.getArgumentPointerString());
             System.exit(ExitStatus.M7R_SYNTAX_ERROR);
 
-        } catch (RestServiceCallerHttpException e) {
+        } catch (RestServiceHttpException e) {
             switch (e.getStatusCode()) {
                 case 401:
                     System.out.println("[ERROR] Authentication failed.");
@@ -133,13 +134,20 @@ public class M7rCli {
                     System.exit(ExitStatus.HTTP_OTHER_ERROR);
             }
 
-        } catch (RestServiceCallerConnectionException e) {
+        } catch (RestServiceConnectionException e) {
             System.out.println("[ERROR] " + e.getMessage());
             System.out.println("Cause: " + e.getCause().getMessage());
             if (cliContext.getCliCallGlobalConfiguration().isStacktrace()) {
                 e.printStackTrace();
             }
             System.exit(ExitStatus.CONNECTION_ERROR);
+
+        } catch (CliException e) {
+            System.out.println("[ERROR] " + e.getMessage());
+            if (cliContext != null && cliContext.getCliCallGlobalConfiguration().isStacktrace()) {
+                e.printStackTrace();
+            }
+            System.exit(ExitStatus.INTERNAL_ERROR);
 
         }
 

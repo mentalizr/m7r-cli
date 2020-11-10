@@ -4,8 +4,8 @@ import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restServiceCaller.RestServiceCaller;
-import org.mentalizr.client.restServiceCaller.exception.RestServiceCallerConnectionException;
-import org.mentalizr.client.restServiceCaller.exception.RestServiceCallerHttpException;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
 import static org.mentalizr.cli.M7rCli.ID_PASSWORD;
 import static org.mentalizr.cli.M7rCli.ID_USER;
@@ -18,7 +18,7 @@ public class LoginCommand extends CommandExecutor {
     }
 
     @Override
-    public void execute() throws RestServiceCallerHttpException, RestServiceCallerConnectionException {
+    public void execute() throws RestServiceHttpException, RestServiceConnectionException {
 
         OptionParserResult optionParserResultSpecific = this.cliContext.getOptionParserResultSpecific();
 
@@ -40,7 +40,6 @@ public class LoginCommand extends CommandExecutor {
 
         RestService restService = new org.mentalizr.client.restService.Login(user, password);
         String body = RestServiceCaller.call(restService, cliConfiguration);
-//        String body = this.checkedCall(restService);
 
         System.out.println("[OK] Successfully logged in to " + this.cliConfiguration.getServer());
 

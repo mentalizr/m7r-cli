@@ -2,11 +2,11 @@ package org.mentalizr.client.restServiceCaller.exception;
 
 import java.net.http.HttpResponse;
 
-public class RestServiceCallerHttpException extends RestServiceCallerException {
+public class RestServiceHttpException extends RestServiceException {
 
     private int statusCode;
 
-    public RestServiceCallerHttpException(HttpResponse httpResponse) {
+    public RestServiceHttpException(HttpResponse httpResponse) {
         super();
         this.statusCode = httpResponse.statusCode();
     }
