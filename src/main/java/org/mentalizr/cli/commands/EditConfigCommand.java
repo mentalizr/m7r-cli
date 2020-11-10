@@ -1,18 +1,16 @@
 package org.mentalizr.cli.commands;
 
-import de.arthurpicht.cli.option.OptionParserResult;
 import de.arthurpicht.utils.core.strings.Strings;
-import org.mentalizr.cli.config.CliCallGlobalConfiguration;
+import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.config.CliConfigurationLoader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public class EditConfigCommand extends CommandExecutor {
 
-    public EditConfigCommand(CliCallGlobalConfiguration cliCallGlobalConfiguration, List<String> commandList, OptionParserResult optionParserResultSpecific) {
-        super(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+    public EditConfigCommand(CliContext cliContext) {
+        super(cliContext);
         this.checkInitStatus();
     }
 

@@ -67,46 +67,49 @@ public class M7rCli {
         CommandLineInterface cli = prepareCLI();
         try {
             ParserResult parserResult = cli.parse(args);
+
             CliCallGlobalConfiguration cliCallGlobalConfiguration = processParserResultGlobalOptions(parserResult.getOptionParserResultGlobal());
             List<String> commandList = parserResult.getCommandList();
             OptionParserResult optionParserResultSpecific = parserResult.getOptionParserResultSpecific();
 
+            CliContext cliContext = new CliContext(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+
             if (parserResult.getCommandList().get(0).equals(VERSION)) {
-                VersionCommand versionCommand = new VersionCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                VersionCommand versionCommand = new VersionCommand(cliContext);
                 versionCommand.execute();
             }
 
             if (parserResult.getCommandList().get(0).equals(HELP)) {
-                HelpCommand helpCommand = new HelpCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                HelpCommand helpCommand = new HelpCommand(cliContext);
                 helpCommand.execute();
             }
 
             if (parserResult.getCommandList().get(0).equals(LOGIN)) {
-                LoginCommand loginCommand = new LoginCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                LoginCommand loginCommand = new LoginCommand(cliContext);
                 loginCommand.execute();
             }
 
             if (parserResult.getCommandList().get(0).equals(LOGOUT)) {
-                LogoutCommand logoutCommand = new LogoutCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                LogoutCommand logoutCommand = new LogoutCommand(cliContext);
                 logoutCommand.execute();
             }
 
             if (parserResult.getCommandList().get(0).equals(NOOP)) {
-                NoopCommand noopCommand = new NoopCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                NoopCommand noopCommand = new NoopCommand(cliContext);
                 noopCommand.execute();
             }
 
             if (commandList.get(0).equals(INIT)) {
-                InitCommand initCommand = new InitCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                InitCommand initCommand = new InitCommand(cliContext);
                 initCommand.execute();
             }
 
             if (commandList.get(0).equals(CONFIG)) {
                 if (commandList.get(1).equals(SHOW)) {
-                    ShowConfigCommand showConfigCommand = new ShowConfigCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                    ShowConfigCommand showConfigCommand = new ShowConfigCommand(cliContext);
                     showConfigCommand.execute();
                 } else {
-                    EditConfigCommand editConfigCommand = new EditConfigCommand(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+                    EditConfigCommand editConfigCommand = new EditConfigCommand(cliContext);
                     editConfigCommand.execute();
                 }
             }

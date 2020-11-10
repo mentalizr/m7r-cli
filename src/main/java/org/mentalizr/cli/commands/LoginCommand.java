@@ -1,26 +1,24 @@
 package org.mentalizr.cli.commands;
 
 import de.arthurpicht.cli.option.OptionParserResult;
-import org.mentalizr.cli.config.CliCallGlobalConfiguration;
-import org.mentalizr.cli.config.CliConfiguration;
-import org.mentalizr.cli.config.CliConfigurationLoader;
+import org.mentalizr.cli.CliContext;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restService.RestServiceCaller;
-
-import java.util.List;
 
 import static org.mentalizr.cli.M7rCli.ID_PASSWORD;
 import static org.mentalizr.cli.M7rCli.ID_USER;
 
 public class LoginCommand extends CommandExecutor {
 
-    public LoginCommand(CliCallGlobalConfiguration cliCallGlobalConfiguration,List<String> commandList, OptionParserResult optionParserResultSpecific) {
-        super(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+    public LoginCommand(CliContext cliContext) {
+        super(cliContext);
         this.checkedInit();
     }
 
     @Override
     public void execute() {
+
+        OptionParserResult optionParserResultSpecific = this.cliContext.getOptionParserResultSpecific();
 
         String user = null;
         if (optionParserResultSpecific.hasOption(ID_USER)) {

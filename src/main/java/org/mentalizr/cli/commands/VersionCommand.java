@@ -1,6 +1,7 @@
 package org.mentalizr.cli.commands;
 
 import de.arthurpicht.cli.option.OptionParserResult;
+import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.M7rCli;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
 import org.mentalizr.util.Version;
@@ -9,8 +10,8 @@ import java.util.List;
 
 public class VersionCommand extends CommandExecutor {
 
-    public VersionCommand(CliCallGlobalConfiguration cliCallGlobalConfiguration, List<String> commandList, OptionParserResult optionParserResultSpecific) {
-        super(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+    public VersionCommand(CliContext cliContext) {
+        super(cliContext);
     }
 
     @Override

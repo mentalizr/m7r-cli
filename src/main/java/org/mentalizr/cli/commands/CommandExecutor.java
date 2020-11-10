@@ -1,24 +1,20 @@
 package org.mentalizr.cli.commands;
 
-import de.arthurpicht.cli.option.OptionParserResult;
+import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
 import org.mentalizr.cli.config.CliConfiguration;
 import org.mentalizr.cli.config.CliConfigurationLoader;
 import org.mentalizr.cli.config.Init;
 
-import java.util.List;
-
 public abstract class CommandExecutor {
 
+    protected CliContext cliContext;
+
     protected CliCallGlobalConfiguration cliCallGlobalConfiguration;
-    protected List<String> commandList;
-    protected OptionParserResult optionParserResultSpecific;
     protected CliConfiguration cliConfiguration;
 
-    public CommandExecutor(CliCallGlobalConfiguration cliCallGlobalConfiguration, List<String> commandList, OptionParserResult optionParserResultSpecific) {
-        this.cliCallGlobalConfiguration = cliCallGlobalConfiguration;
-        this.commandList = commandList;
-        this.optionParserResultSpecific = optionParserResultSpecific;
+    public CommandExecutor(CliContext cliContext) {
+        this.cliContext = cliContext;
         this.cliConfiguration = null;
     }
 
