@@ -20,7 +20,7 @@ public class RestServiceCaller {
 
         ClientConfiguration clientConfiguration = clientContext.getClientConfiguration();
         HttpClient client = HttpClientCreator.create(clientConfiguration);
-        HttpRequest httpRequest = HttpRequestCreator.create(restService, clientConfiguration);
+        HttpRequest httpRequest = HttpRequestCreator.create(restService, clientContext);
 
         if (clientContext.isDebug()) HeaderHelper.showRequestHeaders(httpRequest);
 

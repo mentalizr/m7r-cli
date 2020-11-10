@@ -2,6 +2,7 @@ package org.mentalizr.client.httpClient;
 
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.client.ClientConfiguration;
+import org.mentalizr.client.ClientContext;
 import org.mentalizr.client.restService.HttpMethod;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restService.RestServiceHelper;
@@ -13,21 +14,21 @@ import java.util.Base64;
 
 public class HttpRequestCreator {
 
-    public static HttpRequest create(RestService restService, ClientConfiguration clientConfiguration) {
+    public static HttpRequest create(RestService restService, ClientContext clientContext) {
 
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
 
-        addUriToRequest(requestBuilder, restService, clientConfiguration);
-        addHttpMethodToRequest(requestBuilder, restService);
+        addUriToRequest(requestBuilder, restService, clientContext);
+        addHttpMethodToRequest(requestBuilder, restService, clientContext);
         addContentTypeHeader(requestBuilder, restService);
-        setProxyServerCredentials(requestBuilder, clientConfiguration);
+        setProxyServerCredentials(requestBuilder, clientContext);
 
         return requestBuilder.build();
     }
 
-    public static void addUriToRequest(HttpRequest.Builder httpRequestBuilder, RestService restService, ClientConfiguration clientConfiguration) {
+    public static void addUriToRequest(HttpRequest.Builder httpRequestBuilder, RestService restService, ClientContext clientContext) {
 
-        String uri = RestServiceHelper.getServiceUrl(restService, clientConfiguration);
+        String uri = RestServiceHelper.getServiceUrl(restService, clientContext);
 
         System.out.println("Service: " + uri);
 
@@ -36,10 +37,9 @@ public class HttpRequestCreator {
         } catch (URISyntaxException e) {
             throw new CliException(e);
         }
-
     }
 
-    public static void addHttpMethodToRequest(HttpRequest.Builder httpRequestBuilder, RestService restService) {
+    public static void addHttpMethodToRequest(HttpRequest.Builder httpRequestBuilder, RestService restService, ClientContext clientContext) {
 
         HttpMethod httpMethod = restService.getMethod();
 
@@ -47,15 +47,17 @@ public class HttpRequestCreator {
 
             httpRequestBuilder.GET();
 
-            System.out.println("Method: GET");
+            if (clientContext.isDebug()) System.out.println("HttpMethod: GET");
 
         } else if (httpMethod == HttpMethod.POST) {
 
             String body = restService.getBody();
             httpRequestBuilder.POST(HttpRequest.BodyPublishers.ofString(body));
 
-            System.out.println("Method: POST");
-            System.out.println("Body: " + body);
+            if (clientContext.isDebug()) {
+                System.out.println("Method: POST");
+                System.out.println("Body: " + body);
+            }
 
         } else {
             throw new RuntimeException("Unknown HttpMethod: " + httpMethod.name());
@@ -68,11 +70,13 @@ public class HttpRequestCreator {
         }
     }
 
-    private static void setProxyServerCredentials(HttpRequest.Builder httpRequestBuilder, ClientConfiguration clientConfiguration) {
+    private static void setProxyServerCredentials(HttpRequest.Builder httpRequestBuilder, ClientContext clientContext) {
 
-        if (!clientConfiguration.hasProxyServerCredentials()) return;
+        if (!clientContext.getClientConfiguration().hasProxyServerCredentials()) return;
 
-        String loginString = clientConfiguration.getProxyServerUser() + ":" + clientConfiguration.getProxyServerPassword();
+        String proxyServerUser = clientContext.getClientConfiguration().getProxyServerUser();
+        String proxyServerPassword = clientContext.getClientConfiguration().getProxyServerPassword();
+        String loginString = proxyServerUser + ":" + proxyServerPassword;
         String encoded = new String(Base64.getEncoder().encode(loginString.getBytes()));
         httpRequestBuilder.setHeader("Proxy-Authorization", "Basic " + encoded);
 
