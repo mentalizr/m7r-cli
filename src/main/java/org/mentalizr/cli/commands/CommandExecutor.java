@@ -4,6 +4,7 @@ import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.config.CliConfiguration;
 import org.mentalizr.cli.config.CliConfigurationLoader;
 import org.mentalizr.cli.config.Init;
+import org.mentalizr.client.ClientContext;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
@@ -11,18 +12,16 @@ public abstract class CommandExecutor {
 
     protected CliContext cliContext;
 
-    protected CliConfiguration cliConfiguration;
-
     public CommandExecutor(CliContext cliContext) {
         this.cliContext = cliContext;
-        this.cliConfiguration = null;
     }
 
     protected void checkedInit() {
 
         this.checkInitStatus();
 
-        this.cliConfiguration = CliConfigurationLoader.load();
+        CliConfiguration cliConfiguration = CliConfigurationLoader.load();
+        this.cliContext.setCliConfiguration(cliConfiguration);
         if (!cliConfiguration.isValid()) {
             System.out.println("[Error] Configuration not valid. Mandatory 'server' configuration missing. Consider calling 'm7r config edit'.");
             System.exit(1);
@@ -38,5 +37,11 @@ public abstract class CommandExecutor {
     }
 
     public abstract void execute() throws RestServiceHttpException, RestServiceConnectionException;
+
+    public ClientContext getClientContext() {
+        this.cliContext.assertCliConfiguration();
+        boolean debug = this.cliContext.getCliCallGlobalConfiguration().isDebug();
+        return new ClientContext(this.cliContext.getCliConfiguration(), debug);
+    }
 
 }

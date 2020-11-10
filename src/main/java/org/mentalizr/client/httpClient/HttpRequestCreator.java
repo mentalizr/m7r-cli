@@ -1,7 +1,7 @@
 package org.mentalizr.client.httpClient;
 
-import org.mentalizr.cli.config.CliConfiguration;
 import org.mentalizr.cli.exceptions.CliException;
+import org.mentalizr.client.ClientConfiguration;
 import org.mentalizr.client.restService.HttpMethod;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restService.RestServiceHelper;
@@ -13,21 +13,21 @@ import java.util.Base64;
 
 public class HttpRequestCreator {
 
-    public static HttpRequest create(RestService restService, CliConfiguration cliConfiguration) {
+    public static HttpRequest create(RestService restService, ClientConfiguration clientConfiguration) {
 
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
 
-        addUriToRequest(requestBuilder, restService, cliConfiguration);
+        addUriToRequest(requestBuilder, restService, clientConfiguration);
         addHttpMethodToRequest(requestBuilder, restService);
         addContentTypeHeader(requestBuilder, restService);
-        setProxyServerCredentials(requestBuilder, cliConfiguration);
+        setProxyServerCredentials(requestBuilder, clientConfiguration);
 
         return requestBuilder.build();
     }
 
-    public static void addUriToRequest(HttpRequest.Builder httpRequestBuilder, RestService restService, CliConfiguration cliConfiguration) {
+    public static void addUriToRequest(HttpRequest.Builder httpRequestBuilder, RestService restService, ClientConfiguration clientConfiguration) {
 
-        String uri = RestServiceHelper.getServiceUrl(restService, cliConfiguration);
+        String uri = RestServiceHelper.getServiceUrl(restService, clientConfiguration);
 
         System.out.println("Service: " + uri);
 
@@ -68,11 +68,11 @@ public class HttpRequestCreator {
         }
     }
 
-    private static void setProxyServerCredentials(HttpRequest.Builder httpRequestBuilder, CliConfiguration cliConfiguration) {
+    private static void setProxyServerCredentials(HttpRequest.Builder httpRequestBuilder, ClientConfiguration clientConfiguration) {
 
-        if (!cliConfiguration.hasProxyServerCredentials()) return;
+        if (!clientConfiguration.hasProxyServerCredentials()) return;
 
-        String loginString = cliConfiguration.getProxyServerUser() + ":" + cliConfiguration.getProxyServerPassword();
+        String loginString = clientConfiguration.getProxyServerUser() + ":" + clientConfiguration.getProxyServerPassword();
         String encoded = new String(Base64.getEncoder().encode(loginString.getBytes()));
         httpRequestBuilder.setHeader("Proxy-Authorization", "Basic " + encoded);
 

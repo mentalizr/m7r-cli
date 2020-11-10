@@ -1,12 +1,12 @@
 package org.mentalizr.client.restService;
 
 import org.mentalizr.cli.Const;
-import org.mentalizr.cli.config.CliConfiguration;
+import org.mentalizr.client.ClientConfiguration;
 
 public class RestServiceHelper {
 
-    public static String getServiceUrl(RestService restService, CliConfiguration cliConfiguration) {
-        String url = cliConfiguration.getServer() + Const.CONTEXT_PATH + restService.getServiceName();
+    public static String getServiceUrl(RestService restService, ClientConfiguration clientConfiguration) {
+        String url = clientConfiguration.getServer() + Const.CONTEXT_PATH + restService.getServiceName();
         return url;
     }
 

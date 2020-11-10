@@ -1,8 +1,8 @@
 package org.mentalizr.client.httpClient;
 
-import org.mentalizr.cli.config.CliConfiguration;
-import org.mentalizr.client.cookieHandler.CookieStoreM7r;
 import org.mentalizr.cli.exceptions.CliException;
+import org.mentalizr.client.ClientConfiguration;
+import org.mentalizr.client.cookieHandler.CookieStoreM7r;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -17,7 +17,7 @@ import java.util.Properties;
 
 public class HttpClientCreator {
 
-    public static HttpClient create(CliConfiguration cliConfiguration) {
+    public static HttpClient create(ClientConfiguration clientConfiguration) {
 
         CookieHandler.setDefault(new CookieManager(new CookieStoreM7r(), CookiePolicy.ACCEPT_ORIGINAL_SERVER));
 
@@ -28,12 +28,12 @@ public class HttpClientCreator {
                 .cookieHandler(CookieHandler.getDefault());
 //                .authenticator(Authenticator.getDefault())
 
-        if (cliConfiguration.isTrustAll()) {
+        if (clientConfiguration.isTrustAll()) {
             setTrustAllCerts(httpClientBuilder);
         }
 
-        if (cliConfiguration.hasProxyServer()) {
-            setProxy(httpClientBuilder, cliConfiguration);
+        if (clientConfiguration.hasProxyServer()) {
+            setProxy(httpClientBuilder, clientConfiguration);
         }
 
         return httpClientBuilder.build();
@@ -72,14 +72,14 @@ public class HttpClientCreator {
         httpClientBuilder.sslContext(sslContext);
     }
 
-    private static void setProxy(HttpClient.Builder httpClientBuilder, CliConfiguration cliConfiguration) {
+    private static void setProxy(HttpClient.Builder httpClientBuilder, ClientConfiguration clientConfiguration) {
 
-        String proxyServer = cliConfiguration.getProxyServer();
-        int proxyPort = cliConfiguration.getProxyPort();
+        String proxyServer = clientConfiguration.getProxyServer();
+        int proxyPort = clientConfiguration.getProxyPort();
 
         httpClientBuilder.proxy(ProxySelector.of(new InetSocketAddress(proxyServer, proxyPort)));
 
-        if (cliConfiguration.hasProxyServerCredentials()) {
+        if (clientConfiguration.hasProxyServerCredentials()) {
             System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
         }
 
