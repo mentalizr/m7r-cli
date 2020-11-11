@@ -1,10 +1,12 @@
 package org.mentalizr.client.restService;
 
-public class Noop extends RestService {
+import org.mentalizr.cli.ContentType;
+
+public class SessionStatusService extends RestService {
 
     @Override
     public String getServiceName() {
-        return "noop";
+        return "sessionStatus";
     }
 
     @Override
@@ -19,7 +21,6 @@ public class Noop extends RestService {
 
     @Override
     public String getContentType() {
-        return null;
+        return ContentType.APPLICATION_JSON;
     }
-
 }

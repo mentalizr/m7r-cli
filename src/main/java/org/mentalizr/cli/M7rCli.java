@@ -34,6 +34,7 @@ public class M7rCli {
     public static final String SHOW = "show";
     public static final String VERSION = "version";
     public static final String HELP = "help";
+    public static final String STATUS = "status";
 
     private static CliCallGlobalConfiguration processParserResultGlobalOptions(OptionParserResult optionParserResult) {
         CliCallGlobalConfiguration cliCallGlobalConfiguration = new CliCallGlobalConfiguration();
@@ -61,6 +62,7 @@ public class M7rCli {
                         .root().add(HELP)
                         .root().add(VERSION)
                         .root().add(NOOP)
+                        .root().add(STATUS)
                 )
                 .build();
     }
@@ -103,6 +105,11 @@ public class M7rCli {
                 noopCommand.execute();
             }
 
+            if (parserResult.getCommandList().get(0).equals(STATUS)) {
+                StatusCommand statusCommand = new StatusCommand(cliContext);
+                statusCommand.execute();
+            }
+
             if (commandList.get(0).equals(INIT)) {
                 InitCommand initCommand = new InitCommand(cliContext);
                 initCommand.execute();
@@ -130,7 +137,8 @@ public class M7rCli {
                     System.out.println("[ERROR] Authentication failed.");
                     System.exit(ExitStatus.HTTP_AUTHENTICATION_ERROR);
                 default:
-                    System.out.println("[ERROR] HttpError " + e.getStatusCode());
+                    String message = e.getMessage() != null ? e.getMessage() : "";
+                    System.out.println("[ERROR] HttpError " + e.getStatusCode() + " " + message);
                     System.exit(ExitStatus.HTTP_OTHER_ERROR);
             }
 
@@ -149,6 +157,13 @@ public class M7rCli {
             }
             System.exit(ExitStatus.INTERNAL_ERROR);
 
+        } catch (RuntimeException e) {
+            System.out.println("[INTERNAL ERROR] " + e.getMessage());
+            if (cliContext.getCliCallGlobalConfiguration().isStacktrace()) {
+                e.printStackTrace();
+            } else {
+                System.out.println("Consider calling command with --stacktrace global option.");
+            }
         }
 
     }

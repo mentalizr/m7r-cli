@@ -1,10 +1,10 @@
 package org.mentalizr.client.restService;
 
-public class Logout extends RestService {
+public class NoopService extends RestService {
 
     @Override
     public String getServiceName() {
-        return "logout";
+        return "noop";
     }
 
     @Override

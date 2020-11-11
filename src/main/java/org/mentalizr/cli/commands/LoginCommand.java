@@ -3,7 +3,7 @@ package org.mentalizr.cli.commands;
 import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.client.ClientContext;
-import org.mentalizr.client.restService.Login;
+import org.mentalizr.client.restService.LoginService;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
@@ -40,7 +40,7 @@ public class LoginCommand extends CommandExecutor {
             password = new String(System.console().readPassword());
         }
 
-        RestService restService = new Login(user, password);
+        RestService restService = new LoginService(user, password);
         ClientContext clientContext = this.getClientContext();
         String body = RestServiceCaller.call(restService, clientContext);
 

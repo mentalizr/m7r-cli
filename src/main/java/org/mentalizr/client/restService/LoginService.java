@@ -6,12 +6,12 @@ import org.mentalizr.cli.ContentType;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Login extends RestService {
+public class LoginService extends RestService {
 
     private final String user;
     private final String password;
 
-    public Login(String user, String password) {
+    public LoginService(String user, String password) {
         this.user = user;
         this.password = password;
     }

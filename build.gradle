@@ -17,6 +17,11 @@ dependencies {
     implementation 'com.github.arthurpicht:cli:0.1-alpha5'
     implementation 'com.github.arthurpicht:AP-Configuration:0.1.0'
 
+    implementation 'org.glassfish.jersey.media:jersey-media-jaxb:2.32'
+    implementation 'org.glassfish.jersey.media:jersey-media-json-binding:2.32'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3'
+    implementation 'com.sun.xml.bind:jaxb-impl:2.3.3'
+
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }

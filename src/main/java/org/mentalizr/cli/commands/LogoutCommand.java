@@ -2,7 +2,7 @@ package org.mentalizr.cli.commands;
 
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.client.ClientContext;
-import org.mentalizr.client.restService.Logout;
+import org.mentalizr.client.restService.LogoutService;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
@@ -17,7 +17,7 @@ public class LogoutCommand extends CommandExecutor {
 
     @Override
     public void execute() throws RestServiceHttpException, RestServiceConnectionException {
-        RestService restService = new Logout();
+        RestService restService = new LogoutService();
         ClientContext clientContext = this.getClientContext();
         String body = RestServiceCaller.call(restService, clientContext);
         System.out.println("[OK] Successfully logged out from " + this.cliContext.getCliConfiguration().getServer());
