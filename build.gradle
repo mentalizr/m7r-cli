@@ -12,6 +12,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.mentalizr:m7r-service-objects:0.0.1-SNAPSHOT'
+
     implementation 'com.github.arthurpicht:utils-core:1.2.1'
     implementation 'com.github.arthurpicht:utils-io:0.0.1.4'
     implementation 'com.github.arthurpicht:cli:0.1-alpha5'
@@ -36,11 +38,11 @@ test {
     useJUnitPlatform()
 }
 
-task copyVersion(type: Copy) {
-    from "version"
-    into "src/main/resources"
-}
-build.dependsOn copyVersion
+//task copyVersion(type: Copy) {
+//    from "version"
+//    into "src/main/resources"
+//}
+//build.dependsOn copyVersion
 
 task extractDependencies(type: Copy, dependsOn: jar) {
     from configurations.runtimeClasspath

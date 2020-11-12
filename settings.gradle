@@ -1,2 +1,5 @@
 rootProject.name = 'm7r-cli'
 
+includeBuild('../m7r-service-objects')
+
+
