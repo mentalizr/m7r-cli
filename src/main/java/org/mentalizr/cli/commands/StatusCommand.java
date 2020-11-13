@@ -1,7 +1,8 @@
 package org.mentalizr.cli.commands;
 
 import org.mentalizr.cli.CliContext;
-import org.mentalizr.client.ClientContext;
+import org.mentalizr.cli.RESTCallContextFactory;
+import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restService.SessionStatusService;
 import org.mentalizr.client.restServiceCaller.RestServiceCaller;
@@ -21,10 +22,11 @@ public class StatusCommand extends CommandExecutor {
 
     @Override
     public void execute() throws RestServiceHttpException, RestServiceConnectionException {
-        RestService restService = new SessionStatusService();
-        ClientContext clientContext = this.getClientContext();
 
-        String body = RestServiceCaller.call(restService, clientContext);
+        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
+        RestService restService = new SessionStatusService();
+
+        String body = RestServiceCaller.call(restCallContext, restService);
 
         Jsonb jsonb = JsonbBuilder.create();
         SessionStatus sessionStatus = jsonb.fromJson(body, SessionStatus.class);

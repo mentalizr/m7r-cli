@@ -2,6 +2,7 @@ package org.mentalizr.client.restService;
 
 import de.arthurpicht.utils.io.urlEncoding.URLEncoderUtil;
 import org.mentalizr.cli.ContentType;
+import org.mentalizr.client.RESTCallContext;
 
 import java.util.HashMap;
 import java.util.Map;

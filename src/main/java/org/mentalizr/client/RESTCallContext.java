@@ -1,11 +1,11 @@
 package org.mentalizr.client;
 
-public class ClientContext {
+public class RESTCallContext {
 
     private final ClientConfiguration clientConfiguration;
     private final boolean debug;
 
-    public ClientContext(ClientConfiguration clientConfiguration, boolean debug) {
+    public RESTCallContext(ClientConfiguration clientConfiguration, boolean debug) {
         this.clientConfiguration = clientConfiguration;
         this.debug = debug;
     }

@@ -12,6 +12,7 @@ import de.arthurpicht.cli.option.Options;
 import org.mentalizr.cli.commands.*;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
 import org.mentalizr.cli.exceptions.CliException;
+import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
@@ -35,6 +36,20 @@ public class M7rCli {
     public static final String VERSION = "version";
     public static final String HELP = "help";
     public static final String STATUS = "status";
+    public static final String USER = "user";
+    public static final String THERAPIST = "therapist";
+    public static final String ADD = "add";
+    public static final String ID_ACTIVE = "active";
+
+    public static final String RESTORE = "restore";
+    public static final String ID_EMAIL = "email";
+    public static final String ID_TITLE = "title";
+    public static final String ID_FIRSTNAME = "firstname";
+    public static final String ID_LASTNAME = "lastname";
+    public static final String ID_GENDER = "gender";
+    public static final String ID_FROM_FILE = "fromFile";
+    public static final String ID_SHOW_TEMPLATE = "showTemplate";
+
 
     private static CliCallGlobalConfiguration processParserResultGlobalOptions(OptionParserResult optionParserResult) {
         CliCallGlobalConfiguration cliCallGlobalConfiguration = new CliCallGlobalConfiguration();
@@ -63,8 +78,22 @@ public class M7rCli {
                         .root().add(VERSION)
                         .root().add(NOOP)
                         .root().add(STATUS)
-                )
+                        .root().add(USER).add(ADD).add(THERAPIST).withSpecificOptions(new Options()
+                                        .add(new OptionBuilder().withLongName("from-file").withShortName('f').withDescription("from file (json)").build(ID_FROM_FILE))
+                                        .add(new OptionBuilder().withLongName("show-template").withDescription("show json template").build(ID_SHOW_TEMPLATE))
+
+//                                .add(new OptionBuilder().withLongName("--prompt").withShortName('p').withDescription("input properties on prompt").build(ID_INPUT))
+//                                .add(new OptionBuilder().withLongName("--active").withShortName('a').withDescription("is active").build(ID_ACTIVE))
+//                                .add(new OptionBuilder().withLongName("--user").withShortName('u').withDescription("user name").build(ID_USER))
+//                                .add(new OptionBuilder().withLongName("--password").withShortName('p').withDescription("password").build(ID_PASSWORD))
+//                                .add(new OptionBuilder().withLongName("--email").withShortName('e').withDescription("email address").build(ID_EMAIL))
+//                                .add(new OptionBuilder().withLongName("--title").withShortName('t').withDescription("academic title").build(ID_TITLE))
+//                                .add(new OptionBuilder().withLongName("--firstname").withShortName('f').withDescription("first name").build(ID_FIRSTNAME))
+//                                .add(new OptionBuilder().withLongName("--lastname").withShortName('l').withDescription("last name").build(ID_LASTNAME))
+//                                .add(new OptionBuilder().withLongName("--gender").withShortName('g').withDescription("gender [m|f|d]").build(ID_LASTNAME))
+                        ))
                 .build();
+
     }
 
     public static void main(String[] args) {
@@ -125,6 +154,11 @@ public class M7rCli {
                 }
             }
 
+            if (commandList.get(0).equals(USER) && commandList.get(1).equals(ADD) && commandList.get(2).equals(THERAPIST)) {
+                    TherapistAddCommand therapistAddCommand = new TherapistAddCommand(cliContext);
+                    therapistAddCommand.execute();;
+            }
+
         } catch (UnrecognizedArgumentException e) {
             System.out.println("[Error] m7r syntax error. " + e.getMessage());
             System.out.println("m7r " + ArgsHelper.getArgsString(args));
@@ -164,6 +198,9 @@ public class M7rCli {
             } else {
                 System.out.println("Consider calling command with --stacktrace global option.");
             }
+
+        } catch (UserAbortedException e) {
+            System.out.println("[Abort] Aborted by user.");
         }
 
     }

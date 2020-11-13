@@ -2,7 +2,8 @@ package org.mentalizr.cli.commands;
 
 import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
-import org.mentalizr.client.ClientContext;
+import org.mentalizr.cli.RESTCallContextFactory;
+import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.LoginService;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restServiceCaller.RestServiceCaller;
@@ -40,9 +41,9 @@ public class LoginCommand extends CommandExecutor {
             password = new String(System.console().readPassword());
         }
 
+        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
         RestService restService = new LoginService(user, password);
-        ClientContext clientContext = this.getClientContext();
-        String body = RestServiceCaller.call(restService, clientContext);
+        String body = RestServiceCaller.call(restCallContext, restService);
 
         System.out.println("[OK] Successfully logged in to " + this.cliContext.getCliConfiguration().getServer());
 

@@ -45,4 +45,5 @@ public class CliContext {
     public void setCliConfiguration(CliConfiguration cliConfiguration) {
         this.cliConfiguration = cliConfiguration;
     }
+
 }

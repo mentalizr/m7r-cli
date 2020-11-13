@@ -1,6 +1,11 @@
 package org.mentalizr.client.restService;
 
+import org.mentalizr.client.RESTCallContext;
+
 public class LogoutService extends RestService {
+
+    public LogoutService() {
+    }
 
     @Override
     public String getServiceName() {

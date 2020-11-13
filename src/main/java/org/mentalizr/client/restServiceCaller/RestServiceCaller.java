@@ -1,7 +1,7 @@
 package org.mentalizr.client.restServiceCaller;
 
 import org.mentalizr.client.ClientConfiguration;
-import org.mentalizr.client.ClientContext;
+import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.httpClient.HeaderHelper;
 import org.mentalizr.client.httpClient.HttpClientCreator;
 import org.mentalizr.client.httpClient.HttpRequestCreator;
@@ -16,13 +16,13 @@ import java.net.http.HttpResponse;
 
 public class RestServiceCaller {
 
-    public static String call(RestService restService, ClientContext clientContext) throws RestServiceConnectionException, RestServiceHttpException {
+    public static String call(RESTCallContext restCallContext, RestService restService) throws RestServiceConnectionException, RestServiceHttpException {
 
-        ClientConfiguration clientConfiguration = clientContext.getClientConfiguration();
+        ClientConfiguration clientConfiguration = restCallContext.getClientConfiguration();
         HttpClient client = HttpClientCreator.create(clientConfiguration);
-        HttpRequest httpRequest = HttpRequestCreator.create(restService, clientContext);
+        HttpRequest httpRequest = HttpRequestCreator.create(restService, restCallContext);
 
-        if (clientContext.isDebug()) HeaderHelper.showRequestHeaders(httpRequest);
+        if (restCallContext.isDebug()) HeaderHelper.showRequestHeaders(httpRequest);
 
         HttpResponse<String> httpResponse = null;
         try {
@@ -31,7 +31,9 @@ public class RestServiceCaller {
             throw new RestServiceConnectionException(e);
         }
 
-        if (clientContext.isDebug()) HeaderHelper.showReponseHeaders(httpResponse);
+        if (restCallContext.isDebug()) HeaderHelper.showReponseHeaders(httpResponse);
+
+        if (restCallContext.isDebug()) System.out.println("response-body: " + httpResponse.body());
 
         if (httpResponse.statusCode() != 200) throw new RestServiceHttpException(httpResponse);
         return httpResponse.body();

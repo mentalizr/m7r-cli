@@ -1,8 +1,11 @@
 package org.mentalizr.client.restService;
 
 import de.arthurpicht.utils.core.strings.Strings;
+import org.mentalizr.client.RESTCallContext;
 
 public abstract class RestService {
+
+    protected RESTCallContext RESTCallContext;
 
     public abstract String getServiceName();
 

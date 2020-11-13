@@ -4,7 +4,7 @@ import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.config.CliConfiguration;
 import org.mentalizr.cli.config.CliConfigurationLoader;
 import org.mentalizr.cli.config.Init;
-import org.mentalizr.client.ClientContext;
+import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
@@ -36,12 +36,12 @@ public abstract class CommandExecutor {
         }
     }
 
-    public abstract void execute() throws RestServiceHttpException, RestServiceConnectionException;
+    public abstract void execute() throws RestServiceHttpException, RestServiceConnectionException, UserAbortedException;
 
-    public ClientContext getClientContext() {
-        this.cliContext.assertCliConfiguration();
-        boolean debug = this.cliContext.getCliCallGlobalConfiguration().isDebug();
-        return new ClientContext(this.cliContext.getCliConfiguration(), debug);
-    }
+//    public ClientContext getClientContext() {
+//        this.cliContext.assertCliConfiguration();
+//        boolean debug = this.cliContext.getCliCallGlobalConfiguration().isDebug();
+//        return new ClientContext(this.cliContext.getCliConfiguration(), debug);
+//    }
 
 }

@@ -1,8 +1,7 @@
 package org.mentalizr.client.httpClient;
 
 import org.mentalizr.cli.exceptions.CliException;
-import org.mentalizr.client.ClientConfiguration;
-import org.mentalizr.client.ClientContext;
+import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.HttpMethod;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restService.RestServiceHelper;
@@ -14,21 +13,21 @@ import java.util.Base64;
 
 public class HttpRequestCreator {
 
-    public static HttpRequest create(RestService restService, ClientContext clientContext) {
+    public static HttpRequest create(RestService restService, RESTCallContext RESTCallContext) {
 
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
 
-        addUriToRequest(requestBuilder, restService, clientContext);
-        addHttpMethodToRequest(requestBuilder, restService, clientContext);
+        addUriToRequest(requestBuilder, restService, RESTCallContext);
+        addHttpMethodToRequest(requestBuilder, restService, RESTCallContext);
         addContentTypeHeader(requestBuilder, restService);
-        setProxyServerCredentials(requestBuilder, clientContext);
+        setProxyServerCredentials(requestBuilder, RESTCallContext);
 
         return requestBuilder.build();
     }
 
-    public static void addUriToRequest(HttpRequest.Builder httpRequestBuilder, RestService restService, ClientContext clientContext) {
+    public static void addUriToRequest(HttpRequest.Builder httpRequestBuilder, RestService restService, RESTCallContext RESTCallContext) {
 
-        String uri = RestServiceHelper.getServiceUrl(restService, clientContext);
+        String uri = RestServiceHelper.getServiceUrl(restService, RESTCallContext);
 
         System.out.println("Service: " + uri);
 
@@ -39,7 +38,7 @@ public class HttpRequestCreator {
         }
     }
 
-    public static void addHttpMethodToRequest(HttpRequest.Builder httpRequestBuilder, RestService restService, ClientContext clientContext) {
+    public static void addHttpMethodToRequest(HttpRequest.Builder httpRequestBuilder, RestService restService, RESTCallContext RESTCallContext) {
 
         HttpMethod httpMethod = restService.getMethod();
 
@@ -47,14 +46,14 @@ public class HttpRequestCreator {
 
             httpRequestBuilder.GET();
 
-            if (clientContext.isDebug()) System.out.println("HttpMethod: GET");
+            if (RESTCallContext.isDebug()) System.out.println("HttpMethod: GET");
 
         } else if (httpMethod == HttpMethod.POST) {
 
             String body = restService.getBody();
             httpRequestBuilder.POST(HttpRequest.BodyPublishers.ofString(body));
 
-            if (clientContext.isDebug()) {
+            if (RESTCallContext.isDebug()) {
                 System.out.println("Method: POST");
                 System.out.println("Body: " + body);
             }
@@ -70,12 +69,12 @@ public class HttpRequestCreator {
         }
     }
 
-    private static void setProxyServerCredentials(HttpRequest.Builder httpRequestBuilder, ClientContext clientContext) {
+    private static void setProxyServerCredentials(HttpRequest.Builder httpRequestBuilder, RESTCallContext RESTCallContext) {
 
-        if (!clientContext.getClientConfiguration().hasProxyServerCredentials()) return;
+        if (!RESTCallContext.getClientConfiguration().hasProxyServerCredentials()) return;
 
-        String proxyServerUser = clientContext.getClientConfiguration().getProxyServerUser();
-        String proxyServerPassword = clientContext.getClientConfiguration().getProxyServerPassword();
+        String proxyServerUser = RESTCallContext.getClientConfiguration().getProxyServerUser();
+        String proxyServerPassword = RESTCallContext.getClientConfiguration().getProxyServerPassword();
         String loginString = proxyServerUser + ":" + proxyServerPassword;
         String encoded = new String(Base64.getEncoder().encode(loginString.getBytes()));
         httpRequestBuilder.setHeader("Proxy-Authorization", "Basic " + encoded);
