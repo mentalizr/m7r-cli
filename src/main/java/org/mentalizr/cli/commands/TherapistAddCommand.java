@@ -75,7 +75,7 @@ public class TherapistAddCommand extends CommandExecutor {
         String email = ConsoleReader.promptForMandatoryString("Email: ");
         therapistSO.setEmail(email);
 
-        String genderString = ConsoleReader.promptForOptionString("Gender (m,f,d): ", "m", "f", "d");
+        String genderString = ConsoleReader.promptForOptionString("Gender (m,f,x): ", "m", "f", "x");
         int gender = 0;
         switch (genderString) {
             case "f":
@@ -84,7 +84,7 @@ public class TherapistAddCommand extends CommandExecutor {
             case "m":
                 gender=1;
                 break;
-            case "d":
+            case "x":
                 gender=2;
                 break;
         }

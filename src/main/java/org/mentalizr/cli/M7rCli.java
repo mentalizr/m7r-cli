@@ -9,6 +9,7 @@ import de.arthurpicht.cli.common.UnrecognizedArgumentException;
 import de.arthurpicht.cli.option.OptionBuilder;
 import de.arthurpicht.cli.option.OptionParserResult;
 import de.arthurpicht.cli.option.Options;
+import de.arthurpicht.cli.parameter.ParametersOne;
 import org.mentalizr.cli.commands.*;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
 import org.mentalizr.cli.exceptions.CliException;
@@ -78,10 +79,17 @@ public class M7rCli {
                         .root().add(VERSION)
                         .root().add(NOOP)
                         .root().add(STATUS)
-                        .root().add(USER).add(ADD).add(THERAPIST).withSpecificOptions(new Options()
+                        .root().add(USER).add(ADD).add(THERAPIST).withSpecificOptions(
+                                new Options()
                                         .add(new OptionBuilder().withLongName("from-file").withShortName('f').withDescription("from file (json)").build(ID_FROM_FILE))
                                         .add(new OptionBuilder().withLongName("show-template").withDescription("show json template").build(ID_SHOW_TEMPLATE))
+                        )
+                .root().add(USER).add(RESTORE).add(THERAPIST)).withParameters(new ParametersOne())
+                .build();
 
+    }
+
+    public static void main(String[] args) {
 //                                .add(new OptionBuilder().withLongName("--prompt").withShortName('p').withDescription("input properties on prompt").build(ID_INPUT))
 //                                .add(new OptionBuilder().withLongName("--active").withShortName('a').withDescription("is active").build(ID_ACTIVE))
 //                                .add(new OptionBuilder().withLongName("--user").withShortName('u').withDescription("user name").build(ID_USER))
@@ -91,12 +99,6 @@ public class M7rCli {
 //                                .add(new OptionBuilder().withLongName("--firstname").withShortName('f').withDescription("first name").build(ID_FIRSTNAME))
 //                                .add(new OptionBuilder().withLongName("--lastname").withShortName('l').withDescription("last name").build(ID_LASTNAME))
 //                                .add(new OptionBuilder().withLongName("--gender").withShortName('g').withDescription("gender [m|f|d]").build(ID_LASTNAME))
-                        ))
-                .build();
-
-    }
-
-    public static void main(String[] args) {
 
         CommandLineInterface cli = prepareCLI();
         CliContext cliContext = null;
