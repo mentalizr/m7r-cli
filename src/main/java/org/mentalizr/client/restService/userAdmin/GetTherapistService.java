@@ -1,33 +1,34 @@
-package org.mentalizr.client.restService;
+package org.mentalizr.client.restService.userAdmin;
 
 import org.mentalizr.cli.ContentType;
+import org.mentalizr.client.restService.HttpMethod;
+import org.mentalizr.client.restService.RestService;
 import org.mentalizr.serviceObjects.userManagement.TherapistSO;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 
-public class AddTherapistService extends RestService {
+public class GetTherapistService extends RestService {
 
-    private TherapistSO therapistSO;
+    private String username;
 
-    public AddTherapistService(TherapistSO therapistSO) {
-        this.therapistSO = therapistSO;
+    public GetTherapistService(String username) {
+        this.username = username;
     }
 
     @Override
     public String getServiceName() {
-        return "admin/user/add/therapist";
+        return "admin/user/therapist/get/" + this.username;
     }
 
     @Override
     public HttpMethod getMethod() {
-        return HttpMethod.POST;
+        return HttpMethod.GET;
     }
 
     @Override
     public String getBody() {
-        Jsonb jsonb = JsonbBuilder.create();
-        return jsonb.toJson(this.therapistSO);
+        return "";
     }
 
     @Override

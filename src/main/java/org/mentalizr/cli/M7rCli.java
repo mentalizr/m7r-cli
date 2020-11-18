@@ -9,8 +9,14 @@ import de.arthurpicht.cli.common.UnrecognizedArgumentException;
 import de.arthurpicht.cli.option.OptionBuilder;
 import de.arthurpicht.cli.option.OptionParserResult;
 import de.arthurpicht.cli.option.Options;
-import de.arthurpicht.cli.parameter.ParametersOne;
 import org.mentalizr.cli.commands.*;
+import org.mentalizr.cli.commands.sessionManagement.LoginCommand;
+import org.mentalizr.cli.commands.sessionManagement.LogoutCommand;
+import org.mentalizr.cli.commands.sessionManagement.NoopCommand;
+import org.mentalizr.cli.commands.sessionManagement.StatusCommand;
+import org.mentalizr.cli.commands.user.therapist.TherapistAddCommand;
+import org.mentalizr.cli.commands.user.therapist.TherapistGetCommand;
+import org.mentalizr.cli.commands.user.therapist.TherapistRestoreCommand;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.cli.exceptions.UserAbortedException;
@@ -39,10 +45,17 @@ public class M7rCli {
     public static final String STATUS = "status";
     public static final String USER = "user";
     public static final String THERAPIST = "therapist";
+    public static final String PATIENT = "patient";
+    public static final String ADMIN = "admin";
     public static final String ADD = "add";
+    public static final String RESTORE = "restore";
+    public static final String GET = "get";
+    public static final String DELETE = "delete";
+    public static final String DEACTIVATE = "deactivate";
+    public static final String ACTIVATE = "activate";
+
     public static final String ID_ACTIVE = "active";
 
-    public static final String RESTORE = "restore";
     public static final String ID_EMAIL = "email";
     public static final String ID_TITLE = "title";
     public static final String ID_FIRSTNAME = "firstname";
@@ -50,6 +63,7 @@ public class M7rCli {
     public static final String ID_GENDER = "gender";
     public static final String ID_FROM_FILE = "fromFile";
     public static final String ID_SHOW_TEMPLATE = "showTemplate";
+    public static final String ID_UUID = "uuid";
 
 
     private static CliCallGlobalConfiguration processParserResultGlobalOptions(OptionParserResult optionParserResult) {
@@ -61,30 +75,60 @@ public class M7rCli {
     }
 
     private static CommandLineInterface prepareCLI() {
+
+        Commands commands = new Commands().add(LOGIN).withSpecificOptions(
+                new Options()
+                .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user").build(ID_USER))
+                .add(new OptionBuilder().withLongName("password").withShortName('p').hasArgument().withDescription("password").build(ID_PASSWORD))
+        )
+                .root().add(LOGOUT)
+                .root().add(INIT)
+                .root().add(CONFIG).addOneOf(SHOW, EDIT)
+                .root().add(HELP)
+                .root().add(VERSION)
+                .root().add(NOOP)
+                .root().add(STATUS);
+        Commands userCommands = commands.root().add(USER);
+        userCommands.add(ADD).addOneOf(PATIENT, THERAPIST, ADMIN).withSpecificOptions(
+                new Options()
+                        .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE))
+                        .add(new OptionBuilder().withLongName("show-template").withDescription("show json template").build(ID_SHOW_TEMPLATE))
+        );
+        userCommands.add(RESTORE).addOneOf(PATIENT, THERAPIST, ADMIN).withSpecificOptions(
+                new Options()
+                    .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE))
+        );
+        userCommands.addOneOf(GET, DELETE, ACTIVATE, DEACTIVATE).addOneOf(PATIENT, THERAPIST, ADMIN).withSpecificOptions(
+                new Options()
+                        .add(new OptionBuilder().withLongName("uuid").withShortName('i').hasArgument().withDescription("uuid").build(ID_UUID))
+                        .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user name").build(ID_USER))
+        );
+
         return new CommandLineInterfaceBuilder()
                 .withGlobalOptions(new Options()
                         .add(new OptionBuilder().withShortName('d').withLongName("debug").withDescription("debug").build(ID_DEBUG))
                         .add(new OptionBuilder().withLongName("silent").withDescription("silent").build(ID_SILENT))
                         .add(new OptionBuilder().withLongName("stacktrace").build(ID_STACKTRACE))
                 )
-                .withCommands(new Commands()
-                        .add(LOGIN).withSpecificOptions(new Options()
-                                .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user").build(ID_USER))
-                                .add(new OptionBuilder().withLongName("password").withShortName('p').hasArgument().withDescription("password").build(ID_PASSWORD))
-                        )
-                        .root().add(LOGOUT)
-                        .root().add(INIT)
-                        .root().add(CONFIG).addOneOf(SHOW, EDIT)
-                        .root().add(HELP)
-                        .root().add(VERSION)
-                        .root().add(NOOP)
-                        .root().add(STATUS)
-                        .root().add(USER).add(ADD).add(THERAPIST).withSpecificOptions(
-                                new Options()
-                                        .add(new OptionBuilder().withLongName("from-file").withShortName('f').withDescription("from file (json)").build(ID_FROM_FILE))
-                                        .add(new OptionBuilder().withLongName("show-template").withDescription("show json template").build(ID_SHOW_TEMPLATE))
-                        )
-                .root().add(USER).add(RESTORE).add(THERAPIST)).withParameters(new ParametersOne())
+                .withCommands(commands)
+//                .withCommands(new Commands()
+//                        .add(LOGIN).withSpecificOptions(new Options()
+//                                .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user").build(ID_USER))
+//                                .add(new OptionBuilder().withLongName("password").withShortName('p').hasArgument().withDescription("password").build(ID_PASSWORD))
+//                        )
+//                        .root().add(LOGOUT)
+//                        .root().add(INIT)
+//                        .root().add(CONFIG).addOneOf(SHOW, EDIT)
+//                        .root().add(HELP)
+//                        .root().add(VERSION)
+//                        .root().add(NOOP)
+//                        .root().add(STATUS)
+//                        .root().add(USER).add(ADD).add(THERAPIST).withSpecificOptions(
+//                                new Options()
+//                                        .add(new OptionBuilder().withLongName("from-file").withShortName('f').withDescription("from file (json)").build(ID_FROM_FILE))
+//                                        .add(new OptionBuilder().withLongName("show-template").withDescription("show json template").build(ID_SHOW_TEMPLATE))
+//                        )
+//                .root().add(USER).add(RESTORE).add(THERAPIST)).withParameters(new ParametersOne())
                 .build();
 
     }
@@ -160,6 +204,18 @@ public class M7rCli {
                     TherapistAddCommand therapistAddCommand = new TherapistAddCommand(cliContext);
                     therapistAddCommand.execute();;
             }
+
+            if (commandList.get(0).equals(USER) && commandList.get(1).equals(RESTORE) && commandList.get(2).equals(THERAPIST)) {
+                TherapistRestoreCommand therapistRestoreCommand = new TherapistRestoreCommand(cliContext);
+                therapistRestoreCommand.execute();
+            }
+
+            if (commandList.get(0).equals(USER) && commandList.get(1).equals(GET) && commandList.get(2).equals(THERAPIST)) {
+                TherapistGetCommand therapistGetCommand = new TherapistGetCommand(cliContext);
+                therapistGetCommand.execute();
+            }
+
+
 
         } catch (UnrecognizedArgumentException e) {
             System.out.println("[Error] m7r syntax error. " + e.getMessage());

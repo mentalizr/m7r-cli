@@ -1,6 +1,8 @@
-package org.mentalizr.client.restService;
+package org.mentalizr.client.restService.sessionManagement;
 
 import org.mentalizr.client.RESTCallContext;
+import org.mentalizr.client.restService.HttpMethod;
+import org.mentalizr.client.restService.RestService;
 
 public class LogoutService extends RestService {
 

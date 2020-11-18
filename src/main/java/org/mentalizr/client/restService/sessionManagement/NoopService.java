@@ -1,4 +1,7 @@
-package org.mentalizr.client.restService;
+package org.mentalizr.client.restService.sessionManagement;
+
+import org.mentalizr.client.restService.HttpMethod;
+import org.mentalizr.client.restService.RestService;
 
 public class NoopService extends RestService {
 

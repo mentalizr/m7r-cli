@@ -1,8 +1,10 @@
-package org.mentalizr.client.restService;
+package org.mentalizr.client.restService.sessionManagement;
 
 import de.arthurpicht.utils.io.urlEncoding.URLEncoderUtil;
 import org.mentalizr.cli.ContentType;
 import org.mentalizr.client.RESTCallContext;
+import org.mentalizr.client.restService.HttpMethod;
+import org.mentalizr.client.restService.RestService;
 
 import java.util.HashMap;
 import java.util.Map;

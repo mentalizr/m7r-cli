@@ -1,10 +1,11 @@
-package org.mentalizr.cli.commands;
+package org.mentalizr.cli.commands.sessionManagement;
 
 import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.RESTCallContextFactory;
+import org.mentalizr.cli.commands.CommandExecutor;
 import org.mentalizr.client.RESTCallContext;
-import org.mentalizr.client.restService.LoginService;
+import org.mentalizr.client.restService.sessionManagement.LoginService;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;

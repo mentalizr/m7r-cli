@@ -1,15 +1,11 @@
-package org.mentalizr.cli.commands;
+package org.mentalizr.cli.commands.user.therapist;
 
 import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.ConsoleReader;
 import org.mentalizr.cli.M7rCli;
-import org.mentalizr.cli.RESTCallContextFactory;
+import org.mentalizr.cli.commands.CommandExecutor;
 import org.mentalizr.cli.exceptions.UserAbortedException;
-import org.mentalizr.client.RESTCallContext;
-import org.mentalizr.client.restService.AddTherapistService;
-import org.mentalizr.client.restService.RestService;
-import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 import org.mentalizr.serviceObjects.userManagement.TherapistSO;
@@ -18,9 +14,9 @@ import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 
-public class TherapistAddCommand extends CommandExecutor {
+public class TherapistRestoreCommand extends CommandExecutor {
 
-    public TherapistAddCommand(CliContext cliContext) {
+    public TherapistRestoreCommand(CliContext cliContext) {
         super(cliContext);
         this.checkedInit();
     }
@@ -32,23 +28,27 @@ public class TherapistAddCommand extends CommandExecutor {
 
         TherapistSO therapistSO;
 
+        System.out.println("Execute TherapistRestoreCommand");
+
         if (optionParserResultSpecific.hasOption(M7rCli.ID_FROM_FILE)) {
-            throw new RuntimeException("NIY");
-        } else if (optionParserResultSpecific.hasOption(M7rCli.ID_SHOW_TEMPLATE)) {
-            System.out.println(getTemplate());
-            return;
-        } else {
-            therapistSO = fromPrompt();
+            // TODO
+            System.out.println("Restore Therapist from file: " + optionParserResultSpecific.getValue(M7rCli.ID_FROM_FILE));
         }
+//        else if (optionParserResultSpecific.hasOption(M7rCli.ID_SHOW_TEMPLATE)) {
+//            System.out.println(getTemplate());
+//            return;
+//        } else {
+//            therapistSO = fromPrompt();
+//        }
 
-        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        RestService restService = new AddTherapistService(therapistSO);
-        String body = RestServiceCaller.call(restCallContext, restService);
-
-        Jsonb jsonb = JsonbBuilder.create();
-        TherapistSO therapistSOBack = jsonb.fromJson(body, TherapistSO.class);
-
-        System.out.println("[OK] User + '" + therapistSOBack.getUsername() + "' added as therapist with UUID: " + therapistSOBack.getUuid());
+//        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
+//        RestService restService = new AddTherapistService(therapistSO);
+//        String body = RestServiceCaller.call(restCallContext, restService);
+//
+//        Jsonb jsonb = JsonbBuilder.create();
+//        TherapistSO therapistSOBack = jsonb.fromJson(body, TherapistSO.class);
+//
+//        System.out.println("[OK] User + '" + therapistSOBack.getUsername() + "' added as therapist with UUID: " + therapistSOBack.getUuid());
 
     }
 

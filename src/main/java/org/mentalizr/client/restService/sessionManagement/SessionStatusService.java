@@ -1,6 +1,8 @@
-package org.mentalizr.client.restService;
+package org.mentalizr.client.restService.sessionManagement;
 
 import org.mentalizr.cli.ContentType;
+import org.mentalizr.client.restService.HttpMethod;
+import org.mentalizr.client.restService.RestService;
 
 public class SessionStatusService extends RestService {
 
