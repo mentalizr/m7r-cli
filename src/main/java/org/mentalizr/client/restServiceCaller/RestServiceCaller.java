@@ -18,8 +18,7 @@ public class RestServiceCaller {
 
     public static String call(RESTCallContext restCallContext, RestService restService) throws RestServiceConnectionException, RestServiceHttpException {
 
-        ClientConfiguration clientConfiguration = restCallContext.getClientConfiguration();
-        HttpClient client = HttpClientCreator.create(clientConfiguration);
+        HttpClient client = HttpClientCreator.create(restCallContext);
         HttpRequest httpRequest = HttpRequestCreator.create(restService, restCallContext);
 
         if (restCallContext.isDebug()) HeaderHelper.showRequestHeaders(httpRequest);

@@ -32,12 +32,11 @@ public class StatusCommand extends CommandExecutor {
         Jsonb jsonb = JsonbBuilder.create();
         SessionStatus sessionStatus = jsonb.fromJson(body, SessionStatus.class);
 
-        System.out.println("[OK] Status");
-        System.out.println("Server " + this.cliContext.getCliConfiguration().getServer() + " is up and running.");
+        System.out.println("[OK] Server " + this.cliContext.getCliConfiguration().getServer() + " is up and running.");
         if (sessionStatus.isValid()) {
-            System.out.println("Logged in as " + sessionStatus.getUserRole());
+            System.out.println("Session is valid. Logged in as " + sessionStatus.getUserRole() + ".");
         } else {
-            System.out.println("Session is logged out.");
+            System.out.println("No valid session.");
         }
     }
 

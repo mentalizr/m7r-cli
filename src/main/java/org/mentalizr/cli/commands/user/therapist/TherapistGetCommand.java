@@ -48,6 +48,8 @@ public class TherapistGetCommand extends CommandExecutor {
 
         } else if (optionParserResultSpecific.hasOption(M7rCli.ID_UUID)) {
             throw new RuntimeException("Not implemented yet.");
+        } else {
+            System.out.println("[ERROR] Please specify --user or --uuid option.");
         }
     }
 

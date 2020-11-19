@@ -2,6 +2,7 @@ package org.mentalizr.client.httpClient;
 
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.client.ClientConfiguration;
+import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.cookieHandler.CookieStoreM7r;
 
 import javax.net.ssl.SSLContext;
@@ -17,9 +18,12 @@ import java.util.Properties;
 
 public class HttpClientCreator {
 
-    public static HttpClient create(ClientConfiguration clientConfiguration) {
+    public static HttpClient create(RESTCallContext restCallContext) {
 
-        CookieHandler.setDefault(new CookieManager(new CookieStoreM7r(), CookiePolicy.ACCEPT_ORIGINAL_SERVER));
+        ClientConfiguration clientConfiguration = restCallContext.getClientConfiguration();
+
+        CookieStore cookieStore = new CookieStoreM7r(restCallContext);
+        CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ORIGINAL_SERVER));
 
         HttpClient.Builder httpClientBuilder = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)

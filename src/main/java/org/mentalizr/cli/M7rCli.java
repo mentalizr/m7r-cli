@@ -17,6 +17,7 @@ import org.mentalizr.cli.commands.sessionManagement.StatusCommand;
 import org.mentalizr.cli.commands.user.therapist.TherapistAddCommand;
 import org.mentalizr.cli.commands.user.therapist.TherapistGetCommand;
 import org.mentalizr.cli.commands.user.therapist.TherapistRestoreCommand;
+import org.mentalizr.cli.commands.user.therapist.TherapistShowCommand;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.cli.exceptions.UserAbortedException;
@@ -103,6 +104,7 @@ public class M7rCli {
                         .add(new OptionBuilder().withLongName("uuid").withShortName('i').hasArgument().withDescription("uuid").build(ID_UUID))
                         .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user name").build(ID_USER))
         );
+        userCommands.add(SHOW).addOneOf(PATIENT, THERAPIST, ADMIN);
 
         return new CommandLineInterfaceBuilder()
                 .withGlobalOptions(new Options()
@@ -111,38 +113,11 @@ public class M7rCli {
                         .add(new OptionBuilder().withLongName("stacktrace").build(ID_STACKTRACE))
                 )
                 .withCommands(commands)
-//                .withCommands(new Commands()
-//                        .add(LOGIN).withSpecificOptions(new Options()
-//                                .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user").build(ID_USER))
-//                                .add(new OptionBuilder().withLongName("password").withShortName('p').hasArgument().withDescription("password").build(ID_PASSWORD))
-//                        )
-//                        .root().add(LOGOUT)
-//                        .root().add(INIT)
-//                        .root().add(CONFIG).addOneOf(SHOW, EDIT)
-//                        .root().add(HELP)
-//                        .root().add(VERSION)
-//                        .root().add(NOOP)
-//                        .root().add(STATUS)
-//                        .root().add(USER).add(ADD).add(THERAPIST).withSpecificOptions(
-//                                new Options()
-//                                        .add(new OptionBuilder().withLongName("from-file").withShortName('f').withDescription("from file (json)").build(ID_FROM_FILE))
-//                                        .add(new OptionBuilder().withLongName("show-template").withDescription("show json template").build(ID_SHOW_TEMPLATE))
-//                        )
-//                .root().add(USER).add(RESTORE).add(THERAPIST)).withParameters(new ParametersOne())
                 .build();
 
     }
 
     public static void main(String[] args) {
-//                                .add(new OptionBuilder().withLongName("--prompt").withShortName('p').withDescription("input properties on prompt").build(ID_INPUT))
-//                                .add(new OptionBuilder().withLongName("--active").withShortName('a').withDescription("is active").build(ID_ACTIVE))
-//                                .add(new OptionBuilder().withLongName("--user").withShortName('u').withDescription("user name").build(ID_USER))
-//                                .add(new OptionBuilder().withLongName("--password").withShortName('p').withDescription("password").build(ID_PASSWORD))
-//                                .add(new OptionBuilder().withLongName("--email").withShortName('e').withDescription("email address").build(ID_EMAIL))
-//                                .add(new OptionBuilder().withLongName("--title").withShortName('t').withDescription("academic title").build(ID_TITLE))
-//                                .add(new OptionBuilder().withLongName("--firstname").withShortName('f').withDescription("first name").build(ID_FIRSTNAME))
-//                                .add(new OptionBuilder().withLongName("--lastname").withShortName('l').withDescription("last name").build(ID_LASTNAME))
-//                                .add(new OptionBuilder().withLongName("--gender").withShortName('g').withDescription("gender [m|f|d]").build(ID_LASTNAME))
 
         CommandLineInterface cli = prepareCLI();
         CliContext cliContext = null;
@@ -215,7 +190,10 @@ public class M7rCli {
                 therapistGetCommand.execute();
             }
 
-
+            if (commandList.get(0).equals(USER) && commandList.get(1).equals(SHOW) && commandList.get(2).equals(THERAPIST)) {
+                TherapistShowCommand therapistShowCommand = new TherapistShowCommand(cliContext);
+                therapistShowCommand.execute();
+            }
 
         } catch (UnrecognizedArgumentException e) {
             System.out.println("[Error] m7r syntax error. " + e.getMessage());

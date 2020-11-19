@@ -8,7 +8,7 @@ import org.mentalizr.cli.commands.CommandExecutor;
 import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
-import org.mentalizr.serviceObjects.userManagement.TherapistSO;
+import org.mentalizr.serviceObjects.userManagement.TherapistAddSO;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
@@ -26,7 +26,7 @@ public class TherapistRestoreCommand extends CommandExecutor {
 
         OptionParserResult optionParserResultSpecific = this.cliContext.getOptionParserResultSpecific();
 
-        TherapistSO therapistSO;
+        TherapistAddSO therapistAddSO;
 
         System.out.println("Execute TherapistRestoreCommand");
 
@@ -53,27 +53,27 @@ public class TherapistRestoreCommand extends CommandExecutor {
     }
 
 
-    private TherapistSO fromPrompt() throws UserAbortedException {
+    private TherapistAddSO fromPrompt() throws UserAbortedException {
 
-        TherapistSO therapistSO = new TherapistSO();
+        TherapistAddSO therapistAddSO = new TherapistAddSO();
 
         boolean active = ConsoleReader.promptForYesOrNo("active? (y/n): ");
-        therapistSO.setActive(active);
+        therapistAddSO.setActive(active);
 
         String username = ConsoleReader.promptForMandatoryString("Username: ");
-        therapistSO.setUsername(username);
+        therapistAddSO.setUsername(username);
 
         String title = ConsoleReader.promptForOptionalString("Title (optional): ");
-        therapistSO.setTitle(title);
+        therapistAddSO.setTitle(title);
 
         String firstname = ConsoleReader.promptForMandatoryString("Firstname: ");
-        therapistSO.setFirstname(firstname);
+        therapistAddSO.setFirstname(firstname);
 
         String lastname = ConsoleReader.promptForMandatoryString("Lastname: ");
-        therapistSO.setLastname(lastname);
+        therapistAddSO.setLastname(lastname);
 
         String email = ConsoleReader.promptForMandatoryString("Email: ");
-        therapistSO.setEmail(email);
+        therapistAddSO.setEmail(email);
 
         String genderString = ConsoleReader.promptForOptionString("Gender (m,f,x): ", "m", "f", "x");
         int gender = 0;
@@ -88,31 +88,31 @@ public class TherapistRestoreCommand extends CommandExecutor {
                 gender=2;
                 break;
         }
-        therapistSO.setGender(gender);
+        therapistAddSO.setGender(gender);
 
         String password = ConsoleReader.promptForMandatoryString("Password: ");
-        therapistSO.setPassword(password);
+        therapistAddSO.setPassword(password);
 
         boolean confirm = ConsoleReader.promptForYesOrNo("Continue? (y/n): ");
         if (!confirm) throw new UserAbortedException();
 
-        return therapistSO;
+        return therapistAddSO;
     }
 
     private String getTemplate() {
 
-        TherapistSO therapistSO = new TherapistSO();
-        therapistSO.setActive(true);
-        therapistSO.setTitle("M.Sc.");
-        therapistSO.setUsername("jdummy");
-        therapistSO.setFirstname("Joe");
-        therapistSO.setLastname("Dummy");
-        therapistSO.setEmail("joe.dummy@example.org");
-        therapistSO.setGender(1);
-        therapistSO.setPassword("topsecret");
+        TherapistAddSO therapistAddSO = new TherapistAddSO();
+        therapistAddSO.setActive(true);
+        therapistAddSO.setTitle("M.Sc.");
+        therapistAddSO.setUsername("jdummy");
+        therapistAddSO.setFirstname("Joe");
+        therapistAddSO.setLastname("Dummy");
+        therapistAddSO.setEmail("joe.dummy@example.org");
+        therapistAddSO.setGender(1);
+        therapistAddSO.setPassword("topsecret");
 
         Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
 
-        return jsonb.toJson(therapistSO);
+        return jsonb.toJson(therapistAddSO);
     }
 }
