@@ -1,6 +1,6 @@
 package org.mentalizr.client.restServiceCaller;
 
-import org.mentalizr.client.ClientConfiguration;
+import de.arthurpicht.utils.core.strings.Strings;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.httpClient.HeaderHelper;
 import org.mentalizr.client.httpClient.HttpClientCreator;
@@ -8,7 +8,10 @@ import org.mentalizr.client.httpClient.HttpRequestCreator;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
+import org.mentalizr.serviceObjects.ErrorSO;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -34,7 +37,15 @@ public class RestServiceCaller {
 
         if (restCallContext.isDebug()) System.out.println("response-body: " + httpResponse.body());
 
-        if (httpResponse.statusCode() != 200) throw new RestServiceHttpException(httpResponse);
+        if (httpResponse.statusCode() != 200) {
+            String responseBody = httpResponse.body();
+            if (Strings.isNotNullAndNotEmpty(responseBody)) {
+                Jsonb jsonb = JsonbBuilder.create();
+                ErrorSO errorSO = jsonb.fromJson(responseBody, ErrorSO.class);
+                throw new RestServiceHttpException(httpResponse, errorSO.getMessage());
+            }
+            throw new RestServiceHttpException(httpResponse);
+        }
         return httpResponse.body();
     }
 

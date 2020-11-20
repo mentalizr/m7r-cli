@@ -14,10 +14,7 @@ import org.mentalizr.cli.commands.sessionManagement.LoginCommand;
 import org.mentalizr.cli.commands.sessionManagement.LogoutCommand;
 import org.mentalizr.cli.commands.sessionManagement.NoopCommand;
 import org.mentalizr.cli.commands.sessionManagement.StatusCommand;
-import org.mentalizr.cli.commands.user.therapist.TherapistAddCommand;
-import org.mentalizr.cli.commands.user.therapist.TherapistGetCommand;
-import org.mentalizr.cli.commands.user.therapist.TherapistRestoreCommand;
-import org.mentalizr.cli.commands.user.therapist.TherapistShowCommand;
+import org.mentalizr.cli.commands.user.therapist.*;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.cli.exceptions.UserAbortedException;
@@ -91,22 +88,22 @@ public class M7rCli {
                 .root().add(VERSION)
                 .root().add(NOOP)
                 .root().add(STATUS);
-        Commands userCommands = commands.root().add(USER);
-        userCommands.add(ADD).addOneOf(PATIENT, THERAPIST, ADMIN).withSpecificOptions(
+        Commands userCommands = commands.root().add(USER).addOneOf(PATIENT, THERAPIST, ADMIN);
+        userCommands.add(ADD).withSpecificOptions(
                 new Options()
                         .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE))
                         .add(new OptionBuilder().withLongName("show-template").withDescription("show json template").build(ID_SHOW_TEMPLATE))
         );
-        userCommands.add(RESTORE).addOneOf(PATIENT, THERAPIST, ADMIN).withSpecificOptions(
+        userCommands.add(RESTORE).withSpecificOptions(
                 new Options()
                     .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE))
         );
-        userCommands.addOneOf(GET, DELETE, ACTIVATE, DEACTIVATE).addOneOf(PATIENT, THERAPIST, ADMIN).withSpecificOptions(
+        userCommands.addOneOf(GET, DELETE, ACTIVATE, DEACTIVATE).withSpecificOptions(
                 new Options()
                         .add(new OptionBuilder().withLongName("uuid").withShortName('i').hasArgument().withDescription("uuid").build(ID_UUID))
                         .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user name").build(ID_USER))
         );
-        userCommands.add(SHOW).addOneOf(PATIENT, THERAPIST, ADMIN);
+        userCommands.add(SHOW);
 
         return new CommandLineInterfaceBuilder()
                 .withGlobalOptions(new Options()
@@ -177,24 +174,25 @@ public class M7rCli {
                 }
             }
 
-            if (commandList.get(0).equals(USER) && commandList.get(1).equals(ADD) && commandList.get(2).equals(THERAPIST)) {
-                    TherapistAddCommand therapistAddCommand = new TherapistAddCommand(cliContext);
-                    therapistAddCommand.execute();;
-            }
-
-            if (commandList.get(0).equals(USER) && commandList.get(1).equals(RESTORE) && commandList.get(2).equals(THERAPIST)) {
-                TherapistRestoreCommand therapistRestoreCommand = new TherapistRestoreCommand(cliContext);
-                therapistRestoreCommand.execute();
-            }
-
-            if (commandList.get(0).equals(USER) && commandList.get(1).equals(GET) && commandList.get(2).equals(THERAPIST)) {
-                TherapistGetCommand therapistGetCommand = new TherapistGetCommand(cliContext);
-                therapistGetCommand.execute();
-            }
-
-            if (commandList.get(0).equals(USER) && commandList.get(1).equals(SHOW) && commandList.get(2).equals(THERAPIST)) {
-                TherapistShowCommand therapistShowCommand = new TherapistShowCommand(cliContext);
-                therapistShowCommand.execute();
+            if (commandList.get(0).equals(USER) && commandList.get(1).equals(THERAPIST)) {
+                String subCommand = commandList.get(2);
+                switch (subCommand) {
+                    case ADD:
+                        new TherapistAddCommand(cliContext).execute();
+                        break;
+                    case RESTORE:
+                        new TherapistRestoreCommand(cliContext).execute();
+                        break;
+                    case GET:
+                        new TherapistGetCommand(cliContext).execute();
+                        break;
+                    case SHOW:
+                        new TherapistShowCommand(cliContext).execute();
+                        break;
+                    case DELETE:
+                        new TherapistDeleteCommand(cliContext).execute();
+                        break;
+                }
             }
 
         } catch (UnrecognizedArgumentException e) {
@@ -210,7 +208,7 @@ public class M7rCli {
                     System.exit(ExitStatus.HTTP_AUTHENTICATION_ERROR);
                 default:
                     String message = e.getMessage() != null ? e.getMessage() : "";
-                    System.out.println("[ERROR] HttpError " + e.getStatusCode() + " " + message);
+                    System.out.println("[ERROR] [" + e.getStatusCode() + "] " + message);
                     System.exit(ExitStatus.HTTP_OTHER_ERROR);
             }
 
