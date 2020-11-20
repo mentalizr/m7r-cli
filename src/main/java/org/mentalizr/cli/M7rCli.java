@@ -65,6 +65,7 @@ public class M7rCli {
     public static final String ID_FROM_FILE = "fromFile";
     public static final String ID_SHOW_TEMPLATE = "showTemplate";
     public static final String ID_UUID = "uuid";
+    public static final String OPTION__CREDENTIAL_FILE = "credentialFile";
 
 
     private static CliCallGlobalConfiguration processParserResultGlobalOptions(OptionParserResult optionParserResult) {
@@ -81,6 +82,7 @@ public class M7rCli {
                 new Options()
                 .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user").build(ID_USER))
                 .add(new OptionBuilder().withLongName("password").withShortName('p').hasArgument().withDescription("password").build(ID_PASSWORD))
+                .add(new OptionBuilder().withLongName("credential-file").withShortName('c').withDescription("use credential file").build(OPTION__CREDENTIAL_FILE))
         )
                 .root().add(LOGOUT)
                 .root().add(INIT)

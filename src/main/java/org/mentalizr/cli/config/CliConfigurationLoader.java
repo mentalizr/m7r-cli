@@ -10,7 +10,8 @@ import java.io.IOException;
 
 public class CliConfigurationLoader {
 
-    private static final String CONFIG_FILE = ".m7r/cli/cli.config";
+    private static final String CONFIG_DIR = ".m7r/cli";
+    private static final String CONFIG_FILE = "cli.config";
 
     private static final String PROPERTY__SERVER = "server";
     private static final String PROPERTY__TRUST_ALL = "trust_all";
@@ -25,7 +26,12 @@ public class CliConfigurationLoader {
     }
 
     public static File getDefaultConfigFile() {
-        String configFileAsString = System.getProperty("user.home") + "/" + CONFIG_FILE;
+        String configFileAsString = getConfigDir() + "/" + CONFIG_FILE;
+        return new File(configFileAsString);
+    }
+
+    public static File getConfigDir() {
+        String configFileAsString = System.getProperty("user.home") + "/" + CONFIG_DIR;
         return new File(configFileAsString);
     }
 
