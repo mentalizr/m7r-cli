@@ -15,14 +15,18 @@ Performs login operation. User and password are prompted for input if not given 
 options.
 
     $ m7r login -u <user> -p <password>
+   
+As an additional option, credentials can be read from a file `~/.m7r/cli/credentials.txt` 
+which contains the user name as a first line, and the password as a second line.
+However, be aware of potential security risks, when using this option.
     
-or:
-
-    $ m7r login -u <user>
+    $ m7r login -c 
     
-or:
+##### Specific options
 
-    $ m7r login
+    -u --user                user name
+    -p --password            password
+    -c --credential-file     cread credentials from file
     
 #### Logout
 
