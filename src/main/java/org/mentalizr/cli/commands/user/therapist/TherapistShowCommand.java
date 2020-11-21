@@ -25,9 +25,7 @@ public class TherapistShowCommand extends CommandExecutor {
     }
 
     @Override
-    public void execute() throws RestServiceHttpException, RestServiceConnectionException, UserAbortedException {
-
-//        OptionParserResult optionParserResultSpecific = this.cliContext.getOptionParserResultSpecific();
+    public void execute() throws RestServiceHttpException, RestServiceConnectionException {
 
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
         RestService restService = new ShowTherapistService();
@@ -37,11 +35,12 @@ public class TherapistShowCommand extends CommandExecutor {
         TherapistRestoreCollectionSO therapistRestoreCollectionSO = jsonb.fromJson(body, TherapistRestoreCollectionSO.class);
         List<TherapistRestoreSO> collection = therapistRestoreCollectionSO.getCollection();
 
+        System.out.println("[OK] Show all therapists. Found " + collection.size() + ".");
+
         for (TherapistRestoreSO therapistRestoreSO : collection) {
             System.out.println(therapistRestoreSO.getUuid() + " | " + therapistRestoreSO.getUsername());
         }
 
-        System.out.println("[OK] Show all therapists. Found " + collection.size() + ".");
     }
 
 }

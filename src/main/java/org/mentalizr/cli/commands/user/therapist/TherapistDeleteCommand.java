@@ -28,22 +28,11 @@ public class TherapistDeleteCommand extends CommandExecutor {
 
             String username = optionParserResultSpecific.getValue(M7rCli.ID_USER).trim();
 
-            System.out.println("Delete user '" + username + "' ...");
-
             RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
             RestService restService = new DeleteTherapistService(username);
-            String responseBody = RestServiceCaller.call(restCallContext, restService);
+            RestServiceCaller.call(restCallContext, restService);
 
-//            Jsonb jsonb = JsonbBuilder.create();
-//            ResponseSO responseSO = jsonb.fromJson(responseBody, ResponseSO.class);
-//
-//            if (responseSO.isOk()) {
-//                System.out.println("[OK] Therapist '" + username + "' deleted.");
-//            } else {
-//                throw new CliException(responseSO.getMessage());
-//            }
-
-            System.out.println("[OK]");
+            System.out.println("[OK] Therapist [" + username + "] deleted.");
 
         } else if (optionParserResultSpecific.hasOption(M7rCli.ID_UUID)) {
             throw new RuntimeException("Not implemented yet.");

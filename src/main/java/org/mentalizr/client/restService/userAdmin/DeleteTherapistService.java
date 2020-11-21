@@ -23,7 +23,7 @@ public class DeleteTherapistService extends RestService {
 
     @Override
     public String getBody() {
-        return "";
+        return null;
     }
 
     @Override

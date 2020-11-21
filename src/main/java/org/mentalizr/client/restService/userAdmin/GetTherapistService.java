@@ -6,7 +6,7 @@ import org.mentalizr.client.restService.RestService;
 
 public class GetTherapistService extends RestService {
 
-    private String username;
+    private final String username;
 
     public GetTherapistService(String username) {
         this.username = username;
@@ -24,7 +24,7 @@ public class GetTherapistService extends RestService {
 
     @Override
     public String getBody() {
-        return "";
+        return null;
     }
 
     @Override

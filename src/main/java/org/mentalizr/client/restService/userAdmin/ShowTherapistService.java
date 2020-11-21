@@ -25,7 +25,7 @@ public class ShowTherapistService extends RestService {
 
     @Override
     public String getBody() {
-        return "";
+        return null;
     }
 
     @Override

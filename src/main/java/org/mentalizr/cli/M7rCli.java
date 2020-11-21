@@ -202,15 +202,8 @@ public class M7rCli {
             System.exit(ExitStatus.M7R_SYNTAX_ERROR);
 
         } catch (RestServiceHttpException e) {
-            switch (e.getStatusCode()) {
-                case 401:
-                    System.out.println("[ERROR] Authentication failed.");
-                    System.exit(ExitStatus.HTTP_AUTHENTICATION_ERROR);
-                default:
-                    String message = e.getMessage() != null ? e.getMessage() : "";
-                    System.out.println("[ERROR] [" + e.getStatusCode() + "] " + message);
-                    System.exit(ExitStatus.HTTP_OTHER_ERROR);
-            }
+            System.out.println("[ERROR] " + e.getMessage());
+            System.exit(1);
 
         } catch (RestServiceConnectionException e) {
             System.out.println("[ERROR] " + e.getMessage());

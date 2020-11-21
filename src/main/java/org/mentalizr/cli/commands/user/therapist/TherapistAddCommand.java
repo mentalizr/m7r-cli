@@ -6,8 +6,8 @@ import org.mentalizr.cli.ConsoleReader;
 import org.mentalizr.cli.M7rCli;
 import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.cli.commands.CommandExecutor;
-import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.cli.exceptions.UserAbortedException;
+import org.mentalizr.cli.helper.ServiceObjectHelper;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restService.userAdmin.AddTherapistService;
@@ -19,10 +19,6 @@ import org.mentalizr.serviceObjects.userManagement.TherapistAddSO;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class TherapistAddCommand extends CommandExecutor {
 
@@ -40,7 +36,7 @@ public class TherapistAddCommand extends CommandExecutor {
 
         if (optionParserResultSpecific.hasOption(M7rCli.ID_FROM_FILE)) {
             String fileName = optionParserResultSpecific.getValue(M7rCli.ID_FROM_FILE);
-            therapistAddSO = fromFile(fileName);
+            therapistAddSO = ServiceObjectHelper.therapistAddSOFromFile(fileName);
         } else if (optionParserResultSpecific.hasOption(M7rCli.ID_SHOW_TEMPLATE)) {
             System.out.println(getTemplate());
             return;
@@ -55,25 +51,8 @@ public class TherapistAddCommand extends CommandExecutor {
         Jsonb jsonb = JsonbBuilder.create();
         TherapistAddSO therapistAddSOBack = jsonb.fromJson(body, TherapistAddSO.class);
 
-        System.out.println("[OK] Therapist '" + therapistAddSOBack.getUsername() + "' added with UUID: " + therapistAddSOBack.getUuid());
+        System.out.println("[OK] Therapist [" + therapistAddSOBack.getUsername() + "] added with UUID: [" + therapistAddSOBack.getUuid() + "]");
 
-    }
-
-    private TherapistAddSO fromFile(String fileName) {
-        Path path = Paths.get(fileName);
-        if (!Files.exists(path)) {
-            throw new CliException("Specified file '" + fileName + "' not found.");
-        }
-
-        String therapistAddSO;
-        try {
-            therapistAddSO = Files.readString(path);
-        } catch (IOException e) {
-            throw new CliException("Could not read file '" + fileName + "': " + e.getMessage(), e);
-        }
-
-        Jsonb jsonb = JsonbBuilder.create();
-        return jsonb.fromJson(therapistAddSO, TherapistAddSO.class);
     }
 
     private TherapistAddSO fromPrompt() throws UserAbortedException {

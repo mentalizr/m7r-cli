@@ -18,7 +18,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class RestServiceCaller {
-
     public static String call(RESTCallContext restCallContext, RestService restService) throws RestServiceConnectionException, RestServiceHttpException {
 
         HttpClient client = HttpClientCreator.create(restCallContext);
@@ -37,7 +36,11 @@ public class RestServiceCaller {
 
         if (restCallContext.isDebug()) System.out.println("response-body: " + httpResponse.body());
 
-        if (httpResponse.statusCode() != 200) {
+        if (httpResponse.statusCode() == 200) {
+            return httpResponse.body();
+        } else if (httpResponse.statusCode() == 401) {
+            throw new RestServiceHttpException(httpResponse, "No valid session.");
+        } else if (httpResponse.statusCode() > 470 && httpResponse.statusCode() <500) {
             String responseBody = httpResponse.body();
             if (Strings.isNotNullAndNotEmpty(responseBody)) {
                 Jsonb jsonb = JsonbBuilder.create();
@@ -45,8 +48,11 @@ public class RestServiceCaller {
                 throw new RestServiceHttpException(httpResponse, errorSO.getMessage());
             }
             throw new RestServiceHttpException(httpResponse);
+        } else {
+            throw new RestServiceHttpException(httpResponse);
         }
-        return httpResponse.body();
+
     }
+
 
 }

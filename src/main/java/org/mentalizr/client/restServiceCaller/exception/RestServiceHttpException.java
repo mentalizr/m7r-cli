@@ -10,6 +10,7 @@ public class RestServiceHttpException extends RestServiceException {
     public RestServiceHttpException(HttpResponse httpResponse) {
         super();
         this.statusCode = httpResponse.statusCode();
+        this.message = "";
     }
 
     public RestServiceHttpException(HttpResponse httpResponse, String message) {

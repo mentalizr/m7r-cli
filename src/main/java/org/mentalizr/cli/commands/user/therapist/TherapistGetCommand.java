@@ -41,7 +41,7 @@ public class TherapistGetCommand extends CommandExecutor {
             Jsonb jsonb = JsonbBuilder.create();
             TherapistRestoreSO therapistRestoreSO = jsonb.fromJson(responseBody, TherapistRestoreSO.class);
 
-            System.out.println("[OK] Get therapist + '" + therapistRestoreSO.getUsername() + "':");
+            System.out.println("[OK] Get therapist '" + therapistRestoreSO.getUsername() + "':");
 
             jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
             System.out.println(jsonb.toJson(therapistRestoreSO));
