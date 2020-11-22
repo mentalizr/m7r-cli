@@ -67,6 +67,7 @@ public class M7rCli {
     public static final String ID_SHOW_TEMPLATE = "showTemplate";
     public static final String ID_UUID = "uuid";
     public static final String OPTION__CREDENTIAL_FILE = "credentialFile";
+    public static final String OPTION__DIRECTORY = "directory" ;
 
 
     private static CliCallGlobalConfiguration processParserResultGlobalOptions(OptionParserResult optionParserResult) {
@@ -81,9 +82,9 @@ public class M7rCli {
 
         Commands commands = new Commands().add(LOGIN).withSpecificOptions(
                 new Options()
-                .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user").build(ID_USER))
-                .add(new OptionBuilder().withLongName("password").withShortName('p').hasArgument().withDescription("password").build(ID_PASSWORD))
-                .add(new OptionBuilder().withLongName("credential-file").withShortName('c').withDescription("use credential file").build(OPTION__CREDENTIAL_FILE))
+                        .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user").build(ID_USER))
+                        .add(new OptionBuilder().withLongName("password").withShortName('p').hasArgument().withDescription("password").build(ID_PASSWORD))
+                        .add(new OptionBuilder().withLongName("credential-file").withShortName('c').withDescription("use credential file").build(OPTION__CREDENTIAL_FILE))
         )
                 .root().add(LOGOUT)
                 .root().add(INIT)
@@ -93,7 +94,10 @@ public class M7rCli {
                 .root().add(NOOP)
                 .root().add(STATUS)
                 .root().add(BACKUP)
-                .root().add(RECOVER);
+                .root().add(RECOVER).withSpecificOptions(
+                        new Options()
+                                .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("directory").build(OPTION__DIRECTORY))
+                );
         Commands userCommands = commands.root().add(USER).addOneOf(PATIENT, THERAPIST, ADMIN);
         userCommands.add(ADD).withSpecificOptions(
                 new Options()

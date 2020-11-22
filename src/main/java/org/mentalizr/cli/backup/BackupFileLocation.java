@@ -1,41 +1,45 @@
 package org.mentalizr.cli.backup;
 
 import org.mentalizr.cli.config.CliConfigurationFiles;
+import org.mentalizr.cli.exceptions.CliException;
+import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class BackupFileLocation {
 
-    private File backupDir;
+    private Path backupDir;
 
-//    private File backupDirProgram;
-    private File backupDirTherapist;
-//    private File backupDirPatientLogin;
-//    private File backupDirPatientAccessKey;
+    public BackupFileLocation() {
 
-    public BackupFileLocation() throws IOException {
-
-        File backupRootDir = CliConfigurationFiles.getBackupRootDir();
-        if (!backupRootDir.exists()) Files.createDirectories(backupRootDir.toPath());
+        Path backupRootDir = CliConfigurationFiles.getBackupRootDir().toPath();
 
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 
-        this.backupDir = new File(backupRootDir, timestamp);
-        Files.createDirectory(this.backupDir.toPath());
-
-        this.backupDirTherapist = new File(this.backupDir, "therapist");
-        Files.createDirectory(this.backupDirTherapist.toPath());
-
-//        this.backupDirProgram = new File(this.backupDir, "program");
-//        Files.createDirectory(this.backupDirProgram.toPath());
+        this.backupDir = backupRootDir.resolve(timestamp);
+        try {
+            Files.createDirectories(this.backupDir);
+        } catch (IOException e) {
+            throw new CliException("Could not create backup directory [" + this.backupDir.toAbsolutePath() + "] " + e.getMessage(), e);
+        }
     }
 
-    public File getBackupDirTherapist() {
-        return backupDirTherapist;
+    public Path getBackupDir() {
+        return this.backupDir;
+    }
+
+    public Path getBackupDirTherapist(TherapistRestoreSO therapistRestoreSO) {
+        Path therapistBackupDir = this.backupDir.resolve("therapist").resolve(therapistRestoreSO.getUuid());
+        try {
+            Files.createDirectories(therapistBackupDir);
+        } catch (IOException e) {
+            throw new CliException("Could not create backup directory [" + therapistBackupDir.toAbsolutePath() + "]. " + e.getMessage(), e);
+        }
+        return therapistBackupDir;
     }
 
 }
