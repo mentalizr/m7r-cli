@@ -10,6 +10,8 @@ import de.arthurpicht.cli.option.OptionBuilder;
 import de.arthurpicht.cli.option.OptionParserResult;
 import de.arthurpicht.cli.option.Options;
 import org.mentalizr.cli.commands.*;
+import org.mentalizr.cli.commands.backup.BackupCommand;
+import org.mentalizr.cli.commands.backup.RecoverCommand;
 import org.mentalizr.cli.commands.sessionManagement.LoginCommand;
 import org.mentalizr.cli.commands.sessionManagement.LogoutCommand;
 import org.mentalizr.cli.commands.sessionManagement.NoopCommand;
@@ -51,6 +53,8 @@ public class M7rCli {
     public static final String DELETE = "delete";
     public static final String DEACTIVATE = "deactivate";
     public static final String ACTIVATE = "activate";
+    public static final String BACKUP = "backup";
+    public static final String RECOVER = "recover";
 
     public static final String ID_ACTIVE = "active";
 
@@ -87,7 +91,9 @@ public class M7rCli {
                 .root().add(HELP)
                 .root().add(VERSION)
                 .root().add(NOOP)
-                .root().add(STATUS);
+                .root().add(STATUS)
+                .root().add(BACKUP)
+                .root().add(RECOVER);
         Commands userCommands = commands.root().add(USER).addOneOf(PATIENT, THERAPIST, ADMIN);
         userCommands.add(ADD).withSpecificOptions(
                 new Options()
@@ -193,6 +199,16 @@ public class M7rCli {
                         new TherapistDeleteCommand(cliContext).execute();
                         break;
                 }
+            }
+
+            if (commandList.get(0).equals(BACKUP)) {
+                CommandExecutor commandExecutor = new BackupCommand(cliContext);
+                commandExecutor.execute();
+            }
+
+            if (commandList.get(0).equals(RECOVER)) {
+                CommandExecutor commandExecutor = new RecoverCommand(cliContext);
+                commandExecutor.execute();
             }
 
         } catch (UnrecognizedArgumentException e) {

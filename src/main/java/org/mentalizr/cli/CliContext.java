@@ -13,7 +13,11 @@ public class CliContext {
     private final OptionParserResult optionParserResultSpecific;
     private CliConfiguration cliConfiguration;
 
-    public CliContext(CliCallGlobalConfiguration cliCallGlobalConfiguration, List<String> commandList, OptionParserResult optionParserResultSpecific) {
+    public CliContext(
+            CliCallGlobalConfiguration cliCallGlobalConfiguration,
+            List<String> commandList,
+            OptionParserResult optionParserResultSpecific
+    ) {
         this.cliCallGlobalConfiguration = cliCallGlobalConfiguration;
         this.commandList = commandList;
         this.optionParserResultSpecific = optionParserResultSpecific;
