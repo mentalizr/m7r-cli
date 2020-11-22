@@ -15,10 +15,7 @@ import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 import org.mentalizr.serviceObjects.userManagement.TherapistAddSO;
-
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
+import org.mentalizr.serviceObjects.userManagement.TherapistAddSOX;
 
 public class TherapistAddCommand extends CommandExecutor {
 
@@ -48,8 +45,7 @@ public class TherapistAddCommand extends CommandExecutor {
         RestService restService = new AddTherapistService(therapistAddSO);
         String body = RestServiceCaller.call(restCallContext, restService);
 
-        Jsonb jsonb = JsonbBuilder.create();
-        TherapistAddSO therapistAddSOBack = jsonb.fromJson(body, TherapistAddSO.class);
+        TherapistAddSO therapistAddSOBack = TherapistAddSOX.fromJson(body);
 
         System.out.println("[OK] Therapist [" + therapistAddSOBack.getUsername() + "] added with UUID: [" + therapistAddSOBack.getUuid() + "]");
 
@@ -113,8 +109,7 @@ public class TherapistAddCommand extends CommandExecutor {
         therapistAddSO.setGender(1);
         therapistAddSO.setPassword("topsecret");
 
-        Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
-
-        return jsonb.toJson(therapistAddSO);
+        return TherapistAddSOX.toJsonWithFormatting(therapistAddSO);
     }
+
 }

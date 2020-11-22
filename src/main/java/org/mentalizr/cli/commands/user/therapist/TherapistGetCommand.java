@@ -13,10 +13,7 @@ import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
-
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
+import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSOX;
 
 public class TherapistGetCommand extends CommandExecutor {
 
@@ -38,13 +35,10 @@ public class TherapistGetCommand extends CommandExecutor {
             RestService restService = new GetTherapistService(username);
             String responseBody = RestServiceCaller.call(restCallContext, restService);
 
-            Jsonb jsonb = JsonbBuilder.create();
-            TherapistRestoreSO therapistRestoreSO = jsonb.fromJson(responseBody, TherapistRestoreSO.class);
+            TherapistRestoreSO therapistRestoreSO = TherapistRestoreSOX.fromJson(responseBody);
 
             System.out.println("[OK] Get therapist '" + therapistRestoreSO.getUsername() + "':");
-
-            jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
-            System.out.println(jsonb.toJson(therapistRestoreSO));
+            System.out.println(TherapistRestoreSOX.toJsonWithFormatting(therapistRestoreSO));
 
         } else if (optionParserResultSpecific.hasOption(M7rCli.ID_UUID)) {
             throw new RuntimeException("Not implemented yet.");

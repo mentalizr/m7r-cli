@@ -11,6 +11,7 @@ import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 import org.mentalizr.serviceObjects.userManagement.TherapistRestoreCollectionSO;
+import org.mentalizr.serviceObjects.userManagement.TherapistRestoreCollectionSOX;
 import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
 
 import javax.json.bind.Jsonb;
@@ -31,8 +32,7 @@ public class TherapistShowCommand extends CommandExecutor {
         RestService restService = new ShowTherapistService();
         String body = RestServiceCaller.call(restCallContext, restService);
 
-        Jsonb jsonb = JsonbBuilder.create();
-        TherapistRestoreCollectionSO therapistRestoreCollectionSO = jsonb.fromJson(body, TherapistRestoreCollectionSO.class);
+        TherapistRestoreCollectionSO therapistRestoreCollectionSO = TherapistRestoreCollectionSOX.fromJson(body);
         List<TherapistRestoreSO> collection = therapistRestoreCollectionSO.getCollection();
 
         System.out.println("[OK] Show all therapists. Found " + collection.size() + ".");
