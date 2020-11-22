@@ -5,6 +5,7 @@ import de.arthurpicht.utils.io.textfile.TextFile;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.cli.commands.CommandExecutor;
+import org.mentalizr.cli.config.CliConfigurationFiles;
 import org.mentalizr.cli.config.CliConfigurationLoader;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.client.RESTCallContext;
@@ -49,7 +50,7 @@ public class LoginCommand extends CommandExecutor {
     }
 
     private void obtainCredentialsFromFile() {
-        File credentialFile = new File(CliConfigurationLoader.getConfigDir(), "credentials.txt");
+        File credentialFile = new File(CliConfigurationFiles.getConfigDirCLI(), "credentials.txt");
         if (!credentialFile.exists())
             throw new CliException("Credential file '" + credentialFile.getAbsolutePath() + "' not found.");
         try {

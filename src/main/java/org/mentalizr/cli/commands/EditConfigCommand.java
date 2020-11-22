@@ -2,6 +2,7 @@ package org.mentalizr.cli.commands;
 
 import de.arthurpicht.utils.core.strings.Strings;
 import org.mentalizr.cli.CliContext;
+import org.mentalizr.cli.config.CliConfigurationFiles;
 import org.mentalizr.cli.config.CliConfigurationLoader;
 
 import java.io.File;
@@ -23,7 +24,7 @@ public class EditConfigCommand extends CommandExecutor {
             System.exit(1);
         }
 
-        File configFile = CliConfigurationLoader.getDefaultConfigFile();
+        File configFile = CliConfigurationFiles.getDefaultConfigFileCLI();
         String callEditorBashCommand = editor + " " + configFile;
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("bash", "-c", callEditorBashCommand);
