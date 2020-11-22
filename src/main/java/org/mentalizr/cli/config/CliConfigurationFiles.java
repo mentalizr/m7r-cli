@@ -19,7 +19,7 @@ public class CliConfigurationFiles {
         return new File(configDirCliAsString);
     }
 
-    public static File getBackupDirRoot() {
+    public static File getBackupRootDir() {
         String backupDirAsString = System.getProperty("user.home") + "/" + CONFIG_DIR_M7R + "/" + BACKUP_DIR;
         return new File(backupDirAsString);
     }
