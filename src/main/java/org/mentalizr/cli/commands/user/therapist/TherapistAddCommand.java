@@ -10,7 +10,7 @@ import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.cli.helper.ServiceObjectHelper;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.RestService;
-import org.mentalizr.client.restService.userAdmin.AddTherapistService;
+import org.mentalizr.client.restService.userAdmin.TherapistAddService;
 import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
@@ -42,7 +42,7 @@ public class TherapistAddCommand extends CommandExecutor {
         }
 
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        RestService restService = new AddTherapistService(therapistAddSO);
+        RestService restService = new TherapistAddService(therapistAddSO);
         String body = RestServiceCaller.call(restCallContext, restService);
 
         TherapistAddSO therapistAddSOBack = TherapistAddSOX.fromJson(body);

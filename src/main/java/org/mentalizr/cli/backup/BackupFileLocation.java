@@ -2,6 +2,7 @@ package org.mentalizr.cli.backup;
 
 import org.mentalizr.cli.config.CliConfigurationFiles;
 import org.mentalizr.cli.exceptions.CliException;
+import org.mentalizr.serviceObjects.userManagement.ProgramSO;
 import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
 
 import java.io.IOException;
@@ -12,7 +13,7 @@ import java.util.Date;
 
 public class BackupFileLocation {
 
-    private Path backupDir;
+    private final Path backupDir;
 
     public BackupFileLocation() {
 
@@ -34,12 +35,22 @@ public class BackupFileLocation {
 
     public Path getBackupDirTherapist(TherapistRestoreSO therapistRestoreSO) {
         Path therapistBackupDir = this.backupDir.resolve("therapist").resolve(therapistRestoreSO.getUuid());
-        try {
-            Files.createDirectories(therapistBackupDir);
-        } catch (IOException e) {
-            throw new CliException("Could not create backup directory [" + therapistBackupDir.toAbsolutePath() + "]. " + e.getMessage(), e);
-        }
+        createBackupDir(therapistBackupDir);
         return therapistBackupDir;
+    }
+
+    public Path getBackupDirProgram(ProgramSO programSO) {
+        Path programBackupDir = this.backupDir.resolve("program");
+        createBackupDir(programBackupDir);
+        return programBackupDir;
+    }
+
+    private void createBackupDir(Path dir) {
+        try {
+            Files.createDirectories(dir);
+        } catch (IOException e) {
+            throw new CliException("Could not create backup directory [" + dir.toAbsolutePath() + "]. " + e.getMessage(), e);
+        }
     }
 
 }

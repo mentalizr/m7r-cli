@@ -8,7 +8,7 @@ import org.mentalizr.cli.commands.CommandExecutor;
 import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.RestService;
-import org.mentalizr.client.restService.userAdmin.GetTherapistService;
+import org.mentalizr.client.restService.userAdmin.TherapistGetService;
 import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
@@ -32,7 +32,7 @@ public class TherapistGetCommand extends CommandExecutor {
             String username = optionParserResultSpecific.getValue(M7rCli.ID_USER);
 
             RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-            RestService restService = new GetTherapistService(username);
+            RestService restService = new TherapistGetService(username);
             String responseBody = RestServiceCaller.call(restCallContext, restService);
 
             TherapistRestoreSO therapistRestoreSO = TherapistRestoreSOX.fromJson(responseBody);

@@ -4,17 +4,14 @@ import org.mentalizr.cli.ContentType;
 import org.mentalizr.client.restService.HttpMethod;
 import org.mentalizr.client.restService.RestService;
 
-public class GetTherapistService extends RestService {
+public class ProgramShowService extends RestService {
 
-    private final String username;
-
-    public GetTherapistService(String username) {
-        this.username = username;
+    public ProgramShowService() {
     }
 
     @Override
     public String getServiceName() {
-        return "admin/user/therapist/get/" + this.username;
+        return "admin/user/program/getAll";
     }
 
     @Override

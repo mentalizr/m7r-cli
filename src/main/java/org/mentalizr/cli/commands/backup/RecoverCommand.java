@@ -4,7 +4,8 @@ import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.M7rCli;
 import org.mentalizr.cli.backup.RecoverFileLocation;
-import org.mentalizr.cli.backup.RecoverTherapist;
+import org.mentalizr.cli.backup.RecoverPrograms;
+import org.mentalizr.cli.backup.RecoverTherapists;
 import org.mentalizr.cli.commands.CommandExecutor;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.cli.exceptions.UserAbortedException;
@@ -36,7 +37,8 @@ public class RecoverCommand extends CommandExecutor {
 
         RecoverFileLocation recoverFileLocation = new RecoverFileLocation(backupDirectory);
 
-        RecoverTherapist.exec(recoverFileLocation, this.cliContext);
+        RecoverPrograms.exec(recoverFileLocation, this.cliContext);
+        RecoverTherapists.exec(recoverFileLocation, this.cliContext);
 
         System.out.println("[OK] Recovered from backup.");
     }

@@ -1,4 +1,4 @@
-package org.mentalizr.cli.commands.user.therapist;
+package org.mentalizr.cli.commands.program;
 
 import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
@@ -6,18 +6,17 @@ import org.mentalizr.cli.M7rCli;
 import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.cli.commands.CommandExecutor;
 import org.mentalizr.cli.exceptions.CliException;
-import org.mentalizr.cli.helper.ServiceObjectHelper;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.RestService;
-import org.mentalizr.client.restService.userAdmin.TherapistRestoreService;
+import org.mentalizr.client.restService.userAdmin.ProgramDeleteService;
+import org.mentalizr.client.restService.userAdmin.TherapistDeleteService;
 import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
-import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
 
-public class TherapistRestoreCommand extends CommandExecutor {
+public class ProgramDeleteCommand extends CommandExecutor {
 
-    public TherapistRestoreCommand(CliContext cliContext) {
+    public ProgramDeleteCommand(CliContext cliContext) {
         super(cliContext);
         this.checkedInit();
     }
@@ -27,18 +26,15 @@ public class TherapistRestoreCommand extends CommandExecutor {
 
         OptionParserResult optionParserResultSpecific = this.cliContext.getOptionParserResultSpecific();
 
-        if (!optionParserResultSpecific.hasOption(M7rCli.ID_FROM_FILE)) {
-            throw new CliException("Specify --from-file option.");
-        }
-
-        String fileName = optionParserResultSpecific.getValue(M7rCli.ID_FROM_FILE);
-        TherapistRestoreSO therapistRestoreSO = ServiceObjectHelper.therapistRestoreSOFromFile(fileName);
+        if (!optionParserResultSpecific.hasOption(M7rCli.OPTION__PROGRAM))
+            throw new CliException("Please specify --program option.");
+        String programId = optionParserResultSpecific.getValue(M7rCli.OPTION__PROGRAM).trim();
 
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        RestService restService = new TherapistRestoreService(therapistRestoreSO);
+        RestService restService = new ProgramDeleteService(programId);
         RestServiceCaller.call(restCallContext, restService);
 
-        System.out.println("[OK] User [" + therapistRestoreSO.getUsername() + "] restored.");
+        System.out.println("[OK] Program [" + programId + "] deleted.");
     }
 
 }

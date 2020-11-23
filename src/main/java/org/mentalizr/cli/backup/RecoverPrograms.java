@@ -5,10 +5,13 @@ import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.RestService;
-import org.mentalizr.client.restService.userAdmin.RestoreTherapistService;
+import org.mentalizr.client.restService.userAdmin.ProgramAddService;
+import org.mentalizr.client.restService.userAdmin.TherapistRestoreService;
 import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
+import org.mentalizr.serviceObjects.userManagement.ProgramSO;
+import org.mentalizr.serviceObjects.userManagement.ProgramSOX;
 import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
 import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSOX;
 
@@ -18,31 +21,31 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public class RecoverTherapist {
+public class RecoverPrograms {
 
     public static void exec(RecoverFileLocation recoverFileLocation, CliContext cliContext) throws RestServiceHttpException, RestServiceConnectionException {
 
-        List<Path> therapistFiles = recoverFileLocation.getAllTherapistFiles();
+        List<Path> programFiles = recoverFileLocation.getAllProgramFiles();
 
-        for (Path therapistFile : therapistFiles) {
+        for (Path programFile : programFiles) {
 
-            String therapistJson;
+            String programJson;
             try {
-                therapistJson = Files.readString(therapistFile, StandardCharsets.UTF_8);
+                programJson = Files.readString(programFile, StandardCharsets.UTF_8);
             } catch (IOException e) {
-                throw new CliException("Could not read therapist file to recover from [" + therapistFile.toAbsolutePath() + "]. " + e.getMessage(), e);
+                throw new CliException("Could not read program file to recover from. [" + programFile.toAbsolutePath() + "] " + e.getMessage(), e);
             }
 
-            TherapistRestoreSO therapistRestoreSO = TherapistRestoreSOX.fromJson(therapistJson);
+            ProgramSO programSO = ProgramSOX.fromJson(programJson);
 
             RESTCallContext restCallContext = RESTCallContextFactory.getInstance(cliContext);
-            RestService restService = new RestoreTherapistService(therapistRestoreSO);
+            RestService restService = new ProgramAddService(programSO);
             RestServiceCaller.call(restCallContext, restService);
 
-            System.out.println("Therapist [" + therapistRestoreSO.getUuid() + "] restored.");
+            System.out.println("Program [" + programSO.getProgramId() + "] restored.");
         }
 
-        System.out.println("[OK] " + therapistFiles.size() + " successfully restored.");
+        System.out.println("[OK] " + programFiles.size() + " successfully restored.");
     }
 
 }

@@ -2,7 +2,8 @@ package org.mentalizr.cli.commands.backup;
 
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.backup.BackupFileLocation;
-import org.mentalizr.cli.backup.BackupTherapist;
+import org.mentalizr.cli.backup.BackupPrograms;
+import org.mentalizr.cli.backup.BackupTherapists;
 import org.mentalizr.cli.commands.CommandExecutor;
 import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
@@ -20,8 +21,8 @@ public class BackupCommand extends CommandExecutor {
 
         BackupFileLocation backupFileLocation = new BackupFileLocation();
 
-        BackupTherapist.exec(backupFileLocation, this.cliContext);
-
+        BackupPrograms.exec(backupFileLocation, this.cliContext);
+        BackupTherapists.exec(backupFileLocation, this.cliContext);
     }
 
 }

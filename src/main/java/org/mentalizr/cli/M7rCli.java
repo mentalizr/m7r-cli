@@ -12,6 +12,9 @@ import de.arthurpicht.cli.option.Options;
 import org.mentalizr.cli.commands.*;
 import org.mentalizr.cli.commands.backup.BackupCommand;
 import org.mentalizr.cli.commands.backup.RecoverCommand;
+import org.mentalizr.cli.commands.program.ProgramAddCommand;
+import org.mentalizr.cli.commands.program.ProgramDeleteCommand;
+import org.mentalizr.cli.commands.program.ProgramShowCommand;
 import org.mentalizr.cli.commands.sessionManagement.LoginCommand;
 import org.mentalizr.cli.commands.sessionManagement.LogoutCommand;
 import org.mentalizr.cli.commands.sessionManagement.NoopCommand;
@@ -55,6 +58,7 @@ public class M7rCli {
     public static final String ACTIVATE = "activate";
     public static final String BACKUP = "backup";
     public static final String RECOVER = "recover";
+    public static final String PROGRAM = "program";
 
     public static final String ID_ACTIVE = "active";
 
@@ -68,6 +72,7 @@ public class M7rCli {
     public static final String ID_UUID = "uuid";
     public static final String OPTION__CREDENTIAL_FILE = "credentialFile";
     public static final String OPTION__DIRECTORY = "directory" ;
+    public static final String OPTION__PROGRAM = "program";
 
 
     private static CliCallGlobalConfiguration processParserResultGlobalOptions(OptionParserResult optionParserResult) {
@@ -114,6 +119,14 @@ public class M7rCli {
                         .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user name").build(ID_USER))
         );
         userCommands.add(SHOW);
+
+        Commands programCommands = commands.root().add(PROGRAM);
+        programCommands.add(ADD);
+        programCommands.add(DELETE).withSpecificOptions(
+                new Options()
+                .add(new OptionBuilder().withLongName("program").withShortName('p').hasArgument().withDescription("program").build(OPTION__PROGRAM))
+        );
+        programCommands.add(SHOW);
 
         return new CommandLineInterfaceBuilder()
                 .withGlobalOptions(new Options()
@@ -201,6 +214,21 @@ public class M7rCli {
                         break;
                     case DELETE:
                         new TherapistDeleteCommand(cliContext).execute();
+                        break;
+                }
+            }
+
+            if (commandList.get(0).equals(PROGRAM)) {
+                String subCommand = commandList.get(1);
+                switch (subCommand) {
+                    case ADD:
+                        new ProgramAddCommand(cliContext).execute();
+                        break;
+                    case DELETE:
+                        new ProgramDeleteCommand(cliContext).execute();
+                        break;
+                    case SHOW:
+                        new ProgramShowCommand(cliContext).execute();
                         break;
                 }
             }

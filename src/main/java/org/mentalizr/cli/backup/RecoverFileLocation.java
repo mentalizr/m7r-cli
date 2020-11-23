@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class RecoverFileLocation {
 
-    private Path backupDir;
+    private final Path backupDir;
 
     public RecoverFileLocation(Path backupDir) {
 
@@ -21,19 +21,24 @@ public class RecoverFileLocation {
     }
 
     public List<Path> getAllTherapistFiles() {
+        Path dir = this.backupDir.resolve("therapist");
+        return getAllContainingRegularFiles(dir);
+    }
 
-        Path therapistDir = this.backupDir.resolve("therapist");
+    public List<Path> getAllProgramFiles() {
+        Path dir = this.backupDir.resolve("program");
+        return getAllContainingRegularFiles(dir);
+    }
 
+    private List<Path> getAllContainingRegularFiles(Path dir) {
         try {
             return Files
-                    .walk(therapistDir)
+                    .walk(dir)
                     .filter(Files::isRegularFile)
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new CliException("Could not read therapist restore files from directory [" + therapistDir.toAbsolutePath() + "] " + e.getMessage(), e);
+            throw new CliException("Could not read restore directory [" + dir.toAbsolutePath() + "] " + e.getMessage(), e);
         }
     }
-
-
 
 }

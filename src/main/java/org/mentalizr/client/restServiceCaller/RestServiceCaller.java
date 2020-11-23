@@ -1,5 +1,6 @@
 package org.mentalizr.client.restServiceCaller;
 
+import de.arthurpicht.utils.core.assertion.AssertMethodPrecondition;
 import de.arthurpicht.utils.core.strings.Strings;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.httpClient.HeaderHelper;
@@ -18,14 +19,18 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class RestServiceCaller {
+
     public static String call(RESTCallContext restCallContext, RestService restService) throws RestServiceConnectionException, RestServiceHttpException {
+
+        AssertMethodPrecondition.parameterNotNull("restCallContext", restCallContext);
+        AssertMethodPrecondition.parameterNotNull("restService", restService);
 
         HttpClient client = HttpClientCreator.create(restCallContext);
         HttpRequest httpRequest = HttpRequestCreator.create(restService, restCallContext);
 
         if (restCallContext.isDebug()) HeaderHelper.showRequestHeaders(httpRequest);
 
-        HttpResponse<String> httpResponse = null;
+        HttpResponse<String> httpResponse;
         try {
             httpResponse = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
@@ -40,6 +45,8 @@ public class RestServiceCaller {
             return httpResponse.body();
         } else if (httpResponse.statusCode() == 401) {
             throw new RestServiceHttpException(httpResponse, "No valid session.");
+        } else if (httpResponse.statusCode() == 404) {
+            throw new RestServiceHttpException(httpResponse, "Backend service not found.");
         } else if (httpResponse.statusCode() > 470 && httpResponse.statusCode() <500) {
             String responseBody = httpResponse.body();
             if (Strings.isNotNullAndNotEmpty(responseBody)) {

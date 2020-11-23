@@ -1,19 +1,20 @@
 package org.mentalizr.client.restService.userAdmin;
 
+import org.mentalizr.cli.ContentType;
 import org.mentalizr.client.restService.HttpMethod;
 import org.mentalizr.client.restService.RestService;
 
-public class DeleteTherapistService extends RestService {
+public class TherapistGetService extends RestService {
 
-    private String username;
+    private final String username;
 
-    public DeleteTherapistService(String username) {
+    public TherapistGetService(String username) {
         this.username = username;
     }
 
     @Override
     public String getServiceName() {
-        return "admin/user/therapist/delete/" + this.username;
+        return "admin/user/therapist/get/" + this.username;
     }
 
     @Override
@@ -28,6 +29,6 @@ public class DeleteTherapistService extends RestService {
 
     @Override
     public String getContentType() {
-        return null;
+        return ContentType.APPLICATION_JSON;
     }
 }

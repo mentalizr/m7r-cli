@@ -2,11 +2,10 @@ package org.mentalizr.cli.backup;
 
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.RESTCallContextFactory;
-import org.mentalizr.cli.backup.BackupFileLocation;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.RestService;
-import org.mentalizr.client.restService.userAdmin.ShowTherapistService;
+import org.mentalizr.client.restService.userAdmin.TherapistShowService;
 import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
@@ -22,14 +21,14 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 
-public class BackupTherapist {
+public class BackupTherapists {
 
     public static void exec(BackupFileLocation backupFileLocation, CliContext cliContext) throws RestServiceHttpException, RestServiceConnectionException {
 
         System.out.println("Creating backup to [" + backupFileLocation.getBackupDir().toAbsolutePath() + "].");
 
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(cliContext);
-        RestService restService = new ShowTherapistService();
+        RestService restService = new TherapistShowService();
         String body = RestServiceCaller.call(restCallContext, restService);
 
         TherapistRestoreCollectionSO therapistRestoreCollectionSO = TherapistRestoreCollectionSOX.fromJson(body);
