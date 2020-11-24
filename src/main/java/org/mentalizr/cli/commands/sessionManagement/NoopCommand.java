@@ -5,8 +5,6 @@ import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.cli.commands.CommandExecutor;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.sessionManagement.NoopService;
-import org.mentalizr.client.restService.RestService;
-import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
@@ -19,14 +17,17 @@ public class NoopCommand extends CommandExecutor {
 
     @Override
     public void execute() throws RestServiceHttpException, RestServiceConnectionException {
-        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        String body = new NoopService(restCallContext).call();
-
+        String body = callNoopService();
         System.out.println("[OK] noop");
 
         if (this.cliContext.getCliCallGlobalConfiguration().isDebug()) {
             System.out.println("body: " + body);
         }
+    }
+
+    private String callNoopService() throws RestServiceHttpException, RestServiceConnectionException {
+        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
+        return new NoopService(restCallContext).call();
     }
 
 }

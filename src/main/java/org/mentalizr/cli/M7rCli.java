@@ -33,7 +33,6 @@ public class M7rCli {
     public static final String ID_DEBUG = "debug";
     public static final String ID_STACKTRACE = "stacktrace";
     public static final String ID_SILENT = "silent";
-
     public static final String LOGIN = "login";
     public static final String ID_USER = "login";
     public static final String ID_PASSWORD = "password";
@@ -59,20 +58,13 @@ public class M7rCli {
     public static final String BACKUP = "backup";
     public static final String RECOVER = "recover";
     public static final String PROGRAM = "program";
-
-    public static final String ID_ACTIVE = "active";
-
-    public static final String ID_EMAIL = "email";
-    public static final String ID_TITLE = "title";
-    public static final String ID_FIRSTNAME = "firstname";
-    public static final String ID_LASTNAME = "lastname";
-    public static final String ID_GENDER = "gender";
     public static final String ID_FROM_FILE = "fromFile";
     public static final String ID_SHOW_TEMPLATE = "showTemplate";
     public static final String ID_UUID = "uuid";
     public static final String OPTION__CREDENTIAL_FILE = "credentialFile";
     public static final String OPTION__DIRECTORY = "directory" ;
     public static final String OPTION__PROGRAM = "program";
+    public static final String WIPE = "wipe";
 
 
     private static CliCallGlobalConfiguration processParserResultGlobalOptions(OptionParserResult optionParserResult) {
@@ -102,7 +94,8 @@ public class M7rCli {
                 .root().add(RECOVER).withSpecificOptions(
                         new Options()
                                 .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("directory").build(OPTION__DIRECTORY))
-                );
+                )
+                .root().add(WIPE);
         Commands userCommands = commands.root().add(USER).addOneOf(PATIENT, THERAPIST, ADMIN);
         userCommands.add(ADD).withSpecificOptions(
                 new Options()
@@ -240,6 +233,11 @@ public class M7rCli {
 
             if (commandList.get(0).equals(RECOVER)) {
                 CommandExecutor commandExecutor = new RecoverCommand(cliContext);
+                commandExecutor.execute();
+            }
+
+            if (commandList.get(0).equals(WIPE)) {
+                CommandExecutor commandExecutor = new WipeCommand(cliContext);
                 commandExecutor.execute();
             }
 

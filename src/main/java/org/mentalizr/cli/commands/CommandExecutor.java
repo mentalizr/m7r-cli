@@ -38,10 +38,4 @@ public abstract class CommandExecutor {
 
     public abstract void execute() throws RestServiceHttpException, RestServiceConnectionException, UserAbortedException;
 
-//    public ClientContext getClientContext() {
-//        this.cliContext.assertCliConfiguration();
-//        boolean debug = this.cliContext.getCliCallGlobalConfiguration().isDebug();
-//        return new ClientContext(this.cliContext.getCliConfiguration(), debug);
-//    }
-
 }
