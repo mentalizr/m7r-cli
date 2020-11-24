@@ -28,8 +28,8 @@ public class ProgramAddCommand extends CommandExecutor {
         programSO.setProgramId(programId);
 
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        RestService restService = new ProgramAddService(programSO);
-        RestServiceCaller.call(restCallContext, restService);
+        RestService restService = new ProgramAddService(programSO, restCallContext);
+        restService.call();
 
         System.out.println("[OK] Program [" + programId + "] added.");
     }

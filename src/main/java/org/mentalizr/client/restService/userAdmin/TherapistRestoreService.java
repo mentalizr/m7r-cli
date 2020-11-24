@@ -1,8 +1,12 @@
 package org.mentalizr.client.restService.userAdmin;
 
 import org.mentalizr.cli.ContentType;
+import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.HttpMethod;
 import org.mentalizr.client.restService.RestService;
+import org.mentalizr.client.restServiceCaller.RestServiceCaller;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
 import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSOX;
 
@@ -13,7 +17,8 @@ public class TherapistRestoreService extends RestService {
 
     private final TherapistRestoreSO therapistRestoreSO;
 
-    public TherapistRestoreService(TherapistRestoreSO therapistRestoreSO) {
+    public TherapistRestoreService(TherapistRestoreSO therapistRestoreSO, RESTCallContext restCallContext) {
+        super(restCallContext);
         this.therapistRestoreSO = therapistRestoreSO;
     }
 
@@ -28,12 +33,18 @@ public class TherapistRestoreService extends RestService {
     }
 
     @Override
-    public String getBody() {
+    public String getRequestBody() {
         return TherapistRestoreSOX.toJson(this.therapistRestoreSO);
     }
 
     @Override
-    public String getContentType() {
+    public String getRequestContentType() {
         return ContentType.APPLICATION_JSON;
+    }
+
+    @Override
+    public Object call() throws RestServiceHttpException, RestServiceConnectionException {
+        RestServiceCaller.call(restCallContext, this);
+        return null;
     }
 }

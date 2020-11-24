@@ -29,8 +29,7 @@ public class TherapistDeleteCommand extends CommandExecutor {
             String username = optionParserResultSpecific.getValue(M7rCli.ID_USER).trim();
 
             RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-            RestService restService = new TherapistDeleteService(username);
-            RestServiceCaller.call(restCallContext, restService);
+            new TherapistDeleteService(username, restCallContext).call();
 
             System.out.println("[OK] Therapist [" + username + "] deleted.");
 

@@ -21,32 +21,28 @@ import java.util.List;
 
 public class BackupPrograms {
 
-    public static void exec(BackupFileLocation backupFileLocation, CliContext cliContext) throws RestServiceHttpException, RestServiceConnectionException {
+    public static void exec(BackupFS backupFS, CliContext cliContext) throws RestServiceHttpException, RestServiceConnectionException {
 
-        System.out.println("Creating backup to [" + backupFileLocation.getBackupDir().toAbsolutePath() + "].");
+        System.out.println("Creating backup to [" + backupFS.getBackupDirAsString() + "].");
 
+        ProgramCollectionSO programCollectionSO = callProgramShowService(cliContext);
+
+        writeProgramsToFile(programCollectionSO, backupFS);
+
+        System.out.println("[OK] " + programCollectionSO.getCollection().size() + " programs backuped.");
+    }
+
+    private static ProgramCollectionSO callProgramShowService(CliContext cliContext) throws RestServiceHttpException, RestServiceConnectionException {
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(cliContext);
-        RestService restService = new ProgramShowService();
-        String body = RestServiceCaller.call(restCallContext, restService);
+        ProgramShowService restService = new ProgramShowService(restCallContext);
+        return restService.call();
+    }
 
-        ProgramCollectionSO programCollectionSO = ProgramCollectionSOX.fromJson(body);
+    private static void writeProgramsToFile(ProgramCollectionSO programCollectionSO, BackupFS backupFS) {
         List<ProgramSO> collection = programCollectionSO.getCollection();
-
         for (ProgramSO programSO : collection) {
-            String programSOJson = ProgramSOX.toJson(programSO) + "\n";
-
-            Path backupDir = backupFileLocation.getBackupDirProgram(programSO);
-            String filename = programSO.getProgramId() + ".programSO.json";
-            Path therapistBackupFile = backupDir.resolve(filename);
-
-            try {
-                Files.writeString(therapistBackupFile, programSOJson, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
-            } catch (IOException e) {
-                throw new CliException("Could not write to file [" + therapistBackupFile.toAbsolutePath() + "]. " + e.getMessage(), e);
-            }
+            backupFS.backup(programSO);
         }
-
-        System.out.println("[OK] " + collection.size() + " programs backuped.");
     }
 
 }

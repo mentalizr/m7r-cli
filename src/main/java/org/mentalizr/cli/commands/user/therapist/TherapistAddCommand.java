@@ -42,13 +42,10 @@ public class TherapistAddCommand extends CommandExecutor {
         }
 
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        RestService restService = new TherapistAddService(therapistAddSO);
-        String body = RestServiceCaller.call(restCallContext, restService);
-
-        TherapistAddSO therapistAddSOBack = TherapistAddSOX.fromJson(body);
+        TherapistAddSO therapistAddSOBack = new TherapistAddService(therapistAddSO, restCallContext)
+                .call();
 
         System.out.println("[OK] Therapist [" + therapistAddSOBack.getUsername() + "] added with UUID: [" + therapistAddSOBack.getUuid() + "]");
-
     }
 
     private TherapistAddSO fromPrompt() throws UserAbortedException {

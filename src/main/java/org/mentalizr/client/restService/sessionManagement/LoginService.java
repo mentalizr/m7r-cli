@@ -5,6 +5,9 @@ import org.mentalizr.cli.ContentType;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.HttpMethod;
 import org.mentalizr.client.restService.RestService;
+import org.mentalizr.client.restServiceCaller.RestServiceCaller;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +17,8 @@ public class LoginService extends RestService {
     private final String user;
     private final String password;
 
-    public LoginService(String user, String password) {
+    public LoginService(String user, String password, RESTCallContext restCallContext) {
+        super(restCallContext);
         this.user = user;
         this.password = password;
     }
@@ -30,7 +34,7 @@ public class LoginService extends RestService {
     }
 
     @Override
-    public String getBody() {
+    public String getRequestBody() {
         Map<String, String> keyValuePairs = new HashMap<>();
         keyValuePairs.put("user", this.user);
         keyValuePairs.put("password", this.password);
@@ -40,7 +44,12 @@ public class LoginService extends RestService {
     }
 
     @Override
-    public String getContentType() {
+    public String getRequestContentType() {
         return ContentType.X_WWW_FORM_URLENCODED;
+    }
+
+    @Override
+    public String call() throws RestServiceHttpException, RestServiceConnectionException {
+        return RestServiceCaller.call(this.restCallContext, this);
     }
 }

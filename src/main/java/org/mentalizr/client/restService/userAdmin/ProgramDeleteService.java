@@ -1,13 +1,18 @@
 package org.mentalizr.client.restService.userAdmin;
 
+import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.HttpMethod;
 import org.mentalizr.client.restService.RestService;
+import org.mentalizr.client.restServiceCaller.RestServiceCaller;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
 public class ProgramDeleteService extends RestService {
 
     private final String programId;
 
-    public ProgramDeleteService(String programId) {
+    public ProgramDeleteService(String programId, RESTCallContext restCallContext) {
+        super(restCallContext);
         this.programId = programId;
     }
 
@@ -22,12 +27,19 @@ public class ProgramDeleteService extends RestService {
     }
 
     @Override
-    public String getBody() {
+    public String getRequestBody() {
         return null;
     }
 
     @Override
-    public String getContentType() {
+    public String getRequestContentType() {
         return null;
     }
+
+    @Override
+    public Object call() throws RestServiceHttpException, RestServiceConnectionException {
+        RestServiceCaller.call(restCallContext, this);
+        return null;
+    }
+
 }

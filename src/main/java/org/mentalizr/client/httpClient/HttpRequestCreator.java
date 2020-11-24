@@ -51,7 +51,7 @@ public class HttpRequestCreator {
 
         } else if (httpMethod == HttpMethod.POST) {
 
-            String body = restService.getBody();
+            String body = restService.getRequestBody();
             httpRequestBuilder.POST(HttpRequest.BodyPublishers.ofString(body));
 
             if (restCallContext.isDebug()) {
@@ -66,7 +66,7 @@ public class HttpRequestCreator {
 
     public static void addContentTypeHeader(HttpRequest.Builder httpRequestBuilder, RestService restService) {
         if (restService.hasContentType()) {
-            httpRequestBuilder.header("Content-Type", restService.getContentType());
+            httpRequestBuilder.header("Content-Type", restService.getRequestContentType());
         }
     }
 

@@ -1,6 +1,7 @@
 package org.mentalizr.cli.commands.backup;
 
 import org.mentalizr.cli.CliContext;
+import org.mentalizr.cli.backup.BackupFS;
 import org.mentalizr.cli.backup.BackupFileLocation;
 import org.mentalizr.cli.backup.BackupPrograms;
 import org.mentalizr.cli.backup.BackupTherapists;
@@ -19,10 +20,10 @@ public class BackupCommand extends CommandExecutor {
     @Override
     public void execute() throws RestServiceHttpException, RestServiceConnectionException, UserAbortedException {
 
-        BackupFileLocation backupFileLocation = new BackupFileLocation();
+        BackupFS backupFS = new BackupFS();
 
-        BackupPrograms.exec(backupFileLocation, this.cliContext);
-        BackupTherapists.exec(backupFileLocation, this.cliContext);
+        BackupPrograms.exec(backupFS, this.cliContext);
+        BackupTherapists.exec(backupFS, this.cliContext);
     }
 
 }

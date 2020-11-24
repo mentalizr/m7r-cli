@@ -36,8 +36,7 @@ public class RecoverTherapists {
             TherapistRestoreSO therapistRestoreSO = TherapistRestoreSOX.fromJson(therapistJson);
 
             RESTCallContext restCallContext = RESTCallContextFactory.getInstance(cliContext);
-            RestService restService = new TherapistRestoreService(therapistRestoreSO);
-            RestServiceCaller.call(restCallContext, restService);
+            new TherapistRestoreService(therapistRestoreSO, restCallContext).call();
 
             System.out.println("Therapist [" + therapistRestoreSO.getUuid() + "] restored.");
         }

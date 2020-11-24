@@ -31,8 +31,8 @@ public class ProgramDeleteCommand extends CommandExecutor {
         String programId = optionParserResultSpecific.getValue(M7rCli.OPTION__PROGRAM).trim();
 
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        RestService restService = new ProgramDeleteService(programId);
-        RestServiceCaller.call(restCallContext, restService);
+        new ProgramDeleteService(programId, restCallContext)
+                .call();
 
         System.out.println("[OK] Program [" + programId + "] deleted.");
     }

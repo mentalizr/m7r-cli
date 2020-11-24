@@ -8,9 +8,7 @@ import org.mentalizr.cli.commands.CommandExecutor;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.cli.helper.ServiceObjectHelper;
 import org.mentalizr.client.RESTCallContext;
-import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restService.userAdmin.TherapistRestoreService;
-import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
@@ -35,8 +33,7 @@ public class TherapistRestoreCommand extends CommandExecutor {
         TherapistRestoreSO therapistRestoreSO = ServiceObjectHelper.therapistRestoreSOFromFile(fileName);
 
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        RestService restService = new TherapistRestoreService(therapistRestoreSO);
-        RestServiceCaller.call(restCallContext, restService);
+        new TherapistRestoreService(therapistRestoreSO, restCallContext).call();
 
         System.out.println("[OK] User [" + therapistRestoreSO.getUsername() + "] restored.");
     }

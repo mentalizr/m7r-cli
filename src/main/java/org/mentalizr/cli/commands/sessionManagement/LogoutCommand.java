@@ -20,8 +20,7 @@ public class LogoutCommand extends CommandExecutor {
     @Override
     public void execute() throws RestServiceHttpException, RestServiceConnectionException {
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        RestService restService = new LogoutService();
-        String body = RestServiceCaller.call(restCallContext, restService);
+        String body = new LogoutService(restCallContext).call();
         System.out.println("[OK] Successfully logged out from " + this.cliContext.getCliConfiguration().getServer());
 
         if (this.cliContext.getCliCallGlobalConfiguration().isDebug()) {

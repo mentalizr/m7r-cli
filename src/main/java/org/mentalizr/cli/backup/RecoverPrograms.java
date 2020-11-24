@@ -39,8 +39,8 @@ public class RecoverPrograms {
             ProgramSO programSO = ProgramSOX.fromJson(programJson);
 
             RESTCallContext restCallContext = RESTCallContextFactory.getInstance(cliContext);
-            RestService restService = new ProgramAddService(programSO);
-            RestServiceCaller.call(restCallContext, restService);
+            new ProgramAddService(programSO, restCallContext)
+                    .call();
 
             System.out.println("Program [" + programSO.getProgramId() + "] restored.");
         }

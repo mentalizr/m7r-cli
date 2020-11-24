@@ -1,9 +1,17 @@
 package org.mentalizr.client.restService.sessionManagement;
 
+import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.HttpMethod;
 import org.mentalizr.client.restService.RestService;
+import org.mentalizr.client.restServiceCaller.RestServiceCaller;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
 public class NoopService extends RestService {
+
+    public NoopService(RESTCallContext restCallContext) {
+        super(restCallContext);
+    }
 
     @Override
     public String getServiceName() {
@@ -16,13 +24,18 @@ public class NoopService extends RestService {
     }
 
     @Override
-    public String getBody() {
+    public String getRequestBody() {
         return null;
     }
 
     @Override
-    public String getContentType() {
+    public String getRequestContentType() {
         return null;
+    }
+
+    @Override
+    public String call() throws RestServiceHttpException, RestServiceConnectionException {
+        return RestServiceCaller.call(this.restCallContext, this);
     }
 
 }

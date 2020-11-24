@@ -25,10 +25,7 @@ public class ProgramShowCommand extends CommandExecutor {
     public void execute() throws RestServiceHttpException, RestServiceConnectionException {
 
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        RestService restService = new ProgramShowService();
-        String body = RestServiceCaller.call(restCallContext, restService);
-
-        ProgramCollectionSO programCollectionSO = ProgramCollectionSOX.fromJson(body);
+        ProgramCollectionSO programCollectionSO = new ProgramShowService(restCallContext).call();
         List<ProgramSO> collection = programCollectionSO.getCollection();
 
         System.out.println("[OK] Show all programs. Found " + collection.size() + ".");

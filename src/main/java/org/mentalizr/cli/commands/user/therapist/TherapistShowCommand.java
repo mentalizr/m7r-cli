@@ -26,10 +26,9 @@ public class TherapistShowCommand extends CommandExecutor {
     public void execute() throws RestServiceHttpException, RestServiceConnectionException {
 
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        RestService restService = new TherapistShowService();
-        String body = RestServiceCaller.call(restCallContext, restService);
+        TherapistShowService restService = new TherapistShowService(restCallContext);
+        TherapistRestoreCollectionSO therapistRestoreCollectionSO = restService.call();
 
-        TherapistRestoreCollectionSO therapistRestoreCollectionSO = TherapistRestoreCollectionSOX.fromJson(body);
         List<TherapistRestoreSO> collection = therapistRestoreCollectionSO.getCollection();
 
         System.out.println("[OK] Show all therapists. Found " + collection.size() + ".");

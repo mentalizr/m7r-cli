@@ -6,12 +6,9 @@ import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.cli.commands.CommandExecutor;
 import org.mentalizr.cli.config.CliConfigurationFiles;
-import org.mentalizr.cli.config.CliConfigurationLoader;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.client.RESTCallContext;
-import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restService.sessionManagement.LoginService;
-import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
@@ -83,8 +80,7 @@ public class LoginCommand extends CommandExecutor {
 
     private String callLoginService() throws RestServiceHttpException, RestServiceConnectionException {
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        RestService restService = new LoginService(user, password);
-        return RestServiceCaller.call(restCallContext, restService);
+        return new LoginService(user, password, restCallContext).call();
     }
 
     private void debugOut(String body) {

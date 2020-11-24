@@ -19,16 +19,14 @@ public class NoopCommand extends CommandExecutor {
 
     @Override
     public void execute() throws RestServiceHttpException, RestServiceConnectionException {
-        RestService restService = new NoopService();
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        String body = RestServiceCaller.call(restCallContext, restService);
+        String body = new NoopService(restCallContext).call();
 
         System.out.println("[OK] noop");
 
         if (this.cliContext.getCliCallGlobalConfiguration().isDebug()) {
             System.out.println("body: " + body);
         }
-
     }
 
 }
