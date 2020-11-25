@@ -19,7 +19,7 @@ public class BackupTherapists {
 
         TherapistRestoreCollectionSO therapistRestoreCollectionSO = callTherapistShowService(cliContext);
 
-        writeProgramsToFile(therapistRestoreCollectionSO, backupFS);
+        writeEntitiesToFile(therapistRestoreCollectionSO, backupFS);
 
         System.out.println("[OK] " + therapistRestoreCollectionSO.getCollection().size() + " therapists backuped.");
     }
@@ -30,7 +30,7 @@ public class BackupTherapists {
         return service.call();
     }
 
-    private static void writeProgramsToFile(TherapistRestoreCollectionSO therapistRestoreCollectionSO, BackupFS backupFS) {
+    private static void writeEntitiesToFile(TherapistRestoreCollectionSO therapistRestoreCollectionSO, BackupFS backupFS) {
         List<TherapistRestoreSO> collection = therapistRestoreCollectionSO.getCollection();
         for (TherapistRestoreSO therapistRestoreSO : collection) {
             backupFS.backup(therapistRestoreSO);

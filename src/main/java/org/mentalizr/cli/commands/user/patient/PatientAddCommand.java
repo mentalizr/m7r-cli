@@ -1,4 +1,4 @@
-package org.mentalizr.cli.commands.user.therapist;
+package org.mentalizr.cli.commands.user.patient;
 
 import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
@@ -7,19 +7,19 @@ import org.mentalizr.cli.M7rCli;
 import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.cli.commands.CommandExecutor;
 import org.mentalizr.cli.exceptions.UserAbortedException;
-import org.mentalizr.cli.fileSystem.TherapistAddSOFS;
+import org.mentalizr.cli.fileSystem.PatientAddSOFS;
 import org.mentalizr.client.RESTCallContext;
-import org.mentalizr.client.restService.userAdmin.TherapistAddService;
+import org.mentalizr.client.restService.userAdmin.PatientAddService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
-import org.mentalizr.serviceObjects.userManagement.TherapistAddSO;
-import org.mentalizr.serviceObjects.userManagement.TherapistAddSOX;
+import org.mentalizr.serviceObjects.userManagement.PatientAddSO;
+import org.mentalizr.serviceObjects.userManagement.PatientAddSOX;
 
 import java.nio.file.Paths;
 
-public class TherapistAddCommand extends CommandExecutor {
+public class PatientAddCommand extends CommandExecutor {
 
-    public TherapistAddCommand(CliContext cliContext) {
+    public PatientAddCommand(CliContext cliContext) {
         super(cliContext);
         this.checkedInit();
     }
@@ -29,46 +29,43 @@ public class TherapistAddCommand extends CommandExecutor {
 
         OptionParserResult optionParserResultSpecific = this.cliContext.getOptionParserResultSpecific();
 
-        TherapistAddSO therapistAddSO;
+        PatientAddSO patientAddSO;
 
         if (optionParserResultSpecific.hasOption(M7rCli.ID_FROM_FILE)) {
             String fileName = optionParserResultSpecific.getValue(M7rCli.ID_FROM_FILE);
-            therapistAddSO = TherapistAddSOFS.fromFile(Paths.get(fileName));
+            patientAddSO = PatientAddSOFS.fromFile(Paths.get(fileName));
         } else if (optionParserResultSpecific.hasOption(M7rCli.ID_SHOW_TEMPLATE)) {
             System.out.println(getTemplate());
             return;
         } else {
-            therapistAddSO = fromPrompt();
+            patientAddSO = fromPrompt();
         }
 
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        TherapistAddSO therapistAddSOBack = new TherapistAddService(therapistAddSO, restCallContext)
+        PatientAddSO patientAddSOBack = new PatientAddService(patientAddSO, restCallContext)
                 .call();
 
-        System.out.println("[OK] Therapist [" + therapistAddSOBack.getUsername() + "] added with UUID: [" + therapistAddSOBack.getUuid() + "]");
+        System.out.println("[OK] Patient [" + patientAddSOBack.getUsername() + "] added with UUID: [" + patientAddSOBack.getUuid() + "]");
     }
 
-    private TherapistAddSO fromPrompt() throws UserAbortedException {
+    private PatientAddSO fromPrompt() throws UserAbortedException {
 
-        TherapistAddSO therapistAddSO = new TherapistAddSO();
+        PatientAddSO patientAddSO = new PatientAddSO();
 
         boolean active = ConsoleReader.promptForYesOrNo("active? (y/n): ");
-        therapistAddSO.setActive(active);
+        patientAddSO.setActive(active);
 
         String username = ConsoleReader.promptForMandatoryString("Username: ");
-        therapistAddSO.setUsername(username);
-
-        String title = ConsoleReader.promptForOptionalString("Title (optional): ");
-        therapistAddSO.setTitle(title);
+        patientAddSO.setUsername(username);
 
         String firstname = ConsoleReader.promptForMandatoryString("Firstname: ");
-        therapistAddSO.setFirstname(firstname);
+        patientAddSO.setFirstname(firstname);
 
         String lastname = ConsoleReader.promptForMandatoryString("Lastname: ");
-        therapistAddSO.setLastname(lastname);
+        patientAddSO.setLastname(lastname);
 
         String email = ConsoleReader.promptForMandatoryString("Email: ");
-        therapistAddSO.setEmail(email);
+        patientAddSO.setEmail(email);
 
         String genderString = ConsoleReader.promptForOptionString("Gender (m,f,x): ", "m", "f", "x");
         int gender = 0;
@@ -83,30 +80,37 @@ public class TherapistAddCommand extends CommandExecutor {
                 gender=2;
                 break;
         }
-        therapistAddSO.setGender(gender);
+        patientAddSO.setGender(gender);
 
         String password = ConsoleReader.promptForMandatoryString("Password: ");
-        therapistAddSO.setPassword(password);
+        patientAddSO.setPassword(password);
+
+        String programId = ConsoleReader.promptForMandatoryString("Program: ");
+        patientAddSO.setProgramId(programId);
+
+        String therapistId = ConsoleReader.promptForMandatoryString("Therapist ID: ");
+        patientAddSO.setTherapistId(therapistId);
 
         boolean confirm = ConsoleReader.promptForYesOrNo("Continue? (y/n): ");
         if (!confirm) throw new UserAbortedException();
 
-        return therapistAddSO;
+        return patientAddSO;
     }
 
     private String getTemplate() {
 
-        TherapistAddSO therapistAddSO = new TherapistAddSO();
-        therapistAddSO.setActive(true);
-        therapistAddSO.setTitle("M.Sc.");
-        therapistAddSO.setUsername("jdummy");
-        therapistAddSO.setFirstname("Joe");
-        therapistAddSO.setLastname("Dummy");
-        therapistAddSO.setEmail("joe.dummy@example.org");
-        therapistAddSO.setGender(1);
-        therapistAddSO.setPassword("topsecret");
+        PatientAddSO patientAddSO = new PatientAddSO();
+        patientAddSO.setActive(true);
+        patientAddSO.setUsername("");
+        patientAddSO.setFirstname("");
+        patientAddSO.setLastname("");
+        patientAddSO.setEmail("");
+        patientAddSO.setGender(1);
+        patientAddSO.setPassword("");
+        patientAddSO.setProgramId("");
+        patientAddSO.setTherapistId("");
 
-        return TherapistAddSOX.toJsonWithFormatting(therapistAddSO);
+        return PatientAddSOX.toJsonWithFormatting(patientAddSO);
     }
 
 }

@@ -6,16 +6,10 @@ import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.cli.config.Init;
 import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.client.RESTCallContext;
-import org.mentalizr.client.restService.userAdmin.ProgramDeleteService;
-import org.mentalizr.client.restService.userAdmin.ProgramShowService;
-import org.mentalizr.client.restService.userAdmin.TherapistDeleteService;
-import org.mentalizr.client.restService.userAdmin.TherapistShowService;
+import org.mentalizr.client.restService.userAdmin.*;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
-import org.mentalizr.serviceObjects.userManagement.ProgramCollectionSO;
-import org.mentalizr.serviceObjects.userManagement.ProgramSO;
-import org.mentalizr.serviceObjects.userManagement.TherapistRestoreCollectionSO;
-import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
+import org.mentalizr.serviceObjects.userManagement.*;
 
 import java.util.List;
 
@@ -35,10 +29,20 @@ public class WipeCommand extends CommandExecutor {
 
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
 
+        deleteAllPatients(restCallContext);
         deleteAllTherapists(restCallContext);
         deleteAllPrograms(restCallContext);
 
         System.out.println("[OK] User database wiped out.");
+    }
+
+    private void deleteAllPatients(RESTCallContext restCallContext) throws RestServiceHttpException, RestServiceConnectionException {
+        PatientRestoreCollectionSO patientRestoreCollectionSO = new PatientShowService(restCallContext).call();
+        List<PatientRestoreSO> collection = patientRestoreCollectionSO.getCollection();
+        for (PatientRestoreSO patientRestoreSO : collection) {
+            new PatientDeleteService(patientRestoreSO.getUsername(), restCallContext).call();
+            System.out.println("Patient [" + patientRestoreSO.getUsername() + "] deleted.");
+        }
     }
 
     private void deleteAllTherapists(RESTCallContext restCallContext) throws RestServiceHttpException, RestServiceConnectionException {
@@ -58,6 +62,5 @@ public class WipeCommand extends CommandExecutor {
             System.out.println("Program [" + programSO.getProgramId() + "] deleted.");
         }
     }
-
 
 }

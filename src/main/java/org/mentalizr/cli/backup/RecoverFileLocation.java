@@ -25,6 +25,11 @@ public class RecoverFileLocation {
         return getAllContainingRegularFiles(dir);
     }
 
+    public List<Path> getAllPatientFiles() {
+        Path dir = this.backupDir.resolve("patient");
+        return getAllContainingRegularFiles(dir);
+    }
+
     public List<Path> getAllProgramFiles() {
         Path dir = this.backupDir.resolve("program");
         return getAllContainingRegularFiles(dir);

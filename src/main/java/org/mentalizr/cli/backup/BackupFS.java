@@ -1,10 +1,7 @@
 package org.mentalizr.cli.backup;
 
 import org.mentalizr.cli.exceptions.CliException;
-import org.mentalizr.serviceObjects.userManagement.ProgramSO;
-import org.mentalizr.serviceObjects.userManagement.ProgramSOX;
-import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
-import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSOX;
+import org.mentalizr.serviceObjects.userManagement.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -31,7 +28,7 @@ public class BackupFS {
     public void backup(ProgramSO programSO) {
         String programSOJson = ProgramSOX.toJson(programSO) + "\n";
 
-        Path backupDir = backupFileLocation.getBackupDirProgram(programSO);
+        Path backupDir = backupFileLocation.getBackupDirProgram();
         String filename = programSO.getProgramId() + ".programSO.json";
         Path therapistBackupFile = backupDir.resolve(filename);
 
@@ -55,5 +52,20 @@ public class BackupFS {
             throw new CliException("Could not write to file [" + therapistBackupFile.toAbsolutePath() + "]. " + e.getMessage(), e);
         }
     }
+
+    public void backup(PatientRestoreSO patientRestoreSO) {
+        String patientRestoreSOJson = PatientRestoreSOX.toJsonWithFormatting(patientRestoreSO) + "\n";
+
+        Path therapistBackupDir = backupFileLocation.getBackupDirPatient(patientRestoreSO);
+        String filename = patientRestoreSO.getUuid() + ".patientRestoreSO.json";
+        Path patientBackupFile = therapistBackupDir.resolve(filename);
+
+        try {
+            Files.writeString(patientBackupFile, patientRestoreSOJson, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
+        } catch (IOException e) {
+            throw new CliException("Could not write to file [" + patientBackupFile.toAbsolutePath() + "]. " + e.getMessage(), e);
+        }
+    }
+
 
 }

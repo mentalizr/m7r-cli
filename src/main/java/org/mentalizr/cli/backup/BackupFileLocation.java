@@ -2,6 +2,7 @@ package org.mentalizr.cli.backup;
 
 import org.mentalizr.cli.config.CliConfigurationFiles;
 import org.mentalizr.cli.exceptions.CliException;
+import org.mentalizr.serviceObjects.userManagement.PatientRestoreSO;
 import org.mentalizr.serviceObjects.userManagement.ProgramSO;
 import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
 
@@ -39,7 +40,13 @@ public class BackupFileLocation {
         return therapistBackupDir;
     }
 
-    public Path getBackupDirProgram(ProgramSO programSO) {
+    public Path getBackupDirPatient(PatientRestoreSO patientRestoreSO) {
+        Path patientBackupDir = this.backupDir.resolve("patient").resolve(patientRestoreSO.getUuid());
+        createBackupDir(patientBackupDir);
+        return patientBackupDir;
+    }
+
+    public Path getBackupDirProgram() {
         Path programBackupDir = this.backupDir.resolve("program");
         createBackupDir(programBackupDir);
         return programBackupDir;

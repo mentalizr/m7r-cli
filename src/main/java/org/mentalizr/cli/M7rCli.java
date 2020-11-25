@@ -19,6 +19,7 @@ import org.mentalizr.cli.commands.sessionManagement.LoginCommand;
 import org.mentalizr.cli.commands.sessionManagement.LogoutCommand;
 import org.mentalizr.cli.commands.sessionManagement.NoopCommand;
 import org.mentalizr.cli.commands.sessionManagement.StatusCommand;
+import org.mentalizr.cli.commands.user.patient.*;
 import org.mentalizr.cli.commands.user.therapist.*;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
 import org.mentalizr.cli.exceptions.CliException;
@@ -207,6 +208,27 @@ public class M7rCli {
                         break;
                     case DELETE:
                         new TherapistDeleteCommand(cliContext).execute();
+                        break;
+                }
+            }
+
+            if (commandList.get(0).equals(USER) && commandList.get(1).equals(PATIENT)) {
+                String subCommand = commandList.get(2);
+                switch (subCommand) {
+                    case ADD:
+                        new PatientAddCommand(cliContext).execute();
+                        break;
+                    case RESTORE:
+                        new PatientRestoreCommand(cliContext).execute();
+                        break;
+                    case GET:
+                        new PatientGetCommand(cliContext).execute();
+                        break;
+                    case SHOW:
+                        new PatientShowCommand(cliContext).execute();
+                        break;
+                    case DELETE:
+                        new PatientDeleteCommand(cliContext).execute();
                         break;
                 }
             }
