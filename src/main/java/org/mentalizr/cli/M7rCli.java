@@ -10,6 +10,7 @@ import de.arthurpicht.cli.option.OptionBuilder;
 import de.arthurpicht.cli.option.OptionParserResult;
 import de.arthurpicht.cli.option.Options;
 import org.mentalizr.cli.commands.*;
+import org.mentalizr.cli.commands.accessKey.AccessKeyCreateCommand;
 import org.mentalizr.cli.commands.backup.BackupCommand;
 import org.mentalizr.cli.commands.backup.RecoverCommand;
 import org.mentalizr.cli.commands.program.ProgramAddCommand;
@@ -66,6 +67,8 @@ public class M7rCli {
     public static final String OPTION__DIRECTORY = "directory" ;
     public static final String OPTION__PROGRAM = "program";
     public static final String WIPE = "wipe";
+    public static final String ACCESS_KEY = "accessKey";
+    public static final String CREATE = "create";
 
 
     private static CliCallGlobalConfiguration processParserResultGlobalOptions(OptionParserResult optionParserResult) {
@@ -96,7 +99,9 @@ public class M7rCli {
                         new Options()
                                 .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("directory").build(OPTION__DIRECTORY))
                 )
-                .root().add(WIPE);
+                .root().add(WIPE)
+                .root().add(ACCESS_KEY).add(CREATE);
+
         Commands userCommands = commands.root().add(USER).addOneOf(PATIENT, THERAPIST, ADMIN);
         userCommands.add(ADD).withSpecificOptions(
                 new Options()
@@ -244,6 +249,15 @@ public class M7rCli {
                         break;
                     case SHOW:
                         new ProgramShowCommand(cliContext).execute();
+                        break;
+                }
+            }
+
+            if (commandList.get(0).equals(ACCESS_KEY)) {
+                String subCommand = commandList.get(1);
+                switch (subCommand) {
+                    case CREATE:
+                        new AccessKeyCreateCommand(cliContext).execute();
                         break;
                 }
             }

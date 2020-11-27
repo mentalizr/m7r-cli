@@ -39,6 +39,20 @@ public class ConsoleReader {
         return userInput;
     }
 
+    public static int promptForMandatoryInt(String prompt) {
+        Integer integer = null;
+        do {
+            System.out.println(prompt);
+            String userInput = System.console().readLine();
+            try {
+                integer = Integer.parseInt(userInput);
+            } catch (NumberFormatException e) {
+                // din
+            }
+        } while (integer == null);
+        return integer;
+    }
+
     public static boolean equalsAtLeastOne(String x, List<String> options) {
         for (String string : options) {
             if (x.equals(string)) return true;
