@@ -69,6 +69,7 @@ public class M7rCli {
     public static final String WIPE = "wipe";
     public static final String ACCESS_KEY = "accessKey";
     public static final String CREATE = "create";
+    public static final String OPTION__TO_FILE = "file";
 
 
     private static CliCallGlobalConfiguration processParserResultGlobalOptions(OptionParserResult optionParserResult) {
@@ -101,6 +102,10 @@ public class M7rCli {
                 )
                 .root().add(WIPE)
                 .root().add(ACCESS_KEY).add(CREATE);
+//        .withSpecificOptions(
+//                        new Options()
+//                        .add(new OptionBuilder().withLongName("to-file").withShortName('f').hasArgument().withDescription("destination file").build(OPTION__TO_FILE))
+//                );
 
         Commands userCommands = commands.root().add(USER).addOneOf(PATIENT, THERAPIST, ADMIN);
         userCommands.add(ADD).withSpecificOptions(
@@ -284,8 +289,11 @@ public class M7rCli {
             System.exit(ExitStatus.M7R_SYNTAX_ERROR);
 
         } catch (RestServiceHttpException e) {
-            System.out.println("[ERROR] " + e.getMessage());
-            System.exit(1);
+            System.out.println("[ERROR] Http-Error " + e.getStatusCode() + " : " + e.getMessage());
+            if (cliContext.getCliCallGlobalConfiguration().isStacktrace()) {
+                e.printStackTrace();
+            }
+            System.exit(ExitStatus.HTTP_OTHER_ERROR);
 
         } catch (RestServiceConnectionException e) {
             System.out.println("[ERROR] " + e.getMessage());

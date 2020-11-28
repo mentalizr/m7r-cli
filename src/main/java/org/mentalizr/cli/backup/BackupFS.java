@@ -17,10 +17,6 @@ public class BackupFS {
         this.backupFileLocation = new BackupFileLocation();
     }
 
-//    public BackupFileLocation getBackupFileLocation() {
-//        return backupFileLocation;
-//    }
-
     public String getBackupDirAsString() {
         return this.backupFileLocation.getBackupDir().toAbsolutePath().toString();
     }
@@ -66,6 +62,5 @@ public class BackupFS {
             throw new CliException("Could not write to file [" + patientBackupFile.toAbsolutePath() + "]. " + e.getMessage(), e);
         }
     }
-
 
 }

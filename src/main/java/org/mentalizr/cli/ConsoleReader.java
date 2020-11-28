@@ -20,21 +20,21 @@ public class ConsoleReader {
         String userInput;
         do {
             System.out.print(prompt);
-            userInput = System.console().readLine().toLowerCase();
+            userInput = System.console().readLine();
         } while (Strings.isNullOrEmpty(userInput));
         return userInput;
     }
 
     public static String promptForOptionalString(String prompt) {
         System.out.print(prompt);
-        return System.console().readLine().toLowerCase();
+        return System.console().readLine();
     }
 
     public static String promptForOptionString(String prompt, String... options) {
         String userInput;
         do {
             System.out.print(prompt);
-            userInput = System.console().readLine().toLowerCase();
+            userInput = System.console().readLine();
         } while (!equalsAtLeastOne(userInput, Arrays.asList(options)));
         return userInput;
     }
@@ -42,7 +42,7 @@ public class ConsoleReader {
     public static int promptForMandatoryInt(String prompt) {
         Integer integer = null;
         do {
-            System.out.println(prompt);
+            System.out.print(prompt);
             String userInput = System.console().readLine();
             try {
                 integer = Integer.parseInt(userInput);

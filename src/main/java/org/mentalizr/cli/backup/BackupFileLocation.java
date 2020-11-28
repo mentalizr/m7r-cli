@@ -3,7 +3,6 @@ package org.mentalizr.cli.backup;
 import org.mentalizr.cli.config.CliConfigurationFiles;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.serviceObjects.userManagement.PatientRestoreSO;
-import org.mentalizr.serviceObjects.userManagement.ProgramSO;
 import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
 
 import java.io.IOException;
