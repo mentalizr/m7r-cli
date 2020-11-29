@@ -17,7 +17,7 @@ public class BackupPatients {
 
     public static void exec(BackupFS backupFS, CliContext cliContext) throws RestServiceHttpException, RestServiceConnectionException {
 
-        System.out.println("Creating backup to [" + backupFS.getBackupDirAsString() + "].");
+        System.out.println("Backup patients ...");
 
         PatientRestoreCollectionSO patientRestoreCollectionSO = callPatientShowService(cliContext);
 

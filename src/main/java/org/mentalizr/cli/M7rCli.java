@@ -11,6 +11,7 @@ import de.arthurpicht.cli.option.OptionParserResult;
 import de.arthurpicht.cli.option.Options;
 import org.mentalizr.cli.commands.*;
 import org.mentalizr.cli.commands.accessKey.AccessKeyCreateCommand;
+import org.mentalizr.cli.commands.accessKey.AccessKeyShowCommand;
 import org.mentalizr.cli.commands.backup.BackupCommand;
 import org.mentalizr.cli.commands.backup.RecoverCommand;
 import org.mentalizr.cli.commands.program.ProgramAddCommand;
@@ -25,8 +26,10 @@ import org.mentalizr.cli.commands.user.therapist.*;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.cli.exceptions.UserAbortedException;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceBusinessException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceServerException;
 
 import java.util.List;
 
@@ -101,11 +104,7 @@ public class M7rCli {
                                 .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("directory").build(OPTION__DIRECTORY))
                 )
                 .root().add(WIPE)
-                .root().add(ACCESS_KEY).add(CREATE);
-//        .withSpecificOptions(
-//                        new Options()
-//                        .add(new OptionBuilder().withLongName("to-file").withShortName('f').hasArgument().withDescription("destination file").build(OPTION__TO_FILE))
-//                );
+                .root().add(ACCESS_KEY).addOneOf(CREATE, SHOW);
 
         Commands userCommands = commands.root().add(USER).addOneOf(PATIENT, THERAPIST, ADMIN);
         userCommands.add(ADD).withSpecificOptions(
@@ -264,6 +263,9 @@ public class M7rCli {
                     case CREATE:
                         new AccessKeyCreateCommand(cliContext).execute();
                         break;
+                    case SHOW:
+                        new AccessKeyShowCommand(cliContext).execute();
+                        break;
                 }
             }
 
@@ -288,8 +290,28 @@ public class M7rCli {
             System.out.println("    " + e.getArgumentPointerString());
             System.exit(ExitStatus.M7R_SYNTAX_ERROR);
 
+        } catch (RestServiceBusinessException e) {
+            System.out.println("[ERROR] " + e.getMessage());
+            if (cliContext.getCliCallGlobalConfiguration().isStacktrace()) {
+                e.printStackTrace();
+            }
+            System.exit(ExitStatus.HTTP_OTHER_ERROR);
+
+        } catch (RestServiceServerException e) {
+            if (!cliContext.getCliCallGlobalConfiguration().isDebug()) {
+                System.out.println("[ERROR] Server error. Call with --debug option for more info.");
+            } else {
+                System.out.println("[ERROR] Server error.");
+                System.out.println("Cause of server Error: " + e.getMessage());
+            }
+            if (cliContext.getCliCallGlobalConfiguration().isStacktrace()) {
+                e.printStackTrace();
+            }
+            System.exit(ExitStatus.HTTP_OTHER_ERROR);
+
+
         } catch (RestServiceHttpException e) {
-            System.out.println("[ERROR] Http-Error " + e.getStatusCode() + " : " + e.getMessage());
+            System.out.println("[ERROR] Http-Error " + e.getStatusCode() + ": " + e.getMessage());
             if (cliContext.getCliCallGlobalConfiguration().isStacktrace()) {
                 e.printStackTrace();
             }

@@ -7,8 +7,10 @@ import org.mentalizr.client.httpClient.HeaderHelper;
 import org.mentalizr.client.httpClient.HttpClientCreator;
 import org.mentalizr.client.httpClient.HttpRequestCreator;
 import org.mentalizr.client.restService.RestService;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceBusinessException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
+import org.mentalizr.client.restServiceCaller.exception.RestServiceServerException;
 import org.mentalizr.serviceObjects.ErrorSO;
 
 import javax.json.bind.Jsonb;
@@ -20,7 +22,10 @@ import java.net.http.HttpResponse;
 
 public class RestServiceCaller {
 
-    public static String call(RESTCallContext restCallContext, RestService restService) throws RestServiceConnectionException, RestServiceHttpException {
+    public static String call(
+            RESTCallContext restCallContext,
+            RestService restService
+    ) throws RestServiceConnectionException, RestServiceHttpException {
 
         AssertMethodPrecondition.parameterNotNull("restCallContext", restCallContext);
         AssertMethodPrecondition.parameterNotNull("restService", restService);
@@ -44,17 +49,25 @@ public class RestServiceCaller {
         if (httpResponse.statusCode() == 200) {
             return httpResponse.body();
         } else if (httpResponse.statusCode() == 401) {
-            throw new RestServiceHttpException(httpResponse, "No valid session.");
+            throw new RestServiceBusinessException(httpResponse, "No valid session.");
         } else if (httpResponse.statusCode() == 404) {
-            throw new RestServiceHttpException(httpResponse, "Backend service not found.");
-        } else if (httpResponse.statusCode() > 470 && httpResponse.statusCode() <500) {
+            throw new RestServiceBusinessException(httpResponse, "Backend service not found.");
+        } else if (httpResponse.statusCode() > 470 && httpResponse.statusCode() < 500) {
             String responseBody = httpResponse.body();
             if (Strings.isNotNullAndNotEmpty(responseBody)) {
                 Jsonb jsonb = JsonbBuilder.create();
                 ErrorSO errorSO = jsonb.fromJson(responseBody, ErrorSO.class);
-                throw new RestServiceHttpException(httpResponse, errorSO.getMessage());
+                throw new RestServiceBusinessException(httpResponse, errorSO.getMessage());
             }
-            throw new RestServiceHttpException(httpResponse);
+            throw new RestServiceBusinessException(httpResponse);
+        } else if (httpResponse.statusCode() == 500) {
+            String responseBody = httpResponse.body();
+            if (Strings.isNotNullAndNotEmpty(responseBody)) {
+                Jsonb jsonb = JsonbBuilder.create();
+                ErrorSO errorSO = jsonb.fromJson(responseBody, ErrorSO.class);
+                throw new RestServiceServerException(httpResponse, errorSO.getMessage());
+            }
+            throw new RestServiceServerException(httpResponse);
         } else {
             throw new RestServiceHttpException(httpResponse);
         }

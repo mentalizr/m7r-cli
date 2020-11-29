@@ -52,9 +52,9 @@ public class BackupFS {
     public void backup(PatientRestoreSO patientRestoreSO) {
         String patientRestoreSOJson = PatientRestoreSOX.toJsonWithFormatting(patientRestoreSO) + "\n";
 
-        Path therapistBackupDir = backupFileLocation.getBackupDirPatient(patientRestoreSO);
+        Path patientBackupDir = backupFileLocation.getBackupDirPatient(patientRestoreSO);
         String filename = patientRestoreSO.getUuid() + ".patientRestoreSO.json";
-        Path patientBackupFile = therapistBackupDir.resolve(filename);
+        Path patientBackupFile = patientBackupDir.resolve(filename);
 
         try {
             Files.writeString(patientBackupFile, patientRestoreSOJson, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
@@ -62,5 +62,20 @@ public class BackupFS {
             throw new CliException("Could not write to file [" + patientBackupFile.toAbsolutePath() + "]. " + e.getMessage(), e);
         }
     }
+
+    public void backup(AccessKeyRestoreSO accessKeyRestoreSO) {
+        String accessKeyRestoreJson = AccessKeyRestoreSOX.toJsonWithFormatting(accessKeyRestoreSO) + "\n";
+
+        Path backupDir = backupFileLocation.getBackupDirAccessKey(accessKeyRestoreSO);
+        String filename = accessKeyRestoreSO.getId() + ".accessKeyRestoreSO.json";
+        Path backupFile = backupDir.resolve(filename);
+
+        try {
+            Files.writeString(backupFile, accessKeyRestoreJson, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
+        } catch (IOException e) {
+            throw new CliException("Could not write to file [" + backupFile.toAbsolutePath() + "]. " + e.getMessage(), e);
+        }
+    }
+
 
 }

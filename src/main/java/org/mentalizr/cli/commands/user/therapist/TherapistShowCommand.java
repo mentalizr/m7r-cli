@@ -31,11 +31,18 @@ public class TherapistShowCommand extends CommandExecutor {
 
         List<TherapistRestoreSO> collection = therapistRestoreCollectionSO.getCollection();
 
-        System.out.println("[OK] Show all therapists. Found " + collection.size() + ".");
+        if (collection.isEmpty()) {
+            System.out.println("No therapists found.");
+        } else {
+            System.out.println(collection.size() + " therapist" + (collection.size() > 1 ? "s" : "") + " found:");
+            System.out.println("ID                                   | username");
+            System.out.println("-------------------------------------+---------------------");
 
-        for (TherapistRestoreSO therapistRestoreSO : collection) {
-            System.out.println(therapistRestoreSO.getUuid() + " | " + therapistRestoreSO.getUsername());
+            for (TherapistRestoreSO therapistRestoreSO : collection) {
+                System.out.println(therapistRestoreSO.getUuid() + " | " + therapistRestoreSO.getUsername());
+            }
         }
+
 
     }
 

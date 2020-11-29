@@ -28,11 +28,18 @@ public class PatientShowCommand extends CommandExecutor {
 
         List<PatientRestoreSO> collection = patientRestoreCollectionSO.getCollection();
 
-        System.out.println("[OK] Show all patients. Found " + collection.size() + ".");
-
-        for (PatientRestoreSO patientRestoreSO : collection) {
-            System.out.println(patientRestoreSO.getUuid() + " | " + patientRestoreSO.getUsername());
+        if (collection.size() == 0) {
+            System.out.println("No patients found.");
+        } else {
+            System.out.println(collection.size() + " patient" + (collection.size() > 1 ? "s" : "") + " found:");
+            System.out.println("ID                                   | username");
+            System.out.println("-------------------------------------+---------------------");
+            for (PatientRestoreSO patientRestoreSO : collection) {
+                System.out.println(patientRestoreSO.getUuid() + " | " + patientRestoreSO.getUsername());
+            }
         }
+
+
 
     }
 

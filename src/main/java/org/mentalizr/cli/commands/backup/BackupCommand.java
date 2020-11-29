@@ -19,9 +19,12 @@ public class BackupCommand extends CommandExecutor {
 
         BackupFS backupFS = new BackupFS();
 
+        System.out.println("Creating backup to [" + backupFS.getBackupDirAsString() + "].");
+
         BackupPrograms.exec(backupFS, this.cliContext);
         BackupTherapists.exec(backupFS, this.cliContext);
         BackupPatients.exec(backupFS, this.cliContext);
+        BackupAccessKeys.exec(backupFS, this.cliContext);
     }
 
 }

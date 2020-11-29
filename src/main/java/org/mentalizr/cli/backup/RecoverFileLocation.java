@@ -30,6 +30,11 @@ public class RecoverFileLocation {
         return getAllContainingRegularFiles(dir);
     }
 
+    public List<Path> getAllAccessKeyFiles() {
+        Path dir = this.backupDir.resolve("accessKey");
+        return getAllContainingRegularFiles(dir);
+    }
+
     public List<Path> getAllProgramFiles() {
         Path dir = this.backupDir.resolve("program");
         return getAllContainingRegularFiles(dir);

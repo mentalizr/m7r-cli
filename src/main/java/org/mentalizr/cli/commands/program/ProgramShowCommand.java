@@ -28,11 +28,17 @@ public class ProgramShowCommand extends CommandExecutor {
         ProgramCollectionSO programCollectionSO = new ProgramShowService(restCallContext).call();
         List<ProgramSO> collection = programCollectionSO.getCollection();
 
-        System.out.println("[OK] Show all programs. Found " + collection.size() + ".");
-
-        for (ProgramSO programSO : collection) {
-            System.out.println(programSO.getProgramId());
+        if (collection.size() == 0) {
+            System.out.println("No programs found.");
+        } else {
+            System.out.println(collection.size() + " program" + (collection.size() > 1 ? "s" : "") + " found:");
+            System.out.println("program id                           |");
+            System.out.println("-------------------------------------+");
+            for (ProgramSO programSO : collection) {
+                System.out.println(programSO.getProgramId());
+            }
         }
+
     }
 
 }
