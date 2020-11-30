@@ -27,6 +27,8 @@ public class RecoverAccessKeys {
 
         for (Path file : files) {
 
+            System.out.println("RecoverAccessKeys. File: " + file.toAbsolutePath());
+
             String json;
             try {
                 json = Files.readString(file, StandardCharsets.UTF_8);

@@ -3,9 +3,12 @@ package org.mentalizr.cli.commands;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.ConsoleReader;
 import org.mentalizr.cli.RESTCallContextFactory;
+import org.mentalizr.cli.commands.accessKey.AccessKeyShowCommand;
 import org.mentalizr.cli.config.Init;
 import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.client.RESTCallContext;
+import org.mentalizr.client.restService.accessKey.AccessKeyDeleteService;
+import org.mentalizr.client.restService.accessKey.AccessKeyGetAllService;
 import org.mentalizr.client.restService.userAdmin.*;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
@@ -30,6 +33,7 @@ public class WipeCommand extends CommandExecutor {
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
 
         deleteAllPatients(restCallContext);
+        deleteAllAccessKeys(restCallContext);
         deleteAllTherapists(restCallContext);
         deleteAllPrograms(restCallContext);
 
@@ -42,6 +46,17 @@ public class WipeCommand extends CommandExecutor {
         for (PatientRestoreSO patientRestoreSO : collection) {
             new PatientDeleteService(patientRestoreSO.getUsername(), restCallContext).call();
             System.out.println("Patient [" + patientRestoreSO.getUsername() + "] deleted.");
+        }
+    }
+
+    private void deleteAllAccessKeys(RESTCallContext restCallContext) throws RestServiceHttpException, RestServiceConnectionException {
+        AccessKeyCollectionSO accessKeyCollectionSO = new AccessKeyGetAllService(restCallContext).call();
+        List<AccessKeyRestoreSO> collection = accessKeyCollectionSO.getCollection();
+        for (AccessKeyRestoreSO accessKeyRestoreSO : collection) {
+            AccessKeyDeleteSO accessKeyDeleteSO = new AccessKeyDeleteSO();
+            accessKeyDeleteSO.setAccessKey(accessKeyRestoreSO.getAccessKey());
+            new AccessKeyDeleteService(accessKeyDeleteSO, restCallContext).call();
+            System.out.println("Access key [" + accessKeyRestoreSO.getAccessKey() + "] deleted.");
         }
     }
 
