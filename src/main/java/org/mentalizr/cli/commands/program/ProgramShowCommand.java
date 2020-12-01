@@ -4,10 +4,8 @@ import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.cli.commands.CommandExecutor;
 import org.mentalizr.client.RESTCallContext;
-import org.mentalizr.client.restService.RestService;
-import org.mentalizr.client.restService.userAdmin.ProgramShowService;
-import org.mentalizr.client.restService.userAdmin.TherapistShowService;
-import org.mentalizr.client.restServiceCaller.RestServiceCaller;
+import org.mentalizr.client.restService.userAdmin.PatientGetAllService;
+import org.mentalizr.client.restService.userAdmin.ProgramGetAllService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 import org.mentalizr.serviceObjects.userManagement.*;
@@ -24,9 +22,7 @@ public class ProgramShowCommand extends CommandExecutor {
     @Override
     public void execute() throws RestServiceHttpException, RestServiceConnectionException {
 
-        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        ProgramCollectionSO programCollectionSO = new ProgramShowService(restCallContext).call();
-        List<ProgramSO> collection = programCollectionSO.getCollection();
+        List<ProgramSO> collection = ProgramGetAllService.call(this.cliContext).getCollection();
 
         if (collection.size() == 0) {
             System.out.println("No programs found.");

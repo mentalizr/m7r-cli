@@ -1,4 +1,4 @@
-package org.mentalizr.cli.commands.accessKey;
+package org.mentalizr.cli.commands.user.accessKey;
 
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.ConsoleReader;
@@ -19,7 +19,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;

@@ -1,24 +1,29 @@
 package org.mentalizr.client.restService.userAdmin;
 
+import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.ContentType;
+import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.HttpMethod;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
-import org.mentalizr.serviceObjects.userManagement.TherapistRestoreCollectionSO;
-import org.mentalizr.serviceObjects.userManagement.TherapistRestoreCollectionSOX;
+import org.mentalizr.serviceObjects.userManagement.ProgramCollectionSO;
+import org.mentalizr.serviceObjects.userManagement.ProgramCollectionSOX;
+import org.mentalizr.serviceObjects.userManagement.ProgramSO;
 
-public class TherapistShowService extends RestService {
+import java.util.List;
 
-    public TherapistShowService(RESTCallContext restCallContext) {
+public class ProgramGetAllService extends RestService {
+
+    public ProgramGetAllService(RESTCallContext restCallContext) {
         super(restCallContext);
     }
 
     @Override
     public String getServiceName() {
-        return "admin/user/therapist/getAll";
+        return "admin/user/program/getAll";
     }
 
     @Override
@@ -37,9 +42,14 @@ public class TherapistShowService extends RestService {
     }
 
     @Override
-    public TherapistRestoreCollectionSO call() throws RestServiceHttpException, RestServiceConnectionException {
+    public ProgramCollectionSO call() throws RestServiceHttpException, RestServiceConnectionException {
         String body = RestServiceCaller.call(restCallContext, this);
-        return TherapistRestoreCollectionSOX.fromJson(body);
+        return ProgramCollectionSOX.fromJson(body);
+    }
+
+    public static ProgramCollectionSO call(CliContext cliContext) throws RestServiceHttpException, RestServiceConnectionException {
+        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(cliContext);
+        return new ProgramGetAllService(restCallContext).call();
     }
 
 }

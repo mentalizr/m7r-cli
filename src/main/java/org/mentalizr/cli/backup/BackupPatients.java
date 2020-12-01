@@ -3,13 +3,11 @@ package org.mentalizr.cli.backup;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.client.RESTCallContext;
-import org.mentalizr.client.restService.userAdmin.PatientShowService;
+import org.mentalizr.client.restService.userAdmin.PatientGetAllService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 import org.mentalizr.serviceObjects.userManagement.PatientRestoreCollectionSO;
 import org.mentalizr.serviceObjects.userManagement.PatientRestoreSO;
-import org.mentalizr.serviceObjects.userManagement.TherapistRestoreCollectionSO;
-import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
 
 import java.util.List;
 
@@ -28,7 +26,7 @@ public class BackupPatients {
 
     private static PatientRestoreCollectionSO callPatientShowService(CliContext cliContext) throws RestServiceHttpException, RestServiceConnectionException {
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(cliContext);
-        PatientShowService service = new PatientShowService(restCallContext);
+        PatientGetAllService service = new PatientGetAllService(restCallContext);
         return service.call();
     }
 

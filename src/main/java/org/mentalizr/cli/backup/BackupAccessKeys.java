@@ -4,13 +4,10 @@ import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.accessKey.AccessKeyGetAllService;
-import org.mentalizr.client.restService.userAdmin.PatientShowService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 import org.mentalizr.serviceObjects.userManagement.AccessKeyCollectionSO;
 import org.mentalizr.serviceObjects.userManagement.AccessKeyRestoreSO;
-import org.mentalizr.serviceObjects.userManagement.PatientRestoreCollectionSO;
-import org.mentalizr.serviceObjects.userManagement.PatientRestoreSO;
 
 import java.util.List;
 

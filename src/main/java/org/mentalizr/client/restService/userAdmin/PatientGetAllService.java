@@ -1,6 +1,8 @@
 package org.mentalizr.client.restService.userAdmin;
 
+import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.ContentType;
+import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.HttpMethod;
 import org.mentalizr.client.restService.RestService;
@@ -9,10 +11,13 @@ import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionExc
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 import org.mentalizr.serviceObjects.userManagement.PatientRestoreCollectionSO;
 import org.mentalizr.serviceObjects.userManagement.PatientRestoreCollectionSOX;
+import org.mentalizr.serviceObjects.userManagement.PatientRestoreSO;
 
-public class PatientShowService extends RestService {
+import java.util.List;
 
-    public PatientShowService(RESTCallContext restCallContext) {
+public class PatientGetAllService extends RestService {
+
+    public PatientGetAllService(RESTCallContext restCallContext) {
         super(restCallContext);
     }
 
@@ -40,6 +45,12 @@ public class PatientShowService extends RestService {
     public PatientRestoreCollectionSO call() throws RestServiceHttpException, RestServiceConnectionException {
         String body = RestServiceCaller.call(restCallContext, this);
         return PatientRestoreCollectionSOX.fromJson(body);
+    }
+
+    public static PatientRestoreCollectionSO call(CliContext cliContext) throws RestServiceHttpException, RestServiceConnectionException {
+        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(cliContext);
+        PatientGetAllService restService = new PatientGetAllService(restCallContext);
+        return restService.call();
     }
 
 }

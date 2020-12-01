@@ -27,15 +27,7 @@ public class RecoverAccessKeys {
 
         for (Path file : files) {
 
-            System.out.println("RecoverAccessKeys. File: " + file.toAbsolutePath());
-
-            String json;
-            try {
-                json = Files.readString(file, StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                throw new CliException("Could not read access key file to recover from [" + file.toAbsolutePath() + "]. " + e.getMessage(), e);
-            }
-
+            String json = getJson(file);
             AccessKeyRestoreSO accessKeyRestoreSO = AccessKeyRestoreSOX.fromJson(json);
 
             RESTCallContext restCallContext = RESTCallContextFactory.getInstance(cliContext);
@@ -45,6 +37,14 @@ public class RecoverAccessKeys {
         }
 
         System.out.println("[OK] " + files.size() + " access keys restored.");
+    }
+
+    private static String getJson(Path file) {
+        try {
+            return Files.readString(file, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new CliException("Could not read access key file to recover from [" + file.toAbsolutePath() + "]. " + e.getMessage(), e);
+        }
     }
 
 }

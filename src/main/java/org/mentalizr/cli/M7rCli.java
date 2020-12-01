@@ -10,8 +10,6 @@ import de.arthurpicht.cli.option.OptionBuilder;
 import de.arthurpicht.cli.option.OptionParserResult;
 import de.arthurpicht.cli.option.Options;
 import org.mentalizr.cli.commands.*;
-import org.mentalizr.cli.commands.accessKey.AccessKeyCreateCommand;
-import org.mentalizr.cli.commands.accessKey.AccessKeyShowCommand;
 import org.mentalizr.cli.commands.backup.BackupCommand;
 import org.mentalizr.cli.commands.backup.RecoverCommand;
 import org.mentalizr.cli.commands.program.ProgramAddCommand;
@@ -21,6 +19,9 @@ import org.mentalizr.cli.commands.sessionManagement.LoginCommand;
 import org.mentalizr.cli.commands.sessionManagement.LogoutCommand;
 import org.mentalizr.cli.commands.sessionManagement.NoopCommand;
 import org.mentalizr.cli.commands.sessionManagement.StatusCommand;
+import org.mentalizr.cli.commands.user.accessKey.AccessKeyCreateCommand;
+import org.mentalizr.cli.commands.user.accessKey.AccessKeyDeleteCommand;
+import org.mentalizr.cli.commands.user.accessKey.AccessKeyShowCommand;
 import org.mentalizr.cli.commands.user.patient.*;
 import org.mentalizr.cli.commands.user.therapist.*;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
@@ -69,6 +70,7 @@ public class M7rCli {
     public static final String OPTION__CREDENTIAL_FILE = "credentialFile";
     public static final String OPTION__DIRECTORY = "directory" ;
     public static final String OPTION__PROGRAM = "program";
+    public static final String OPTION__ACCESS_KEY = "accessKey";
     public static final String WIPE = "wipe";
     public static final String ACCESS_KEY = "accessKey";
     public static final String CREATE = "create";
@@ -103,8 +105,7 @@ public class M7rCli {
                         new Options()
                                 .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("directory").build(OPTION__DIRECTORY))
                 )
-                .root().add(WIPE)
-                .root().add(ACCESS_KEY).addOneOf(CREATE, SHOW);
+                .root().add(WIPE);
 
         Commands userCommands = commands.root().add(USER).addOneOf(PATIENT, THERAPIST, ADMIN);
         userCommands.add(ADD).withSpecificOptions(
@@ -127,9 +128,17 @@ public class M7rCli {
         programCommands.add(ADD);
         programCommands.add(DELETE).withSpecificOptions(
                 new Options()
-                .add(new OptionBuilder().withLongName("program").withShortName('p').hasArgument().withDescription("program").build(OPTION__PROGRAM))
+                        .add(new OptionBuilder().withLongName("program").withShortName('p').hasArgument().withDescription("program").build(OPTION__PROGRAM))
         );
         programCommands.add(SHOW);
+
+        Commands accessKeyCommands = commands.root().add(ACCESS_KEY);
+        accessKeyCommands.add(CREATE);
+        accessKeyCommands.add(SHOW);
+        accessKeyCommands.add(DELETE).withSpecificOptions(
+                new Options()
+                        .add(new OptionBuilder().withLongName("accessKey").withShortName('a').hasArgument().withDescription("access key").build(OPTION__ACCESS_KEY))
+        );
 
         return new CommandLineInterfaceBuilder()
                 .withGlobalOptions(new Options()
@@ -265,6 +274,9 @@ public class M7rCli {
                         break;
                     case SHOW:
                         new AccessKeyShowCommand(cliContext).execute();
+                        break;
+                    case DELETE:
+                        new AccessKeyDeleteCommand(cliContext).execute();
                         break;
                 }
             }

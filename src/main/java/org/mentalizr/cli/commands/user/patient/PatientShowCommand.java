@@ -4,7 +4,7 @@ import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.cli.commands.CommandExecutor;
 import org.mentalizr.client.RESTCallContext;
-import org.mentalizr.client.restService.userAdmin.PatientShowService;
+import org.mentalizr.client.restService.userAdmin.PatientGetAllService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 import org.mentalizr.serviceObjects.userManagement.PatientRestoreCollectionSO;
@@ -22,11 +22,9 @@ public class PatientShowCommand extends CommandExecutor {
     @Override
     public void execute() throws RestServiceHttpException, RestServiceConnectionException {
 
-        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        PatientShowService restService = new PatientShowService(restCallContext);
-        PatientRestoreCollectionSO patientRestoreCollectionSO = restService.call();
+        List<PatientRestoreSO> collection = PatientGetAllService.call(this.cliContext).getCollection();
 
-        List<PatientRestoreSO> collection = patientRestoreCollectionSO.getCollection();
+        // TODO debug out of restoreSO, see AccessKeyShowCommand
 
         if (collection.size() == 0) {
             System.out.println("No patients found.");
@@ -38,8 +36,6 @@ public class PatientShowCommand extends CommandExecutor {
                 System.out.println(patientRestoreSO.getUuid() + " | " + patientRestoreSO.getUsername());
             }
         }
-
-
 
     }
 
