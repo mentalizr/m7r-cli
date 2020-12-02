@@ -70,9 +70,9 @@ public class M7rCli {
     public static final String OPTION__CREDENTIAL_FILE = "credentialFile";
     public static final String OPTION__DIRECTORY = "directory" ;
     public static final String OPTION__PROGRAM = "program";
-    public static final String OPTION__ACCESS_KEY = "accessKey";
+    public static final String OPTION__ACCESS_KEY = "accesskey";
     public static final String WIPE = "wipe";
-    public static final String ACCESS_KEY = "accessKey";
+    public static final String ACCESS_KEY = "accesskey";
     public static final String CREATE = "create";
     public static final String OPTION__TO_FILE = "file";
 
@@ -107,7 +107,7 @@ public class M7rCli {
                 )
                 .root().add(WIPE);
 
-        Commands userCommands = commands.root().add(USER).addOneOf(PATIENT, THERAPIST, ADMIN);
+        Commands userCommands = commands.root().addOneOf(PATIENT, THERAPIST, ADMIN);
         userCommands.add(ADD).withSpecificOptions(
                 new Options()
                         .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE))
@@ -209,7 +209,7 @@ public class M7rCli {
                 }
             }
 
-            if (commandList.get(0).equals(USER) && commandList.get(1).equals(THERAPIST)) {
+            if (commandList.get(0).equals(THERAPIST)) {
                 String subCommand = commandList.get(2);
                 switch (subCommand) {
                     case ADD:
@@ -230,7 +230,7 @@ public class M7rCli {
                 }
             }
 
-            if (commandList.get(0).equals(USER) && commandList.get(1).equals(PATIENT)) {
+            if (commandList.get(0).equals(PATIENT)) {
                 String subCommand = commandList.get(2);
                 switch (subCommand) {
                     case ADD:
