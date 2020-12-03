@@ -1,84 +1,162 @@
 # m7r-cli
+
 mentalizr command line interface
+
+Allows for administering programs, patients, therapists and access keys as well as
+performing backups and recoveries.
 
 ## Build
 
 Required: gradle 5.6
 
     gradle fatJar
-     
+
+## Install
+
+Put *bin* directory on PATH.
+
 ## Usage     
+     
+### Show version
+
+    $ m7r version     
+     
+### Initialize
+
+Initialize `m7r`, create configuration directory under *~/.m7r* if not preexisting:
+
+    $ m7r init
+    
+### Configuration
+    
+Show m7r configuration as specified in *~/.m7r/cli/cli.config*:
+
+    $ m7r config show
+    
+Open m7r configuration file *~/.m7r/cli/cli.config* with default editor:
+
+    $ m7r config edit
      
 ### Session management
 
 #### Login
 
-Performs login operation. User and password are prompted for input if not given as 
-options.
+Perform login operation. User and password are optional and will be prompted for input if not specified.
 
     $ m7r login -u <user> -p <password>
    
-As an additional option, credentials can be read from file `~/.m7r/cli/credentials.txt` 
-which contains the user name as a first line, and the password as a second line.
-However, be aware of potential security risks, when using this option.
+Read credentials from file `~/.m7r/cli/credentials.txt` 
+which must contain the user name as a first line, and the password as a second line:
     
     $ m7r login -c 
     
-##### Specific options
-
-    -u --user                    user name
-    -p --password                password
-    -c --credential-file         cread credentials from file
-    
 #### Logout
 
-Performs logout operation.
+Perform logout operation:
 
     $ m7r logout
     
 #### Status
 
-Shows session status. Refreshes session. Shows user role if logged in.
+Show session status:
 
     $ m7r status
     
+Session will be refreshed, user role will be shown if logged in.
+    
 #### Noop
 
-Executes a no operation command. Refreshes session.
+Execute a no operation command and refresh session:
 
     $ m7r noop
     
-### User management
+### User management of patients
 
-## Show all users
+#### Show all patients
 
 Show all users in role patient, therapist or administrator:
 
-    $ m7r user admin|patient|therapist show
+    $ m7r patient show
     
-## Add user
+#### Add patient
 
-Add user with role patient, therapist or administrator. Input is prompted on command line:
+Add patient, input will be prompted on command line:
 
-    $ m7r user admin|patient|therapist add
+    $ m7r patient add
     
-Example:
+Add patient by json file of type *AddPatient*:
+ 
+     $ m7r patient add --from-file <jsonFile>
+     
+Show json template for adding patient:
+ 
+     $ m7r patient add --show-template
+     
+ #### Get patient
+ 
+ Get patient by user name as json of type *PatientRestore* 
+ 
+     $ m7r patient --user <username>
+     
+#### Restore patient
 
-    $ m7r user therapist add
+Restore patient from json of type *PatientRestore*:
+
+    $ m7r patient restore --from-file <jsonFile>
     
- Add user with a specific role from json file, typed as *AddServiceObject*:
+#### Delete patient
+
+Delete patient by user name:
+
+    $ m7r patient delete --user <username>
+     
+### User management of therapists
+
+As an analogy to patients:
+
+    $ m7r therapist add
+    $ m7r therapist add --from-file <jsonFile>
+    $ m7r therapist add --show-template
+    $ m7r therapist restore --from-file <jsonFile> 
+    $ m7r therapist delete --user <username>
+    
+### Program management
+
+#### Add program
+
+Add a program, input will be prompted:
+
+    $ m7r program add
+    
+#### Show all programs
+
+    $ m7r program show
+    
+#### Delete program
+
+Delete a program by program id. 
+All referencing patients must be deleted first.
  
-     $ m7r user admin|patient|therapist add --from-file myFile.json
-     
- Show json template for adding user in a specific role:
- 
-     $ m7r user admin|patient|therapist add --show-template
-     
- ## Get user
- 
- Get user by name as json, typed as *ResultServiceObject* 
- 
-     $ m7r user admin|patient|therapist get --user <username>
-     
-     
-     
+    $ m7r program delete --program <program_id>
+    
+### Backup
+
+Crate a backup of all user entities in a subdirectory of 
+*~/.m7r/backup* which will be named after current timestamp.
+
+    $ m7r backup
+
+### Recover
+
+Recover from a specified backup directory. 
+No entities must be preexisting.
+
+    $ m7r recover --directory <backup_directory>
+    
+### Wipe
+
+Dangerous! Delete all entities except administrator accounts.
+Security question needs to be confirmed.
+
+    $ m7r wipe
+    

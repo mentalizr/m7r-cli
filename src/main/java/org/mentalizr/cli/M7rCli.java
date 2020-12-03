@@ -210,7 +210,7 @@ public class M7rCli {
             }
 
             if (commandList.get(0).equals(THERAPIST)) {
-                String subCommand = commandList.get(2);
+                String subCommand = commandList.get(1);
                 switch (subCommand) {
                     case ADD:
                         new TherapistAddCommand(cliContext).execute();
@@ -231,7 +231,7 @@ public class M7rCli {
             }
 
             if (commandList.get(0).equals(PATIENT)) {
-                String subCommand = commandList.get(2);
+                String subCommand = commandList.get(1);
                 switch (subCommand) {
                     case ADD:
                         new PatientAddCommand(cliContext).execute();
