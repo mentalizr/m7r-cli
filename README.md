@@ -119,7 +119,24 @@ As an analogy to patients:
     $ m7r therapist add --show-template
     $ m7r therapist restore --from-file <jsonFile> 
     $ m7r therapist delete --user <username>
+
+### Access key managment
+
+#### Create access keys
+
+Create a specified number of access keys. All related information will
+be prompted for input.
+
+    $ m7r accessKey create
     
+Show all access keys:
+
+    $ m7r accessKey show
+    
+Delete access key:
+
+    $ m7r accessKey delete --accessKey <acces-key>
+
 ### Program management
 
 #### Add program
