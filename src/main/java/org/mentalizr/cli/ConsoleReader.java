@@ -27,7 +27,9 @@ public class ConsoleReader {
 
     public static String promptForOptionalString(String prompt) {
         System.out.print(prompt);
-        return System.console().readLine();
+        String userInput = System.console().readLine();
+        if (userInput == null) userInput = "";
+        return userInput;
     }
 
     public static String promptForOptionString(String prompt, String... options) {
