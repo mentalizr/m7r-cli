@@ -14,6 +14,11 @@ import java.util.Date;
 
 public class BackupFileLocation {
 
+    private static final String SUB_DIR_THERAPIST = "therapist";
+    private static final String SUB_DIR_PATIENT = "patient";
+    private static final String SUB_DIR_ACCESS_KEY = "accessKey";
+    private static final String SUB_DIR_PROGRAM = "program";
+
     private final Path backupDir;
 
     public BackupFileLocation() {
@@ -25,6 +30,10 @@ public class BackupFileLocation {
         this.backupDir = backupRootDir.resolve(timestamp);
         try {
             Files.createDirectories(this.backupDir);
+            Files.createDirectories(this.backupDir.resolve(SUB_DIR_THERAPIST));
+            Files.createDirectories(this.backupDir.resolve(SUB_DIR_PATIENT));
+            Files.createDirectories(this.backupDir.resolve(SUB_DIR_ACCESS_KEY));
+            Files.createDirectories(this.backupDir.resolve(SUB_DIR_PROGRAM));
         } catch (IOException e) {
             throw new CliException("Could not create backup directory [" + this.backupDir.toAbsolutePath() + "] " + e.getMessage(), e);
         }
@@ -35,25 +44,25 @@ public class BackupFileLocation {
     }
 
     public Path getBackupDirTherapist(TherapistRestoreSO therapistRestoreSO) {
-        Path therapistBackupDir = this.backupDir.resolve("therapist").resolve(therapistRestoreSO.getUuid());
+        Path therapistBackupDir = this.backupDir.resolve(SUB_DIR_THERAPIST).resolve(therapistRestoreSO.getUuid());
         createBackupDir(therapistBackupDir);
         return therapistBackupDir;
     }
 
     public Path getBackupDirPatient(PatientRestoreSO patientRestoreSO) {
-        Path patientBackupDir = this.backupDir.resolve("patient").resolve(patientRestoreSO.getUuid());
+        Path patientBackupDir = this.backupDir.resolve(SUB_DIR_PATIENT).resolve(patientRestoreSO.getUuid());
         createBackupDir(patientBackupDir);
         return patientBackupDir;
     }
 
     public Path getBackupDirAccessKey(AccessKeyRestoreSO accessKeyRestoreSO) {
-        Path accessKeyBackupDir = this.backupDir.resolve("accessKey").resolve(accessKeyRestoreSO.getId());
+        Path accessKeyBackupDir = this.backupDir.resolve(SUB_DIR_ACCESS_KEY).resolve(accessKeyRestoreSO.getId());
         createBackupDir(accessKeyBackupDir);
         return accessKeyBackupDir;
     }
 
     public Path getBackupDirProgram() {
-        Path programBackupDir = this.backupDir.resolve("program");
+        Path programBackupDir = this.backupDir.resolve(SUB_DIR_PROGRAM);
         createBackupDir(programBackupDir);
         return programBackupDir;
     }
