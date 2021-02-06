@@ -1,11 +1,9 @@
 package org.mentalizr.cli.commands.user.accessKey;
 
 import org.mentalizr.cli.CliContext;
-import org.mentalizr.cli.RESTCallContextFactory;
-import org.mentalizr.cli.commands.CommandExecutor;
+import org.mentalizr.cli.commands.AbstractCommandExecutor;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
 import org.mentalizr.cli.exceptions.UserAbortedException;
-import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.accessKey.AccessKeyGetAllService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
@@ -13,7 +11,7 @@ import org.mentalizr.serviceObjects.userManagement.*;
 
 import java.util.List;
 
-public class AccessKeyShowCommand extends CommandExecutor {
+public class AccessKeyShowCommand extends AbstractCommandExecutor {
 
     public AccessKeyShowCommand(CliContext cliContext) {
         super(cliContext);

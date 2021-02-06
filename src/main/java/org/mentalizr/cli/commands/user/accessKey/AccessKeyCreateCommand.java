@@ -3,7 +3,7 @@ package org.mentalizr.cli.commands.user.accessKey;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.ConsoleReader;
 import org.mentalizr.cli.RESTCallContextFactory;
-import org.mentalizr.cli.commands.CommandExecutor;
+import org.mentalizr.cli.commands.AbstractCommandExecutor;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
 import org.mentalizr.cli.config.CliConfigurationFiles;
 import org.mentalizr.cli.exceptions.CliException;
@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class AccessKeyCreateCommand extends CommandExecutor {
+public class AccessKeyCreateCommand extends AbstractCommandExecutor {
 
     public AccessKeyCreateCommand(CliContext cliContext) {
         super(cliContext);

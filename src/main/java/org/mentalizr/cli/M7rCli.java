@@ -1,10 +1,13 @@
 package org.mentalizr.cli;
 
+import de.arthurpicht.cli.CommandExecutorException;
 import de.arthurpicht.cli.CommandLineInterface;
 import de.arthurpicht.cli.CommandLineInterfaceBuilder;
 import de.arthurpicht.cli.ParserResult;
+import de.arthurpicht.cli.command.CommandSequenceBuilder;
 import de.arthurpicht.cli.command.Commands;
-import de.arthurpicht.cli.common.ArgsHelper;
+import de.arthurpicht.cli.command.DefaultCommand;
+import de.arthurpicht.cli.command.DefaultCommandBuilder;
 import de.arthurpicht.cli.common.UnrecognizedArgumentException;
 import de.arthurpicht.cli.option.OptionBuilder;
 import de.arthurpicht.cli.option.OptionParserResult;
@@ -15,10 +18,7 @@ import org.mentalizr.cli.commands.backup.RecoverCommand;
 import org.mentalizr.cli.commands.program.ProgramAddCommand;
 import org.mentalizr.cli.commands.program.ProgramDeleteCommand;
 import org.mentalizr.cli.commands.program.ProgramShowCommand;
-import org.mentalizr.cli.commands.sessionManagement.LoginCommand;
-import org.mentalizr.cli.commands.sessionManagement.LogoutCommand;
-import org.mentalizr.cli.commands.sessionManagement.NoopCommand;
-import org.mentalizr.cli.commands.sessionManagement.StatusCommand;
+import org.mentalizr.cli.commands.sessionManagement.*;
 import org.mentalizr.cli.commands.user.accessKey.AccessKeyCreateCommand;
 import org.mentalizr.cli.commands.user.accessKey.AccessKeyDeleteCommand;
 import org.mentalizr.cli.commands.user.accessKey.AccessKeyShowCommand;
@@ -39,19 +39,19 @@ public class M7rCli {
     public static final String ID_DEBUG = "debug";
     public static final String ID_STACKTRACE = "stacktrace";
     public static final String ID_SILENT = "silent";
-    public static final String LOGIN = "login";
+    public static final String ID_VERSION = "version";
+    public static final String ID_HELP = "help";
     public static final String ID_USER = "login";
     public static final String ID_PASSWORD = "password";
+    public static final String LOGIN = "login";
     public static final String LOGOUT = "logout";
     public static final String NOOP = "noop";
     public static final String INIT = "init";
     public static final String CONFIG = "config";
     public static final String EDIT = "edit";
     public static final String SHOW = "show";
-    public static final String VERSION = "version";
     public static final String HELP = "help";
     public static final String STATUS = "status";
-    public static final String USER = "user";
     public static final String THERAPIST = "therapist";
     public static final String PATIENT = "patient";
     public static final String ADMIN = "admin";
@@ -87,68 +87,292 @@ public class M7rCli {
 
     private static CommandLineInterface prepareCLI() {
 
-        Commands commands = new Commands().add(LOGIN).withSpecificOptions(
-                new Options()
+        Options globalOptions = new Options()
+                .add(new OptionBuilder().withShortName('d').withLongName("debug").withDescription("debug").build(ID_DEBUG))
+                .add(new OptionBuilder().withLongName("silent").withDescription("silent").build(ID_SILENT))
+                .add(new OptionBuilder().withLongName("stacktrace").build(ID_STACKTRACE))
+                .add(new OptionBuilder().withShortName('v').withLongName("version").withDescription("show version").build(ID_VERSION))
+                .add(new OptionBuilder().withShortName('h').withLongName("help").withDescription("show help").build(ID_HELP));
+
+        Commands commands = new Commands();
+
+        DefaultCommand defaultCommand = new DefaultCommandBuilder()
+                .withCommandExecutor(new DefaultCommandExecutor())
+                .build();
+        commands.setDefaultCommand(defaultCommand);
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(LOGIN)
+                .withSpecificOptions(new Options()
                         .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user").build(ID_USER))
                         .add(new OptionBuilder().withLongName("password").withShortName('p').hasArgument().withDescription("password").build(ID_PASSWORD))
-                        .add(new OptionBuilder().withLongName("credential-file").withShortName('c').withDescription("use credential file").build(OPTION__CREDENTIAL_FILE))
-        )
-                .root().add(LOGOUT)
-                .root().add(INIT)
-                .root().add(CONFIG).addOneOf(SHOW, EDIT)
-                .root().add(HELP)
-                .root().add(VERSION)
-                .root().add(NOOP)
-                .root().add(STATUS)
-                .root().add(BACKUP)
-                .root().add(RECOVER).withSpecificOptions(
-                        new Options()
-                                .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("directory").build(OPTION__DIRECTORY))
-                )
-                .root().add(WIPE);
+                        .add(new OptionBuilder().withLongName("credential-file").withShortName('c').withDescription("use credential file").build(OPTION__CREDENTIAL_FILE)))
+                .withCommandExecutor(new LoginCommandExecutor())
+                .build());
 
-        Commands userCommands = commands.root().addOneOf(PATIENT, THERAPIST, ADMIN);
-        userCommands.add(ADD).withSpecificOptions(
-                new Options()
-                        .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE))
-                        .add(new OptionBuilder().withLongName("show-template").withDescription("show json template").build(ID_SHOW_TEMPLATE))
-        );
-        userCommands.add(RESTORE).withSpecificOptions(
-                new Options()
-                    .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE))
-        );
-        userCommands.addOneOf(GET, DELETE, ACTIVATE, DEACTIVATE).withSpecificOptions(
-                new Options()
-                        .add(new OptionBuilder().withLongName("uuid").withShortName('i').hasArgument().withDescription("uuid").build(ID_UUID))
-                        .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user name").build(ID_USER))
-        );
-        userCommands.add(SHOW);
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(LOGOUT)
+                .withCommandExecutor(new LogoutCommandExecutor())
+                .build());
 
-        Commands programCommands = commands.root().add(PROGRAM);
-        programCommands.add(ADD);
-        programCommands.add(DELETE).withSpecificOptions(
-                new Options()
-                        .add(new OptionBuilder().withLongName("program").withShortName('p').hasArgument().withDescription("program").build(OPTION__PROGRAM))
-        );
-        programCommands.add(SHOW);
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(INIT)
+                .withCommandExecutor(new InitCommandExecutor())
+                .build());
 
-        Commands accessKeyCommands = commands.root().add(ACCESS_KEY);
-        accessKeyCommands.add(CREATE);
-        accessKeyCommands.add(SHOW);
-        accessKeyCommands.add(DELETE).withSpecificOptions(
-                new Options()
-                        .add(new OptionBuilder().withLongName("accessKey").withShortName('a').hasArgument().withDescription("access key").build(OPTION__ACCESS_KEY))
-        );
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(CONFIG, SHOW)
+                .withCommandExecutor(new ShowConfigCommandExecutor())
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(CONFIG, EDIT)
+                .withCommandExecutor(new EditConfigCommandExecutor())
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(HELP)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(NOOP)
+                .withCommandExecutor(new NoopCommandExecutor())
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(STATUS)
+                .withCommandExecutor(new StatusCommandExecutor())
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(BACKUP)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(RECOVER)
+                .withSpecificOptions(new Options()
+                        .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("directory").build(OPTION__DIRECTORY)))
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(WIPE)
+                .build());
+
+//        Commands commands = new Commands().add(LOGIN).withSpecificOptions(
+//                new Options()
+//                        .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user").build(ID_USER))
+//                        .add(new OptionBuilder().withLongName("password").withShortName('p').hasArgument().withDescription("password").build(ID_PASSWORD))
+//                        .add(new OptionBuilder().withLongName("credential-file").withShortName('c').withDescription("use credential file").build(OPTION__CREDENTIAL_FILE))
+//        )
+//                .root().add(LOGOUT)
+//                .root().add(INIT)
+//                .root().add(CONFIG).addOneOf(SHOW, EDIT)
+//                .root().add(HELP)
+//                .root().add(VERSION)
+//                .root().add(NOOP)
+//                .root().add(STATUS)
+//                .root().add(BACKUP)
+//                .root().add(RECOVER).withSpecificOptions(
+//                        new Options()
+//                                .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("directory").build(OPTION__DIRECTORY))
+//                )
+//                .root().add(WIPE);
+
+        Options specificOptionsUserAdd = new Options()
+                .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE))
+                .add(new OptionBuilder().withLongName("show-template").withDescription("show json template").build(ID_SHOW_TEMPLATE));
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(PATIENT, ADD)
+                .withSpecificOptions(specificOptionsUserAdd)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(THERAPIST, ADD)
+                .withSpecificOptions(specificOptionsUserAdd)
+                .withCommandExecutor(new TherapistAddCommand())
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(ADMIN, ADD)
+                .withSpecificOptions(specificOptionsUserAdd)
+                .build());
+
+        Options specificOptionsUserRestore = new Options()
+                .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE));
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(PATIENT, RESTORE)
+                .withSpecificOptions(specificOptionsUserRestore)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(THERAPIST, RESTORE)
+                .withSpecificOptions(specificOptionsUserRestore)
+                .withCommandExecutor(new TherapistRestoreCommand())
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(ADMIN, RESTORE)
+                .withSpecificOptions(specificOptionsUserRestore)
+                .build());
+
+        Options specificOptionsUser = new Options()
+                .add(new OptionBuilder().withLongName("uuid").withShortName('i').hasArgument().withDescription("uuid").build(ID_UUID))
+                .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user name").build(ID_USER));
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(PATIENT, GET)
+                .withSpecificOptions(specificOptionsUser)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(PATIENT, DELETE)
+                .withSpecificOptions(specificOptionsUser)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(PATIENT, ACTIVATE)
+                .withSpecificOptions(specificOptionsUser)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(PATIENT, DEACTIVATE)
+                .withSpecificOptions(specificOptionsUser)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(THERAPIST, GET)
+                .withSpecificOptions(specificOptionsUser)
+                .withCommandExecutor(new TherapistGetCommand())
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(THERAPIST, DELETE)
+                .withSpecificOptions(specificOptionsUser)
+                .withCommandExecutor(new TherapistDeleteCommand())
+                .build());
+
+        // TODO CommandExecutor
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(THERAPIST, ACTIVATE)
+                .withSpecificOptions(specificOptionsUser)
+                .build());
+
+        // TODO CommandExecutor
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(THERAPIST, DEACTIVATE)
+                .withSpecificOptions(specificOptionsUser)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(ADMIN, GET)
+                .withSpecificOptions(specificOptionsUser)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(ADMIN, DELETE)
+                .withSpecificOptions(specificOptionsUser)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(ADMIN, ACTIVATE)
+                .withSpecificOptions(specificOptionsUser)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(ADMIN, DEACTIVATE)
+                .withSpecificOptions(specificOptionsUser)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(PATIENT, SHOW)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(THERAPIST, SHOW)
+                .withCommandExecutor(new TherapistShowCommand())
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(ADMIN, SHOW)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(PROGRAM, ADD)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(PROGRAM, DELETE)
+                .withSpecificOptions(new Options()
+                        .add(new OptionBuilder().withLongName("program").withShortName('p').hasArgument().withDescription("program").build(OPTION__PROGRAM)))
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(PROGRAM, SHOW)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(ACCESS_KEY, CREATE)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(ACCESS_KEY, SHOW)
+                .build());
+
+        commands.add(new CommandSequenceBuilder()
+                .addCommands(ACCESS_KEY, DELETE)
+                .withSpecificOptions(new Options()
+                        .add(new OptionBuilder().withLongName("accessKey").withShortName('a').hasArgument().withDescription("access key").build(OPTION__ACCESS_KEY)))
+                .build());
+
+
+//        Commands userCommands = commands.root().addOneOf(PATIENT, THERAPIST, ADMIN);
+//        userCommands.add(ADD).withSpecificOptions(
+//                new Options()
+//                        .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE))
+//                        .add(new OptionBuilder().withLongName("show-template").withDescription("show json template").build(ID_SHOW_TEMPLATE))
+//        );
+//        userCommands.add(RESTORE).withSpecificOptions(
+//                new Options()
+//                    .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE))
+//        );
+//        userCommands.addOneOf(GET, DELETE, ACTIVATE, DEACTIVATE).withSpecificOptions(
+//                new Options()
+//                        .add(new OptionBuilder().withLongName("uuid").withShortName('i').hasArgument().withDescription("uuid").build(ID_UUID))
+//                        .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user name").build(ID_USER))
+//        );
+//        userCommands.add(SHOW);
+
+//        Commands programCommands = commands.root().add(PROGRAM);
+//        programCommands.add(ADD);
+//        programCommands.add(DELETE).withSpecificOptions(
+//                new Options()
+//                        .add(new OptionBuilder().withLongName("program").withShortName('p').hasArgument().withDescription("program").build(OPTION__PROGRAM))
+//        );
+//        programCommands.add(SHOW);
+
+//        Commands accessKeyCommands = commands.root().add(ACCESS_KEY);
+//        accessKeyCommands.add(CREATE);
+//        accessKeyCommands.add(SHOW);
+//        accessKeyCommands.add(DELETE).withSpecificOptions(
+//                new Options()
+//                        .add(new OptionBuilder().withLongName("accessKey").withShortName('a').hasArgument().withDescription("access key").build(OPTION__ACCESS_KEY))
+//        );
+//
+//        return new CommandLineInterfaceBuilder()
+//                .withGlobalOptions(new Options()
+//                        .add(new OptionBuilder().withShortName('d').withLongName("debug").withDescription("debug").build(ID_DEBUG))
+//                        .add(new OptionBuilder().withLongName("silent").withDescription("silent").build(ID_SILENT))
+//                        .add(new OptionBuilder().withLongName("stacktrace").build(ID_STACKTRACE))
+//                )
+//                .withCommands(commands)
+//                .build();
 
         return new CommandLineInterfaceBuilder()
-                .withGlobalOptions(new Options()
-                        .add(new OptionBuilder().withShortName('d').withLongName("debug").withDescription("debug").build(ID_DEBUG))
-                        .add(new OptionBuilder().withLongName("silent").withDescription("silent").build(ID_SILENT))
-                        .add(new OptionBuilder().withLongName("stacktrace").build(ID_STACKTRACE))
-                )
+                .withGlobalOptions(globalOptions)
                 .withCommands(commands)
                 .build();
-
     }
 
     public static void main(String[] args) {
@@ -156,79 +380,54 @@ public class M7rCli {
         CommandLineInterface cli = prepareCLI();
         CliContext cliContext = null;
         try {
-            ParserResult parserResult = cli.parse(args);
+            ParserResult parserResult = cli.execute(args);
 
-            CliCallGlobalConfiguration cliCallGlobalConfiguration = processParserResultGlobalOptions(parserResult.getOptionParserResultGlobal());
+            // TODO
+            System.exit(0);
+
+            cliContext = CliContext.getInstance(parserResult);
+
+//            CliCallGlobalConfiguration cliCallGlobalConfiguration = processParserResultGlobalOptions(parserResult.getOptionParserResultGlobal());
             List<String> commandList = parserResult.getCommandList();
-            OptionParserResult optionParserResultSpecific = parserResult.getOptionParserResultSpecific();
+//            OptionParserResult optionParserResultSpecific = parserResult.getOptionParserResultSpecific();
+//
+//            cliContext = new CliContext(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
 
-            cliContext = new CliContext(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+//            if (commandList.get(0).equals(INIT)) {
+//                InitCommandExecutor initCommand = new InitCommandExecutor(cliContext);
+//                initCommand.execute();
+//            }
 
-            if (parserResult.getCommandList().get(0).equals(VERSION)) {
-                VersionCommand versionCommand = new VersionCommand(cliContext);
-                versionCommand.execute();
-            }
+//            if (commandList.get(0).equals(CONFIG)) {
+//                if (commandList.get(1).equals(SHOW)) {
+//                    ShowConfigCommandExecutor showConfigCommand = new ShowConfigCommandExecutor(cliContext);
+//                    showConfigCommand.execute();
+//                } else {
+//                    EditConfigCommandExecutor editConfigCommand = new EditConfigCommandExecutor(cliContext);
+//                    editConfigCommand.execute();
+//                }
+//            }
 
-            if (parserResult.getCommandList().get(0).equals(HELP)) {
-                HelpCommand helpCommand = new HelpCommand(cliContext);
-                helpCommand.execute();
-            }
-
-            if (parserResult.getCommandList().get(0).equals(LOGIN)) {
-                LoginCommand loginCommand = new LoginCommand(cliContext);
-                loginCommand.execute();
-            }
-
-            if (parserResult.getCommandList().get(0).equals(LOGOUT)) {
-                LogoutCommand logoutCommand = new LogoutCommand(cliContext);
-                logoutCommand.execute();
-            }
-
-            if (parserResult.getCommandList().get(0).equals(NOOP)) {
-                NoopCommand noopCommand = new NoopCommand(cliContext);
-                noopCommand.execute();
-            }
-
-            if (parserResult.getCommandList().get(0).equals(STATUS)) {
-                StatusCommand statusCommand = new StatusCommand(cliContext);
-                statusCommand.execute();
-            }
-
-            if (commandList.get(0).equals(INIT)) {
-                InitCommand initCommand = new InitCommand(cliContext);
-                initCommand.execute();
-            }
-
-            if (commandList.get(0).equals(CONFIG)) {
-                if (commandList.get(1).equals(SHOW)) {
-                    ShowConfigCommand showConfigCommand = new ShowConfigCommand(cliContext);
-                    showConfigCommand.execute();
-                } else {
-                    EditConfigCommand editConfigCommand = new EditConfigCommand(cliContext);
-                    editConfigCommand.execute();
-                }
-            }
-
-            if (commandList.get(0).equals(THERAPIST)) {
-                String subCommand = commandList.get(1);
-                switch (subCommand) {
-                    case ADD:
-                        new TherapistAddCommand(cliContext).execute();
-                        break;
-                    case RESTORE:
-                        new TherapistRestoreCommand(cliContext).execute();
-                        break;
-                    case GET:
-                        new TherapistGetCommand(cliContext).execute();
-                        break;
-                    case SHOW:
-                        new TherapistShowCommand(cliContext).execute();
-                        break;
-                    case DELETE:
-                        new TherapistDeleteCommand(cliContext).execute();
-                        break;
-                }
-            }
+//            if (commandList.get(0).equals(THERAPIST)) {
+//                String subCommand = commandList.get(1);
+//                switch (subCommand) {
+//                    case ADD:
+//                        new TherapistAddCommand(cliContext).execute();
+//                        break;
+//                    case RESTORE:
+//                        new TherapistRestoreCommand(cliContext).execute();
+//                        break;
+//                    case GET:
+//                        new TherapistGetCommand(cliContext).execute();
+//                        break;
+//                    case SHOW:
+//                        new TherapistShowCommand(cliContext).execute();
+//                        break;
+//                    case DELETE:
+//                        new TherapistDeleteCommand(cliContext).execute();
+//                        break;
+//                }
+//            }
 
             if (commandList.get(0).equals(PATIENT)) {
                 String subCommand = commandList.get(1);
@@ -282,23 +481,23 @@ public class M7rCli {
             }
 
             if (commandList.get(0).equals(BACKUP)) {
-                CommandExecutor commandExecutor = new BackupCommand(cliContext);
+                AbstractCommandExecutor commandExecutor = new BackupCommand(cliContext);
                 commandExecutor.execute();
             }
 
             if (commandList.get(0).equals(RECOVER)) {
-                CommandExecutor commandExecutor = new RecoverCommand(cliContext);
+                AbstractCommandExecutor commandExecutor = new RecoverCommand(cliContext);
                 commandExecutor.execute();
             }
 
             if (commandList.get(0).equals(WIPE)) {
-                CommandExecutor commandExecutor = new WipeCommand(cliContext);
+                AbstractCommandExecutor commandExecutor = new WipeCommand(cliContext);
                 commandExecutor.execute();
             }
 
         } catch (UnrecognizedArgumentException e) {
             System.out.println("[Error] m7r syntax error. " + e.getMessage());
-            System.out.println("m7r " + ArgsHelper.getArgsString(args));
+            System.out.println("m7r " + e.getArgsAsString());
             System.out.println("    " + e.getArgumentPointerString());
             System.exit(ExitStatus.M7R_SYNTAX_ERROR);
 
@@ -354,6 +553,35 @@ public class M7rCli {
 
         } catch (UserAbortedException e) {
             System.out.println("[Abort] Aborted by user.");
+        } catch (CommandExecutorException e) {
+            if (e.getCause() instanceof RestServiceHttpException) {
+                RestServiceHttpException restServiceHttpException = (RestServiceHttpException) e.getCause();
+                System.out.println("[ERROR] Http-Error " + restServiceHttpException.getStatusCode() + ": " + e.getMessage());
+                if (cliContext.showStacktrace()) {
+                    e.printStackTrace();
+                }
+                System.exit(ExitStatus.HTTP_OTHER_ERROR);
+            } else if (e.getCause() instanceof RestServiceConnectionException) {
+                System.out.println("[ERROR] " + e.getMessage());
+                System.out.println("Cause: " + e.getCause().getMessage());
+                if (cliContext.showStacktrace()) {
+                    e.printStackTrace();
+                }
+                System.exit(ExitStatus.CONNECTION_ERROR);
+            } else if (e.getCause() instanceof UserAbortedException) {
+                System.out.println("[Abort] Aborted by user.");
+            } else {
+                Throwable cause = e.getCause();
+                if (cause != null) {
+                    System.out.println("[ERROR] " + cause.getMessage());
+                } else {
+                    System.out.println("[ERROR] " + e.getMessage());
+                }
+                if (cliContext.showStacktrace()) {
+                    e.printStackTrace();
+                }
+            }
+            e.printStackTrace();
         }
 
     }

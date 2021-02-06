@@ -4,17 +4,14 @@ import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.M7rCli;
 import org.mentalizr.cli.RESTCallContextFactory;
-import org.mentalizr.cli.commands.CommandExecutor;
+import org.mentalizr.cli.commands.AbstractCommandExecutor;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.client.RESTCallContext;
-import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restService.userAdmin.ProgramDeleteService;
-import org.mentalizr.client.restService.userAdmin.TherapistDeleteService;
-import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
-public class ProgramDeleteCommand extends CommandExecutor {
+public class ProgramDeleteCommand extends AbstractCommandExecutor {
 
     public ProgramDeleteCommand(CliContext cliContext) {
         super(cliContext);

@@ -1,0 +1,34 @@
+package org.mentalizr.cli.commands;
+
+import de.arthurpicht.cli.CommandExecutor;
+import de.arthurpicht.cli.option.OptionParserResult;
+import org.mentalizr.cli.M7rCli;
+import org.mentalizr.util.Version;
+
+import java.util.List;
+
+import static org.mentalizr.cli.M7rCli.ID_HELP;
+import static org.mentalizr.cli.M7rCli.ID_VERSION;
+
+public class DefaultCommandExecutor implements CommandExecutor {
+
+    @Override
+    public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) {
+
+        if (optionParserResultGlobal.hasOption(ID_VERSION)) {
+            Version version = Version.getInstance(M7rCli.class);
+            System.out.println();
+            System.out.println("-----------------------------------------------");
+            System.out.println("m7r-cli " + version.getVersion());
+            System.out.println("-----------------------------------------------");
+            System.out.println();
+            System.out.println("Build:         " + version.getBuild());
+
+        } else if (optionParserResultGlobal.hasOption(ID_HELP)) {
+            System.out.println("help: not implemented yet!");
+        } else {
+            System.out.println("mentalizr command line interface. Call 'm7r help' for more information.");
+        }
+
+    }
+}

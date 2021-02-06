@@ -1,9 +1,11 @@
 package org.mentalizr.cli.commands.user.therapist;
 
+import de.arthurpicht.cli.CommandExecutor;
+import de.arthurpicht.cli.CommandExecutorException;
+import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
-import org.mentalizr.cli.RESTCallContextFactory;
-import org.mentalizr.cli.commands.CommandExecutor;
-import org.mentalizr.client.RESTCallContext;
+import org.mentalizr.cli.commands.AbstractCommandExecutor;
+import org.mentalizr.cli.commands.CommandExecutorHelper;
 import org.mentalizr.client.restService.userAdmin.TherapistGetAllService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
@@ -12,18 +14,15 @@ import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
 
 import java.util.List;
 
-public class TherapistShowCommand extends CommandExecutor {
-
-    public TherapistShowCommand(CliContext cliContext) {
-        super(cliContext);
-        this.checkedInit();
-    }
+public class TherapistShowCommand implements CommandExecutor {
 
     @Override
-    public void execute() throws RestServiceHttpException, RestServiceConnectionException {
+    public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) throws CommandExecutorException {
 
-        TherapistRestoreCollectionSO therapistRestoreCollectionSO = TherapistGetAllService.call(this.cliContext);
-        List<TherapistRestoreSO> collection = therapistRestoreCollectionSO.getCollection();
+        CliContext cliContext = CliContext.getInstance(optionParserResultGlobal, commandList, optionParserResultSpecific);
+        CommandExecutorHelper.checkedInit(cliContext);
+
+        List<TherapistRestoreSO> collection = callService(cliContext);
 
         if (collection.isEmpty()) {
             System.out.println("No therapists found.");
@@ -36,8 +35,15 @@ public class TherapistShowCommand extends CommandExecutor {
                 System.out.println(therapistRestoreSO.getUuid() + " | " + therapistRestoreSO.getUsername());
             }
         }
+    }
 
-
+    private List<TherapistRestoreSO> callService(CliContext cliContext) throws CommandExecutorException {
+        try {
+            TherapistRestoreCollectionSO therapistRestoreCollectionSO = TherapistGetAllService.call(cliContext);
+            return therapistRestoreCollectionSO.getCollection();
+        } catch (RestServiceHttpException | RestServiceConnectionException e) {
+            throw new CommandExecutorException(e);
+        }
     }
 
 }

@@ -2,12 +2,12 @@ package org.mentalizr.cli.commands.backup;
 
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.backup.*;
-import org.mentalizr.cli.commands.CommandExecutor;
+import org.mentalizr.cli.commands.AbstractCommandExecutor;
 import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
-public class BackupCommand extends CommandExecutor {
+public class BackupCommand extends AbstractCommandExecutor {
 
     public BackupCommand(CliContext cliContext) {
         super(cliContext);

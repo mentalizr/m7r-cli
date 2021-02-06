@@ -8,11 +8,11 @@ import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
-public abstract class CommandExecutor {
+public abstract class AbstractCommandExecutor {
 
     protected CliContext cliContext;
 
-    public CommandExecutor(CliContext cliContext) {
+    public AbstractCommandExecutor(CliContext cliContext) {
         this.cliContext = cliContext;
     }
 

@@ -1,47 +1,45 @@
-package org.mentalizr.cli.commands.user.therapist;
+package org.mentalizr.cli.commands.sessionManagement;
 
 import de.arthurpicht.cli.CommandExecutor;
 import de.arthurpicht.cli.CommandExecutorException;
 import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
-import org.mentalizr.cli.M7rCli;
 import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.cli.commands.AbstractCommandExecutor;
 import org.mentalizr.cli.commands.CommandExecutorHelper;
 import org.mentalizr.client.RESTCallContext;
-import org.mentalizr.client.restService.userAdmin.TherapistDeleteService;
+import org.mentalizr.client.restService.sessionManagement.SessionStatusService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
+import org.mentalizr.serviceObjects.SessionStatusSO;
 
 import java.util.List;
 
-public class TherapistDeleteCommand implements CommandExecutor {
+public class StatusCommandExecutor implements CommandExecutor {
 
     @Override
     public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) throws CommandExecutorException {
 
         CliContext cliContext = CliContext.getInstance(optionParserResultGlobal, commandList, optionParserResultSpecific);
+
         CommandExecutorHelper.checkedInit(cliContext);
 
-        if (optionParserResultSpecific.hasOption(M7rCli.ID_USER)) {
+        SessionStatusSO sessionStatusSO = callStatus(cliContext);
 
-            String username = optionParserResultSpecific.getValue(M7rCli.ID_USER).trim();
-
-            callTherapistDeleteService(username, cliContext);
-
-            System.out.println("[OK] Therapist [" + username + "] deleted.");
-
-        } else if (optionParserResultSpecific.hasOption(M7rCli.ID_UUID)) {
-            throw new RuntimeException("Not implemented yet.");
+        System.out.println("[OK] Server " + cliContext.getCliConfiguration().getServer() + " is up and running.");
+        if (sessionStatusSO.isValid()) {
+            System.out.println("Session is valid. Logged in as " + sessionStatusSO.getUserRole() + ".");
         } else {
-            System.out.println("[ERROR] Please specify --user or --uuid option.");
+            System.out.println("No valid session.");
         }
+
     }
 
-    private void callTherapistDeleteService(String username, CliContext cliContext) throws CommandExecutorException {
+    private SessionStatusSO callStatus(CliContext cliContext) throws CommandExecutorException {
+
         RESTCallContext restCallContext = RESTCallContextFactory.getInstance(cliContext);
         try {
-            new TherapistDeleteService(username, restCallContext).call();
+            return new SessionStatusService(restCallContext).call();
         } catch (RestServiceHttpException | RestServiceConnectionException e) {
             throw new CommandExecutorException(e);
         }

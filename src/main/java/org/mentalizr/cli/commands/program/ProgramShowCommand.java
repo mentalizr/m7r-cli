@@ -1,10 +1,7 @@
 package org.mentalizr.cli.commands.program;
 
 import org.mentalizr.cli.CliContext;
-import org.mentalizr.cli.RESTCallContextFactory;
-import org.mentalizr.cli.commands.CommandExecutor;
-import org.mentalizr.client.RESTCallContext;
-import org.mentalizr.client.restService.userAdmin.PatientGetAllService;
+import org.mentalizr.cli.commands.AbstractCommandExecutor;
 import org.mentalizr.client.restService.userAdmin.ProgramGetAllService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
@@ -12,7 +9,7 @@ import org.mentalizr.serviceObjects.userManagement.*;
 
 import java.util.List;
 
-public class ProgramShowCommand extends CommandExecutor {
+public class ProgramShowCommand extends AbstractCommandExecutor {
 
     public ProgramShowCommand(CliContext cliContext) {
         super(cliContext);

@@ -1,10 +1,12 @@
 package org.mentalizr.cli.commands.sessionManagement;
 
+import de.arthurpicht.cli.CommandExecutor;
+import de.arthurpicht.cli.CommandExecutorException;
 import de.arthurpicht.cli.option.OptionParserResult;
 import de.arthurpicht.utils.io.textfile.TextFile;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.RESTCallContextFactory;
-import org.mentalizr.cli.commands.CommandExecutor;
+import org.mentalizr.cli.commands.CommandExecutorHelper;
 import org.mentalizr.cli.config.CliConfigurationFiles;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.client.RESTCallContext;
@@ -18,20 +20,17 @@ import java.util.List;
 
 import static org.mentalizr.cli.M7rCli.*;
 
-public class LoginCommand extends CommandExecutor {
+public class LoginCommandExecutor implements CommandExecutor {
 
     private String user;
     private String password;
 
-    public LoginCommand(CliContext cliContext) {
-        super(cliContext);
-        this.checkedInit();
-    }
-
     @Override
-    public void execute() throws RestServiceHttpException, RestServiceConnectionException {
+    public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) throws CommandExecutorException {
 
-        OptionParserResult optionParserResultSpecific = this.cliContext.getOptionParserResultSpecific();
+        CliContext cliContext = CliContext.getInstance(optionParserResultGlobal, commandList, optionParserResultSpecific);
+
+        CommandExecutorHelper.checkedInit(cliContext);
 
         if (optionParserResultSpecific.hasOption(OPTION__CREDENTIAL_FILE)) {
             obtainCredentialsFromFile();
@@ -39,11 +38,12 @@ public class LoginCommand extends CommandExecutor {
             obtainCredentialsFromCommandLine(optionParserResultSpecific);
         }
 
-        String body = callLoginService();
+        String body = callLoginService(cliContext);
 
-        System.out.println("[OK] Successfully logged in to " + this.cliContext.getCliConfiguration().getServer());
+        System.out.println("[OK] Successfully logged in to " + cliContext.getCliConfiguration().getServer());
 
-        debugOut(body);
+        debugOut(body, cliContext);
+
     }
 
     private void obtainCredentialsFromFile() {
@@ -78,13 +78,17 @@ public class LoginCommand extends CommandExecutor {
         }
     }
 
-    private String callLoginService() throws RestServiceHttpException, RestServiceConnectionException {
-        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        return new LoginService(user, password, restCallContext).call();
+    private String callLoginService(CliContext cliContext) throws CommandExecutorException {
+        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(cliContext);
+        try {
+            return new LoginService(user, password, restCallContext).call();
+        } catch (RestServiceHttpException | RestServiceConnectionException e) {
+            throw new CommandExecutorException(e);
+        }
     }
 
-    private void debugOut(String body) {
-        if (this.cliContext.getCliCallGlobalConfiguration().isDebug()) {
+    private void debugOut(String body, CliContext cliContext) {
+        if (cliContext.getCliCallGlobalConfiguration().isDebug()) {
             System.out.println("body: " + body);
         }
     }

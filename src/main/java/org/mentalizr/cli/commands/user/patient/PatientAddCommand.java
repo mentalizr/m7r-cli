@@ -5,7 +5,7 @@ import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.ConsoleReader;
 import org.mentalizr.cli.M7rCli;
 import org.mentalizr.cli.RESTCallContextFactory;
-import org.mentalizr.cli.commands.CommandExecutor;
+import org.mentalizr.cli.commands.AbstractCommandExecutor;
 import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.cli.fileSystem.PatientAddSOFS;
 import org.mentalizr.client.RESTCallContext;
@@ -17,7 +17,7 @@ import org.mentalizr.serviceObjects.userManagement.PatientAddSOX;
 
 import java.nio.file.Paths;
 
-public class PatientAddCommand extends CommandExecutor {
+public class PatientAddCommand extends AbstractCommandExecutor {
 
     public PatientAddCommand(CliContext cliContext) {
         super(cliContext);

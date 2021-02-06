@@ -3,16 +3,15 @@ package org.mentalizr.cli.commands.program;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.ConsoleReader;
 import org.mentalizr.cli.RESTCallContextFactory;
-import org.mentalizr.cli.commands.CommandExecutor;
+import org.mentalizr.cli.commands.AbstractCommandExecutor;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.RestService;
 import org.mentalizr.client.restService.userAdmin.ProgramAddService;
-import org.mentalizr.client.restServiceCaller.RestServiceCaller;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 import org.mentalizr.serviceObjects.userManagement.ProgramSO;
 
-public class ProgramAddCommand extends CommandExecutor {
+public class ProgramAddCommand extends AbstractCommandExecutor {
 
     public ProgramAddCommand(CliContext cliContext) {
         super(cliContext);

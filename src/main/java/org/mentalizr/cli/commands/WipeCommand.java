@@ -14,7 +14,7 @@ import org.mentalizr.serviceObjects.userManagement.*;
 
 import java.util.List;
 
-public class WipeCommand extends CommandExecutor {
+public class WipeCommand extends AbstractCommandExecutor {
 
     public WipeCommand(CliContext cliContext) {
         super(cliContext);

@@ -4,21 +4,18 @@ import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.M7rCli;
 import org.mentalizr.cli.RESTCallContextFactory;
-import org.mentalizr.cli.commands.CommandExecutor;
+import org.mentalizr.cli.commands.AbstractCommandExecutor;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.cli.fileSystem.PatientRestoreSOFS;
-import org.mentalizr.cli.fileSystem.TherapistRestoreSOFS;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.userAdmin.PatientRestoreService;
-import org.mentalizr.client.restService.userAdmin.TherapistRestoreService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 import org.mentalizr.serviceObjects.userManagement.PatientRestoreSO;
-import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
 
 import java.nio.file.Paths;
 
-public class PatientRestoreCommand extends CommandExecutor {
+public class PatientRestoreCommand extends AbstractCommandExecutor {
 
     public PatientRestoreCommand(CliContext cliContext) {
         super(cliContext);

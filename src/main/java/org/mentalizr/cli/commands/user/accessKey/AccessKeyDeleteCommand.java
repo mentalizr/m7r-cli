@@ -4,15 +4,14 @@ import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.M7rCli;
 import org.mentalizr.cli.RESTCallContextFactory;
-import org.mentalizr.cli.commands.CommandExecutor;
+import org.mentalizr.cli.commands.AbstractCommandExecutor;
 import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.accessKey.AccessKeyDeleteService;
-import org.mentalizr.client.restService.userAdmin.PatientDeleteService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 import org.mentalizr.serviceObjects.userManagement.AccessKeyDeleteSO;
 
-public class AccessKeyDeleteCommand extends CommandExecutor {
+public class AccessKeyDeleteCommand extends AbstractCommandExecutor {
 
     public AccessKeyDeleteCommand(CliContext cliContext) {
         super(cliContext);

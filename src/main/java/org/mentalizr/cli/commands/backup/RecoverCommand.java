@@ -4,7 +4,7 @@ import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.M7rCli;
 import org.mentalizr.cli.backup.*;
-import org.mentalizr.cli.commands.CommandExecutor;
+import org.mentalizr.cli.commands.AbstractCommandExecutor;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.client.restService.accessKey.AccessKeyGetAllService;
 import org.mentalizr.client.restService.userAdmin.PatientGetAllService;
@@ -22,7 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class RecoverCommand extends CommandExecutor {
+public class RecoverCommand extends AbstractCommandExecutor {
 
     public RecoverCommand(CliContext cliContext) {
         super(cliContext);
