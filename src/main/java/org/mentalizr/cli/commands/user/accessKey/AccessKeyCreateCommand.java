@@ -1,10 +1,12 @@
 package org.mentalizr.cli.commands.user.accessKey;
 
+import de.arthurpicht.cli.CommandExecutor;
+import de.arthurpicht.cli.CommandExecutorException;
+import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.ConsoleReader;
 import org.mentalizr.cli.RESTCallContextFactory;
-import org.mentalizr.cli.commands.AbstractCommandExecutor;
-import org.mentalizr.cli.config.CliCallGlobalConfiguration;
+import org.mentalizr.cli.commands.CommandExecutorHelper;
 import org.mentalizr.cli.config.CliConfigurationFiles;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.cli.exceptions.UserAbortedException;
@@ -23,30 +25,24 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class AccessKeyCreateCommand extends AbstractCommandExecutor {
-
-    public AccessKeyCreateCommand(CliContext cliContext) {
-        super(cliContext);
-        this.checkedInit();
-    }
+public class AccessKeyCreateCommand implements CommandExecutor {
 
     @Override
-    public void execute() throws RestServiceHttpException, RestServiceConnectionException, UserAbortedException {
+    public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) throws CommandExecutorException {
 
-        CliCallGlobalConfiguration cliCallGlobalConfiguration = this.cliContext.getCliCallGlobalConfiguration();
+        CliContext cliContext = CliContext.getInstance(optionParserResultGlobal, commandList, optionParserResultSpecific);
+        CommandExecutorHelper.checkedInit(cliContext);
 
         AccessKeyCreateSO accessKeyCreateSO = fromPrompt();
 
-        if (cliCallGlobalConfiguration.isDebug()) {
+        if (cliContext.isDebug()) {
             System.out.println("Request service object [AccessKeyCreate]:");
             System.out.println(AccessKeyCreateSOX.toJsonWithFormatting(accessKeyCreateSO));
         }
 
-        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        AccessKeyCollectionSO accessKeyCollectionSO = new AccessKeyCreateService(accessKeyCreateSO, restCallContext)
-                .call();
+        AccessKeyCollectionSO accessKeyCollectionSO = callService(accessKeyCreateSO, cliContext);
 
-        if (cliCallGlobalConfiguration.isDebug()) {
+        if (cliContext.isDebug()) {
             System.out.println("Response service object [AccessKeyCollection]:");
             System.out.println(AccessKeyCollectionSOX.toJsonWithFormatting(accessKeyCollectionSO));
         }
@@ -61,7 +57,7 @@ public class AccessKeyCreateCommand extends AbstractCommandExecutor {
         writeToFile(accessKeyCollectionSO);
     }
 
-    private AccessKeyCreateSO fromPrompt() throws UserAbortedException {
+    private AccessKeyCreateSO fromPrompt() throws CommandExecutorException {
 
         AccessKeyCreateSO accessKeyCreateSO = new AccessKeyCreateSO();
 
@@ -81,9 +77,19 @@ public class AccessKeyCreateCommand extends AbstractCommandExecutor {
         accessKeyCreateSO.setTherapistId(therapistId);
 
         boolean confirm = ConsoleReader.promptForYesOrNo("Continue? (y/n): ");
-        if (!confirm) throw new UserAbortedException();
+        if (!confirm) throw new CommandExecutorException(new UserAbortedException());
 
         return accessKeyCreateSO;
+    }
+
+    private AccessKeyCollectionSO callService(AccessKeyCreateSO accessKeyCreateSO, CliContext cliContext) throws CommandExecutorException {
+        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(cliContext);
+        try {
+            return new AccessKeyCreateService(accessKeyCreateSO, restCallContext).call();
+        } catch (RestServiceHttpException | RestServiceConnectionException e) {
+            throw new CommandExecutorException(e);
+        }
+
     }
 
     private void writeToFile(AccessKeyCollectionSO accessKeyCollectionSO) {
@@ -110,5 +116,4 @@ public class AccessKeyCreateCommand extends AbstractCommandExecutor {
 
         System.out.println("Generated user access keys written to [" + file.getAbsolutePath() + "].");
     }
-
 }

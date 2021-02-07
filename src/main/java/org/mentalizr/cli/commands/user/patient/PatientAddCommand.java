@@ -1,11 +1,14 @@
 package org.mentalizr.cli.commands.user.patient;
 
+import de.arthurpicht.cli.CommandExecutor;
+import de.arthurpicht.cli.CommandExecutorException;
 import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.ConsoleReader;
 import org.mentalizr.cli.M7rCli;
 import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.cli.commands.AbstractCommandExecutor;
+import org.mentalizr.cli.commands.CommandExecutorHelper;
 import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.cli.fileSystem.PatientAddSOFS;
 import org.mentalizr.client.RESTCallContext;
@@ -16,18 +19,15 @@ import org.mentalizr.serviceObjects.userManagement.PatientAddSO;
 import org.mentalizr.serviceObjects.userManagement.PatientAddSOX;
 
 import java.nio.file.Paths;
+import java.util.List;
 
-public class PatientAddCommand extends AbstractCommandExecutor {
-
-    public PatientAddCommand(CliContext cliContext) {
-        super(cliContext);
-        this.checkedInit();
-    }
+public class PatientAddCommand implements CommandExecutor {
 
     @Override
-    public void execute() throws RestServiceHttpException, RestServiceConnectionException, UserAbortedException {
+    public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) throws CommandExecutorException {
 
-        OptionParserResult optionParserResultSpecific = this.cliContext.getOptionParserResultSpecific();
+        CliContext cliContext = CliContext.getInstance(optionParserResultGlobal, commandList, optionParserResultSpecific);
+        CommandExecutorHelper.checkedInit(cliContext);
 
         PatientAddSO patientAddSO;
 
@@ -41,14 +41,12 @@ public class PatientAddCommand extends AbstractCommandExecutor {
             patientAddSO = fromPrompt();
         }
 
-        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
-        PatientAddSO patientAddSOBack = new PatientAddService(patientAddSO, restCallContext)
-                .call();
+        PatientAddSO patientAddSOBack = callService(patientAddSO, cliContext);
 
         System.out.println("[OK] Patient [" + patientAddSOBack.getUsername() + "] added with UUID: [" + patientAddSOBack.getUuid() + "]");
     }
 
-    private PatientAddSO fromPrompt() throws UserAbortedException {
+    private PatientAddSO fromPrompt() throws CommandExecutorException {
 
         PatientAddSO patientAddSO = new PatientAddSO();
 
@@ -92,7 +90,7 @@ public class PatientAddCommand extends AbstractCommandExecutor {
         patientAddSO.setTherapistId(therapistId);
 
         boolean confirm = ConsoleReader.promptForYesOrNo("Continue? (y/n): ");
-        if (!confirm) throw new UserAbortedException();
+        if (!confirm) throw new CommandExecutorException(new UserAbortedException());
 
         return patientAddSO;
     }
@@ -111,6 +109,16 @@ public class PatientAddCommand extends AbstractCommandExecutor {
         patientAddSO.setTherapistId("");
 
         return PatientAddSOX.toJsonWithFormatting(patientAddSO);
+    }
+
+    public PatientAddSO callService(PatientAddSO patientAddSO, CliContext cliContext) throws CommandExecutorException {
+        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(cliContext);
+        try {
+            return new PatientAddService(patientAddSO, restCallContext)
+                    .call();
+        } catch (RestServiceHttpException | RestServiceConnectionException e) {
+            throw new CommandExecutorException(e);
+        }
     }
 
 }

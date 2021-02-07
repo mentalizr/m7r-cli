@@ -1,10 +1,13 @@
 package org.mentalizr.cli.commands.backup;
 
+import de.arthurpicht.cli.CommandExecutor;
+import de.arthurpicht.cli.CommandExecutorException;
 import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.M7rCli;
 import org.mentalizr.cli.backup.*;
 import org.mentalizr.cli.commands.AbstractCommandExecutor;
+import org.mentalizr.cli.commands.CommandExecutorHelper;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.client.restService.accessKey.AccessKeyGetAllService;
 import org.mentalizr.client.restService.userAdmin.PatientGetAllService;
@@ -22,17 +25,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class RecoverCommand extends AbstractCommandExecutor {
-
-    public RecoverCommand(CliContext cliContext) {
-        super(cliContext);
-        this.checkedInit();
-    }
+public class RecoverCommand implements CommandExecutor {
 
     @Override
-    public void execute() throws RestServiceHttpException, RestServiceConnectionException {
+    public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) throws CommandExecutorException {
 
-        OptionParserResult optionParserResultSpecific = this.cliContext.getOptionParserResultSpecific();
+        CliContext cliContext = CliContext.getInstance(optionParserResultGlobal, commandList, optionParserResultSpecific);
+        CommandExecutorHelper.checkedInit(cliContext);
 
         if (!optionParserResultSpecific.hasOption(M7rCli.OPTION__DIRECTORY))
             throw new CliException("Option --directory not specified.");
@@ -43,33 +42,45 @@ public class RecoverCommand extends AbstractCommandExecutor {
 
         RecoverFileLocation recoverFileLocation = new RecoverFileLocation(backupDirectory);
 
-        assertDBisEmpty();
+        assertDBisEmpty(cliContext);
 
-        RecoverPrograms.exec(recoverFileLocation, this.cliContext);
-        RecoverTherapists.exec(recoverFileLocation, this.cliContext);
-        RecoverPatients.exec(recoverFileLocation, this.cliContext);
-        RecoverAccessKeys.exec(recoverFileLocation, this.cliContext);
+        executeRecover(recoverFileLocation, cliContext);
 
         System.out.println("[OK] Recovered from backup.");
     }
 
-    private void assertDBisEmpty() throws RestServiceHttpException, RestServiceConnectionException {
+    private void assertDBisEmpty(CliContext cliContext) throws CommandExecutorException {
 
-        List<ProgramSO> collectionProgram = ProgramGetAllService.call(this.cliContext).getCollection();
-        if (!collectionProgram.isEmpty())
-            throw new CliException("Cannot recover user database due to preexisting programs.");
+        try {
+            List<ProgramSO> collectionProgram = ProgramGetAllService.call(cliContext).getCollection();
+            if (!collectionProgram.isEmpty())
+                throw new CliException("Cannot recover user database due to preexisting programs.");
 
-        List<TherapistRestoreSO> collectionTherapist = TherapistGetAllService.call(this.cliContext).getCollection();
-        if (!collectionTherapist.isEmpty())
-            throw new CliException("Cannot recover user database due to preexisting therapists.");
+            List<TherapistRestoreSO> collectionTherapist = TherapistGetAllService.call(cliContext).getCollection();
+            if (!collectionTherapist.isEmpty())
+                throw new CliException("Cannot recover user database due to preexisting therapists.");
 
-        List<PatientRestoreSO> collectionPatient = PatientGetAllService.call(this.cliContext).getCollection();
-        if (!collectionPatient.isEmpty())
-            throw new CliException("Cannot recover user database due to preexisting patients.");
+            List<PatientRestoreSO> collectionPatient = PatientGetAllService.call(cliContext).getCollection();
+            if (!collectionPatient.isEmpty())
+                throw new CliException("Cannot recover user database due to preexisting patients.");
 
-        List<AccessKeyRestoreSO> collectionAccessKey = AccessKeyGetAllService.call(this.cliContext).getCollection();
-        if (!collectionAccessKey.isEmpty()) {
-            throw new CliException("Cannot recover user database due to preexisting access keys.");
+            List<AccessKeyRestoreSO> collectionAccessKey = AccessKeyGetAllService.call(cliContext).getCollection();
+            if (!collectionAccessKey.isEmpty()) {
+                throw new CliException("Cannot recover user database due to preexisting access keys.");
+            }
+        } catch (RestServiceHttpException | RestServiceConnectionException e) {
+            throw new CommandExecutorException(e);
+        }
+    }
+
+    private void executeRecover(RecoverFileLocation recoverFileLocation, CliContext cliContext) throws CommandExecutorException {
+        try {
+            RecoverPrograms.exec(recoverFileLocation, cliContext);
+            RecoverTherapists.exec(recoverFileLocation, cliContext);
+            RecoverPatients.exec(recoverFileLocation, cliContext);
+            RecoverAccessKeys.exec(recoverFileLocation, cliContext);
+        } catch (RestServiceHttpException | RestServiceConnectionException e) {
+            throw new CommandExecutorException(e);
         }
     }
 

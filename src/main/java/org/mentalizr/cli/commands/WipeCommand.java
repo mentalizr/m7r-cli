@@ -1,5 +1,8 @@
 package org.mentalizr.cli.commands;
 
+import de.arthurpicht.cli.CommandExecutor;
+import de.arthurpicht.cli.CommandExecutorException;
+import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.ConsoleReader;
 import org.mentalizr.cli.RESTCallContextFactory;
@@ -14,35 +17,46 @@ import org.mentalizr.serviceObjects.userManagement.*;
 
 import java.util.List;
 
-public class WipeCommand extends AbstractCommandExecutor {
-
-    public WipeCommand(CliContext cliContext) {
-        super(cliContext);
-        this.checkedInit();
-    }
+public class WipeCommand implements  CommandExecutor {
 
     @Override
-    public void execute() throws UserAbortedException, RestServiceHttpException, RestServiceConnectionException {
+    public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) throws CommandExecutorException {
 
-        System.out.println("[WARNING] This will DELETE ALL database content!");
-        boolean confirm = ConsoleReader.promptForYesOrNo("Continue? (y/n): ");
-        if (!confirm) throw new UserAbortedException();
+        CliContext cliContext = CliContext.getInstance(optionParserResultGlobal, commandList, optionParserResultSpecific);
+        CommandExecutorHelper.checkedInit(cliContext);
 
-        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(this.cliContext);
+        promptForUserConfirmation();
 
-        System.out.println("Delete all patients ...");
-        deleteAllPatients(restCallContext);
-
-        System.out.println("Delete all access keys ...");
-        deleteAllAccessKeys(restCallContext);
-
-        System.out.println("Delete all therapists ...");
-        deleteAllTherapists(restCallContext);
-
-        System.out.println("Delete all programs ...");
-        deleteAllPrograms(restCallContext);
+        callAllDeleteServices(cliContext);
 
         System.out.println("[OK] User database wiped out.");
+    }
+
+    private void promptForUserConfirmation() throws CommandExecutorException {
+        System.out.println("[WARNING] This will DELETE ALL database content!");
+        boolean confirm = ConsoleReader.promptForYesOrNo("Continue? (y/n): ");
+        if (!confirm) throw new CommandExecutorException(new UserAbortedException());
+    }
+
+    private void callAllDeleteServices(CliContext cliContext) throws CommandExecutorException {
+
+        RESTCallContext restCallContext = RESTCallContextFactory.getInstance(cliContext);
+
+        try {
+            System.out.println("Delete all patients ...");
+            deleteAllPatients(restCallContext);
+            System.out.println("Delete all access keys ...");
+            deleteAllAccessKeys(restCallContext);
+
+            System.out.println("Delete all therapists ...");
+            deleteAllTherapists(restCallContext);
+
+            System.out.println("Delete all programs ...");
+            deleteAllPrograms(restCallContext);
+
+        } catch (RestServiceHttpException | RestServiceConnectionException e) {
+            throw new CommandExecutorException(e);
+        }
     }
 
     private void deleteAllPatients(RESTCallContext restCallContext) throws RestServiceHttpException, RestServiceConnectionException {

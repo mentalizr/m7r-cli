@@ -1,7 +1,11 @@
 package org.mentalizr.cli.commands.user.accessKey;
 
+import de.arthurpicht.cli.CommandExecutor;
+import de.arthurpicht.cli.CommandExecutorException;
+import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.commands.AbstractCommandExecutor;
+import org.mentalizr.cli.commands.CommandExecutorHelper;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
 import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.client.restService.accessKey.AccessKeyGetAllService;
@@ -11,21 +15,17 @@ import org.mentalizr.serviceObjects.userManagement.*;
 
 import java.util.List;
 
-public class AccessKeyShowCommand extends AbstractCommandExecutor {
-
-    public AccessKeyShowCommand(CliContext cliContext) {
-        super(cliContext);
-        this.checkedInit();
-    }
+public class AccessKeyShowCommand implements CommandExecutor {
 
     @Override
-    public void execute() throws RestServiceHttpException, RestServiceConnectionException, UserAbortedException {
+    public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) throws CommandExecutorException {
 
-        CliCallGlobalConfiguration cliCallGlobalConfiguration = this.cliContext.getCliCallGlobalConfiguration();
+        CliContext cliContext = CliContext.getInstance(optionParserResultGlobal, commandList, optionParserResultSpecific);
+        CommandExecutorHelper.checkedInit(cliContext);
 
-        AccessKeyCollectionSO accessKeyCollectionSO = AccessKeyGetAllService.call(this.cliContext);
+        AccessKeyCollectionSO accessKeyCollectionSO =  callService(cliContext);
 
-        if (cliCallGlobalConfiguration.isDebug()) {
+        if (cliContext.isDebug()) {
             System.out.println("Response service object [AccessKeyCollection]:");
             System.out.println(AccessKeyCollectionSOX.toJsonWithFormatting(accessKeyCollectionSO));
         }
@@ -40,6 +40,15 @@ public class AccessKeyShowCommand extends AbstractCommandExecutor {
             for (AccessKeyRestoreSO accessKeyRestoreSO : collection) {
                 System.out.println(accessKeyRestoreSO.getId() + " | " + accessKeyRestoreSO.getAccessKey() + " | " + accessKeyRestoreSO.getProgramId());
             }
+        }
+    }
+
+    private AccessKeyCollectionSO callService(CliContext cliContext) throws CommandExecutorException {
+
+        try {
+            return AccessKeyGetAllService.call(cliContext);
+        } catch (RestServiceHttpException | RestServiceConnectionException e) {
+            throw new CommandExecutorException(e);
         }
     }
 

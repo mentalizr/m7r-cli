@@ -33,6 +33,7 @@ import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException
 import org.mentalizr.client.restServiceCaller.exception.RestServiceServerException;
 
 import java.util.List;
+import java.util.Objects;
 
 public class M7rCli {
 
@@ -146,37 +147,20 @@ public class M7rCli {
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(BACKUP)
+                .withCommandExecutor(new BackupCommand())
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(RECOVER)
                 .withSpecificOptions(new Options()
                         .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("directory").build(OPTION__DIRECTORY)))
+                .withCommandExecutor(new RecoverCommand())
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(WIPE)
+                .withCommandExecutor(new WipeCommand())
                 .build());
-
-//        Commands commands = new Commands().add(LOGIN).withSpecificOptions(
-//                new Options()
-//                        .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user").build(ID_USER))
-//                        .add(new OptionBuilder().withLongName("password").withShortName('p').hasArgument().withDescription("password").build(ID_PASSWORD))
-//                        .add(new OptionBuilder().withLongName("credential-file").withShortName('c').withDescription("use credential file").build(OPTION__CREDENTIAL_FILE))
-//        )
-//                .root().add(LOGOUT)
-//                .root().add(INIT)
-//                .root().add(CONFIG).addOneOf(SHOW, EDIT)
-//                .root().add(HELP)
-//                .root().add(VERSION)
-//                .root().add(NOOP)
-//                .root().add(STATUS)
-//                .root().add(BACKUP)
-//                .root().add(RECOVER).withSpecificOptions(
-//                        new Options()
-//                                .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("directory").build(OPTION__DIRECTORY))
-//                )
-//                .root().add(WIPE);
 
         Options specificOptionsUserAdd = new Options()
                 .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE))
@@ -185,6 +169,7 @@ public class M7rCli {
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PATIENT, ADD)
                 .withSpecificOptions(specificOptionsUserAdd)
+                .withCommandExecutor(new PatientAddCommand())
                 .build());
 
         commands.add(new CommandSequenceBuilder()
@@ -204,6 +189,7 @@ public class M7rCli {
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PATIENT, RESTORE)
                 .withSpecificOptions(specificOptionsUserRestore)
+                .withCommandExecutor(new PatientRestoreCommand())
                 .build());
 
         commands.add(new CommandSequenceBuilder()
@@ -223,12 +209,14 @@ public class M7rCli {
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PATIENT, GET)
+                .withCommandExecutor(new PatientGetCommand())
                 .withSpecificOptions(specificOptionsUser)
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PATIENT, DELETE)
                 .withSpecificOptions(specificOptionsUser)
+                .withCommandExecutor(new PatientDeleteCommand())
                 .build());
 
         commands.add(new CommandSequenceBuilder()
@@ -287,6 +275,7 @@ public class M7rCli {
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PATIENT, SHOW)
+                .withCommandExecutor(new PatientShowCommand())
                 .build());
 
         commands.add(new CommandSequenceBuilder()
@@ -300,74 +289,37 @@ public class M7rCli {
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PROGRAM, ADD)
+                .withCommandExecutor(new ProgramAddCommand())
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PROGRAM, DELETE)
                 .withSpecificOptions(new Options()
                         .add(new OptionBuilder().withLongName("program").withShortName('p').hasArgument().withDescription("program").build(OPTION__PROGRAM)))
+                .withCommandExecutor(new ProgramDeleteCommand())
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PROGRAM, SHOW)
+                .withCommandExecutor(new ProgramShowCommand())
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ACCESS_KEY, CREATE)
+                .withCommandExecutor(new AccessKeyCreateCommand())
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ACCESS_KEY, SHOW)
+                .withCommandExecutor(new AccessKeyShowCommand())
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ACCESS_KEY, DELETE)
                 .withSpecificOptions(new Options()
                         .add(new OptionBuilder().withLongName("accessKey").withShortName('a').hasArgument().withDescription("access key").build(OPTION__ACCESS_KEY)))
+                .withCommandExecutor(new AccessKeyDeleteCommand())
                 .build());
-
-
-//        Commands userCommands = commands.root().addOneOf(PATIENT, THERAPIST, ADMIN);
-//        userCommands.add(ADD).withSpecificOptions(
-//                new Options()
-//                        .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE))
-//                        .add(new OptionBuilder().withLongName("show-template").withDescription("show json template").build(ID_SHOW_TEMPLATE))
-//        );
-//        userCommands.add(RESTORE).withSpecificOptions(
-//                new Options()
-//                    .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE))
-//        );
-//        userCommands.addOneOf(GET, DELETE, ACTIVATE, DEACTIVATE).withSpecificOptions(
-//                new Options()
-//                        .add(new OptionBuilder().withLongName("uuid").withShortName('i').hasArgument().withDescription("uuid").build(ID_UUID))
-//                        .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user name").build(ID_USER))
-//        );
-//        userCommands.add(SHOW);
-
-//        Commands programCommands = commands.root().add(PROGRAM);
-//        programCommands.add(ADD);
-//        programCommands.add(DELETE).withSpecificOptions(
-//                new Options()
-//                        .add(new OptionBuilder().withLongName("program").withShortName('p').hasArgument().withDescription("program").build(OPTION__PROGRAM))
-//        );
-//        programCommands.add(SHOW);
-
-//        Commands accessKeyCommands = commands.root().add(ACCESS_KEY);
-//        accessKeyCommands.add(CREATE);
-//        accessKeyCommands.add(SHOW);
-//        accessKeyCommands.add(DELETE).withSpecificOptions(
-//                new Options()
-//                        .add(new OptionBuilder().withLongName("accessKey").withShortName('a').hasArgument().withDescription("access key").build(OPTION__ACCESS_KEY))
-//        );
-//
-//        return new CommandLineInterfaceBuilder()
-//                .withGlobalOptions(new Options()
-//                        .add(new OptionBuilder().withShortName('d').withLongName("debug").withDescription("debug").build(ID_DEBUG))
-//                        .add(new OptionBuilder().withLongName("silent").withDescription("silent").build(ID_SILENT))
-//                        .add(new OptionBuilder().withLongName("stacktrace").build(ID_STACKTRACE))
-//                )
-//                .withCommands(commands)
-//                .build();
 
         return new CommandLineInterfaceBuilder()
                 .withGlobalOptions(globalOptions)
@@ -378,210 +330,87 @@ public class M7rCli {
     public static void main(String[] args) {
 
         CommandLineInterface cli = prepareCLI();
-        CliContext cliContext = null;
+
+        ParserResult parserResult = null;
+
         try {
-            ParserResult parserResult = cli.execute(args);
-
-            // TODO
-            System.exit(0);
-
-            cliContext = CliContext.getInstance(parserResult);
-
-//            CliCallGlobalConfiguration cliCallGlobalConfiguration = processParserResultGlobalOptions(parserResult.getOptionParserResultGlobal());
-            List<String> commandList = parserResult.getCommandList();
-//            OptionParserResult optionParserResultSpecific = parserResult.getOptionParserResultSpecific();
-//
-//            cliContext = new CliContext(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
-
-//            if (commandList.get(0).equals(INIT)) {
-//                InitCommandExecutor initCommand = new InitCommandExecutor(cliContext);
-//                initCommand.execute();
-//            }
-
-//            if (commandList.get(0).equals(CONFIG)) {
-//                if (commandList.get(1).equals(SHOW)) {
-//                    ShowConfigCommandExecutor showConfigCommand = new ShowConfigCommandExecutor(cliContext);
-//                    showConfigCommand.execute();
-//                } else {
-//                    EditConfigCommandExecutor editConfigCommand = new EditConfigCommandExecutor(cliContext);
-//                    editConfigCommand.execute();
-//                }
-//            }
-
-//            if (commandList.get(0).equals(THERAPIST)) {
-//                String subCommand = commandList.get(1);
-//                switch (subCommand) {
-//                    case ADD:
-//                        new TherapistAddCommand(cliContext).execute();
-//                        break;
-//                    case RESTORE:
-//                        new TherapistRestoreCommand(cliContext).execute();
-//                        break;
-//                    case GET:
-//                        new TherapistGetCommand(cliContext).execute();
-//                        break;
-//                    case SHOW:
-//                        new TherapistShowCommand(cliContext).execute();
-//                        break;
-//                    case DELETE:
-//                        new TherapistDeleteCommand(cliContext).execute();
-//                        break;
-//                }
-//            }
-
-            if (commandList.get(0).equals(PATIENT)) {
-                String subCommand = commandList.get(1);
-                switch (subCommand) {
-                    case ADD:
-                        new PatientAddCommand(cliContext).execute();
-                        break;
-                    case RESTORE:
-                        new PatientRestoreCommand(cliContext).execute();
-                        break;
-                    case GET:
-                        new PatientGetCommand(cliContext).execute();
-                        break;
-                    case SHOW:
-                        new PatientShowCommand(cliContext).execute();
-                        break;
-                    case DELETE:
-                        new PatientDeleteCommand(cliContext).execute();
-                        break;
-                }
-            }
-
-            if (commandList.get(0).equals(PROGRAM)) {
-                String subCommand = commandList.get(1);
-                switch (subCommand) {
-                    case ADD:
-                        new ProgramAddCommand(cliContext).execute();
-                        break;
-                    case DELETE:
-                        new ProgramDeleteCommand(cliContext).execute();
-                        break;
-                    case SHOW:
-                        new ProgramShowCommand(cliContext).execute();
-                        break;
-                }
-            }
-
-            if (commandList.get(0).equals(ACCESS_KEY)) {
-                String subCommand = commandList.get(1);
-                switch (subCommand) {
-                    case CREATE:
-                        new AccessKeyCreateCommand(cliContext).execute();
-                        break;
-                    case SHOW:
-                        new AccessKeyShowCommand(cliContext).execute();
-                        break;
-                    case DELETE:
-                        new AccessKeyDeleteCommand(cliContext).execute();
-                        break;
-                }
-            }
-
-            if (commandList.get(0).equals(BACKUP)) {
-                AbstractCommandExecutor commandExecutor = new BackupCommand(cliContext);
-                commandExecutor.execute();
-            }
-
-            if (commandList.get(0).equals(RECOVER)) {
-                AbstractCommandExecutor commandExecutor = new RecoverCommand(cliContext);
-                commandExecutor.execute();
-            }
-
-            if (commandList.get(0).equals(WIPE)) {
-                AbstractCommandExecutor commandExecutor = new WipeCommand(cliContext);
-                commandExecutor.execute();
-            }
-
+            parserResult = cli.parse(args);
         } catch (UnrecognizedArgumentException e) {
             System.out.println("[Error] m7r syntax error. " + e.getMessage());
             System.out.println("m7r " + e.getArgsAsString());
             System.out.println("    " + e.getArgumentPointerString());
             System.exit(ExitStatus.M7R_SYNTAX_ERROR);
+        }
 
-        } catch (RestServiceBusinessException e) {
-            System.out.println("[ERROR] " + e.getMessage());
-            if (cliContext.getCliCallGlobalConfiguration().isStacktrace()) {
-                e.printStackTrace();
-            }
-            System.exit(ExitStatus.HTTP_OTHER_ERROR);
+        boolean showStacktrace = parserResult.getOptionParserResultGlobal().hasOption(ID_STACKTRACE);
+        boolean isDebug = parserResult.getOptionParserResultGlobal().hasOption(ID_DEBUG);
 
-        } catch (RestServiceServerException e) {
-            if (!cliContext.getCliCallGlobalConfiguration().isDebug()) {
-                System.out.println("[ERROR] Server error. Call with --debug option for more info.");
-            } else {
-                System.out.println("[ERROR] Server error.");
-                System.out.println("Cause of server Error: " + e.getMessage());
-            }
-            if (cliContext.getCliCallGlobalConfiguration().isStacktrace()) {
-                e.printStackTrace();
-            }
-            System.exit(ExitStatus.HTTP_OTHER_ERROR);
+        try {
 
-
-        } catch (RestServiceHttpException e) {
-            System.out.println("[ERROR] Http-Error " + e.getStatusCode() + ": " + e.getMessage());
-            if (cliContext.getCliCallGlobalConfiguration().isStacktrace()) {
-                e.printStackTrace();
-            }
-            System.exit(ExitStatus.HTTP_OTHER_ERROR);
-
-        } catch (RestServiceConnectionException e) {
-            System.out.println("[ERROR] " + e.getMessage());
-            System.out.println("Cause: " + e.getCause().getMessage());
-            if (cliContext.getCliCallGlobalConfiguration().isStacktrace()) {
-                e.printStackTrace();
-            }
-            System.exit(ExitStatus.CONNECTION_ERROR);
+            cli.execute(parserResult);
 
         } catch (CliException e) {
+
             System.out.println("[ERROR] " + e.getMessage());
-            if (cliContext != null && cliContext.getCliCallGlobalConfiguration().isStacktrace()) {
-                e.printStackTrace();
-            }
+            if (showStacktrace) e.printStackTrace();
             System.exit(ExitStatus.INTERNAL_ERROR);
 
         } catch (RuntimeException e) {
+
             System.out.println("[INTERNAL ERROR] " + e.getMessage());
-            if (cliContext.getCliCallGlobalConfiguration().isStacktrace()) {
+            if (showStacktrace) {
                 e.printStackTrace();
             } else {
                 System.out.println("Consider calling command with --stacktrace global option.");
             }
 
-        } catch (UserAbortedException e) {
-            System.out.println("[Abort] Aborted by user.");
         } catch (CommandExecutorException e) {
-            if (e.getCause() instanceof RestServiceHttpException) {
+
+            if (e.getCause() instanceof RestServiceBusinessException) {
+
+                RestServiceBusinessException restServiceBusinessException = (RestServiceBusinessException) e.getCause();
+                System.out.println("[ERROR] " + restServiceBusinessException.getMessage());
+                if (showStacktrace) e.printStackTrace();
+                System.exit(ExitStatus.HTTP_OTHER_ERROR);
+
+            } else if (e.getCause() instanceof RestServiceServerException) {
+
+                if (isDebug) {
+                    RestServiceServerException restServiceServerException = (RestServiceServerException) e.getCause();
+                    System.out.println("[ERROR] Server error.");
+                    System.out.println("Cause: " + restServiceServerException.getMessage());
+                } else {
+                    System.out.println("[ERROR] Server error. Call with --debug option for more info.");
+                }
+                if (showStacktrace) e.printStackTrace();
+                System.exit(ExitStatus.HTTP_OTHER_ERROR);
+
+            } else if (e.getCause() instanceof RestServiceHttpException) {
+
                 RestServiceHttpException restServiceHttpException = (RestServiceHttpException) e.getCause();
                 System.out.println("[ERROR] Http-Error " + restServiceHttpException.getStatusCode() + ": " + e.getMessage());
-                if (cliContext.showStacktrace()) {
-                    e.printStackTrace();
-                }
+                if (showStacktrace) e.printStackTrace();
                 System.exit(ExitStatus.HTTP_OTHER_ERROR);
+
             } else if (e.getCause() instanceof RestServiceConnectionException) {
-                System.out.println("[ERROR] " + e.getMessage());
-                System.out.println("Cause: " + e.getCause().getMessage());
-                if (cliContext.showStacktrace()) {
-                    e.printStackTrace();
-                }
+
+                System.out.println("[ERROR] " + e.getCause().getMessage());
+                if (showStacktrace) e.printStackTrace();
                 System.exit(ExitStatus.CONNECTION_ERROR);
+
             } else if (e.getCause() instanceof UserAbortedException) {
+
                 System.out.println("[Abort] Aborted by user.");
+                System.exit(ExitStatus.USER_ABORT);
+
             } else {
+                System.out.println("Unknown error type.");
                 Throwable cause = e.getCause();
-                if (cause != null) {
-                    System.out.println("[ERROR] " + cause.getMessage());
-                } else {
-                    System.out.println("[ERROR] " + e.getMessage());
-                }
-                if (cliContext.showStacktrace()) {
+                System.out.println("[ERROR] " + Objects.requireNonNullElse(cause, e).getMessage());
+                if (showStacktrace) {
                     e.printStackTrace();
                 }
             }
-            e.printStackTrace();
         }
 
     }
