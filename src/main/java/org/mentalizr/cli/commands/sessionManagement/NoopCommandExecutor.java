@@ -1,8 +1,8 @@
 package org.mentalizr.cli.commands.sessionManagement;
 
+import de.arthurpicht.cli.CliCall;
 import de.arthurpicht.cli.CommandExecutor;
 import de.arthurpicht.cli.CommandExecutorException;
-import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.RESTCallContextFactory;
 import org.mentalizr.cli.commands.CommandExecutorHelper;
@@ -11,19 +11,12 @@ import org.mentalizr.client.restService.sessionManagement.NoopService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
-import java.util.List;
-
 public class NoopCommandExecutor implements CommandExecutor {
 
     @Override
-    public void execute(
-            OptionParserResult optionParserResultGlobal,
-            List<String> commandList,
-            OptionParserResult optionParserResultSpecific,
-            List<String> parameterList)
-            throws CommandExecutorException {
+    public void execute(CliCall cliCall) throws CommandExecutorException {
 
-        CliContext cliContext = CliContext.getInstance(optionParserResultGlobal, commandList, optionParserResultSpecific);
+        CliContext cliContext = CliContext.getInstance(cliCall);
 
         CommandExecutorHelper.checkedInit(cliContext);
 

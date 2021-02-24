@@ -1,20 +1,18 @@
 package org.mentalizr.cli.commands;
 
+import de.arthurpicht.cli.CliCall;
 import de.arthurpicht.cli.CommandExecutor;
 import de.arthurpicht.cli.CommandExecutorException;
-import de.arthurpicht.cli.option.OptionParserResult;
 import de.arthurpicht.utils.core.strings.Strings;
-import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.config.CliConfigurationFiles;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public class EditConfigCommandExecutor implements CommandExecutor {
 
     @Override
-    public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) throws CommandExecutorException {
+    public void execute(CliCall cliCall) throws CommandExecutorException {
 
         CommandExecutorHelper.checkInitStatus();
 

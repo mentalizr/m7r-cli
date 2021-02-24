@@ -1,24 +1,20 @@
 package org.mentalizr.cli.commands.backup;
 
+import de.arthurpicht.cli.CliCall;
 import de.arthurpicht.cli.CommandExecutor;
 import de.arthurpicht.cli.CommandExecutorException;
-import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.backup.*;
-import org.mentalizr.cli.commands.AbstractCommandExecutor;
 import org.mentalizr.cli.commands.CommandExecutorHelper;
-import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
-
-import java.util.List;
 
 public class BackupCommand implements CommandExecutor {
 
     @Override
-    public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) throws CommandExecutorException {
+    public void execute(CliCall cliCall) throws CommandExecutorException {
 
-        CliContext cliContext = CliContext.getInstance(optionParserResultGlobal, commandList, optionParserResultSpecific);
+        CliContext cliContext = CliContext.getInstance(cliCall);
         CommandExecutorHelper.checkedInit(cliContext);
 
         BackupFS backupFS = new BackupFS();

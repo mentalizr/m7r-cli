@@ -1,5 +1,6 @@
 package org.mentalizr.cli.commands.user.therapist;
 
+import de.arthurpicht.cli.CliCall;
 import de.arthurpicht.cli.CommandExecutor;
 import de.arthurpicht.cli.CommandExecutorException;
 import de.arthurpicht.cli.option.OptionParserResult;
@@ -18,18 +19,18 @@ import org.mentalizr.serviceObjects.userManagement.TherapistAddSO;
 import org.mentalizr.serviceObjects.userManagement.TherapistAddSOX;
 
 import java.nio.file.Paths;
-import java.util.List;
 
 public class TherapistAddCommand implements CommandExecutor {
 
     @Override
-    public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) throws CommandExecutorException {
+    public void execute(CliCall cliCall) throws CommandExecutorException {
 
-        CliContext cliContext = CliContext.getInstance(optionParserResultGlobal, commandList, optionParserResultSpecific);
+        CliContext cliContext = CliContext.getInstance(cliCall);
         CommandExecutorHelper.checkedInit(cliContext);
 
         TherapistAddSO therapistAddSO;
 
+        OptionParserResult optionParserResultSpecific = cliCall.getOptionParserResultSpecific();
         if (optionParserResultSpecific.hasOption(M7rCli.ID_FROM_FILE)) {
             String fileName = optionParserResultSpecific.getValue(M7rCli.ID_FROM_FILE);
             therapistAddSO = TherapistAddSOFS.fromFile(Paths.get(fileName));

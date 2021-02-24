@@ -1,6 +1,6 @@
 package org.mentalizr.cli;
 
-import de.arthurpicht.cli.ParserResult;
+import de.arthurpicht.cli.CliCall;
 import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.config.CliCallGlobalConfiguration;
 import org.mentalizr.cli.config.CliConfiguration;
@@ -27,16 +27,16 @@ public class CliContext {
         this.cliConfiguration = null;
     }
 
-    public static CliContext getInstance(ParserResult parserResult) {
-
-        CliCallGlobalConfiguration cliCallGlobalConfiguration = new CliCallGlobalConfiguration();
-        OptionParserResult optionParserResultGlobal = parserResult.getOptionParserResultGlobal();
-        if (optionParserResultGlobal.hasOption(ID_DEBUG)) cliCallGlobalConfiguration.setDebug(true);
-        if (optionParserResultGlobal.hasOption(ID_SILENT)) cliCallGlobalConfiguration.setSilent(true);
-        if (optionParserResultGlobal.hasOption(ID_STACKTRACE)) cliCallGlobalConfiguration.setStacktrace(true);
-
-        return new CliContext(cliCallGlobalConfiguration, parserResult.getCommandList(), parserResult.getOptionParserResultSpecific());
-    }
+//    public static CliContext getInstance(ParserResult parserResult) {
+//
+//        CliCallGlobalConfiguration cliCallGlobalConfiguration = new CliCallGlobalConfiguration();
+//        OptionParserResult optionParserResultGlobal = parserResult.getOptionParserResultGlobal();
+//        if (optionParserResultGlobal.hasOption(ID_DEBUG)) cliCallGlobalConfiguration.setDebug(true);
+//        if (optionParserResultGlobal.hasOption(ID_SILENT)) cliCallGlobalConfiguration.setSilent(true);
+//        if (optionParserResultGlobal.hasOption(ID_STACKTRACE)) cliCallGlobalConfiguration.setStacktrace(true);
+//
+//        return new CliContext(cliCallGlobalConfiguration, parserResult.getCommandList(), parserResult.getOptionParserResultSpecific());
+//    }
 
     public static CliContext getInstance(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific) {
         CliCallGlobalConfiguration cliCallGlobalConfiguration = new CliCallGlobalConfiguration();
@@ -46,6 +46,20 @@ public class CliContext {
 
         return new CliContext(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
     }
+
+    public static CliContext getInstance(CliCall cliCall) {
+        CliCallGlobalConfiguration cliCallGlobalConfiguration = new CliCallGlobalConfiguration();
+        OptionParserResult optionParserResultGlobal = cliCall.getOptionParserResultGlobal();
+        if (optionParserResultGlobal.hasOption(ID_DEBUG)) cliCallGlobalConfiguration.setDebug(true);
+        if (optionParserResultGlobal.hasOption(ID_SILENT)) cliCallGlobalConfiguration.setSilent(true);
+        if (optionParserResultGlobal.hasOption(ID_STACKTRACE)) cliCallGlobalConfiguration.setStacktrace(true);
+
+        List<String> commandList = cliCall.getCommandList();
+        OptionParserResult optionParserResultSpecific = cliCall.getOptionParserResultSpecific();
+
+        return new CliContext(cliCallGlobalConfiguration, commandList, optionParserResultSpecific);
+    }
+
 
     public CliCallGlobalConfiguration getCliCallGlobalConfiguration() {
         return cliCallGlobalConfiguration;

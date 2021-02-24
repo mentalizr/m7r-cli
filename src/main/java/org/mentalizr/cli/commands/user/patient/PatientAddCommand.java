@@ -1,5 +1,6 @@
 package org.mentalizr.cli.commands.user.patient;
 
+import de.arthurpicht.cli.CliCall;
 import de.arthurpicht.cli.CommandExecutor;
 import de.arthurpicht.cli.CommandExecutorException;
 import de.arthurpicht.cli.option.OptionParserResult;
@@ -7,7 +8,6 @@ import org.mentalizr.cli.CliContext;
 import org.mentalizr.cli.ConsoleReader;
 import org.mentalizr.cli.M7rCli;
 import org.mentalizr.cli.RESTCallContextFactory;
-import org.mentalizr.cli.commands.AbstractCommandExecutor;
 import org.mentalizr.cli.commands.CommandExecutorHelper;
 import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.cli.fileSystem.PatientAddSOFS;
@@ -19,18 +19,18 @@ import org.mentalizr.serviceObjects.userManagement.PatientAddSO;
 import org.mentalizr.serviceObjects.userManagement.PatientAddSOX;
 
 import java.nio.file.Paths;
-import java.util.List;
 
 public class PatientAddCommand implements CommandExecutor {
 
     @Override
-    public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) throws CommandExecutorException {
+    public void execute(CliCall cliCall) throws CommandExecutorException {
 
-        CliContext cliContext = CliContext.getInstance(optionParserResultGlobal, commandList, optionParserResultSpecific);
+        CliContext cliContext = CliContext.getInstance(cliCall);
         CommandExecutorHelper.checkedInit(cliContext);
 
         PatientAddSO patientAddSO;
 
+        OptionParserResult optionParserResultSpecific = cliCall.getOptionParserResultSpecific();
         if (optionParserResultSpecific.hasOption(M7rCli.ID_FROM_FILE)) {
             String fileName = optionParserResultSpecific.getValue(M7rCli.ID_FROM_FILE);
             patientAddSO = PatientAddSOFS.fromFile(Paths.get(fileName));

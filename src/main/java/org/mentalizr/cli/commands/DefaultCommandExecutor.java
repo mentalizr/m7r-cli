@@ -1,11 +1,10 @@
 package org.mentalizr.cli.commands;
 
+import de.arthurpicht.cli.CliCall;
 import de.arthurpicht.cli.CommandExecutor;
 import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.M7rCli;
 import org.mentalizr.util.Version;
-
-import java.util.List;
 
 import static org.mentalizr.cli.M7rCli.ID_HELP;
 import static org.mentalizr.cli.M7rCli.ID_VERSION;
@@ -13,8 +12,9 @@ import static org.mentalizr.cli.M7rCli.ID_VERSION;
 public class DefaultCommandExecutor implements CommandExecutor {
 
     @Override
-    public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) {
+    public void execute(CliCall cliCall) {
 
+        OptionParserResult optionParserResultGlobal = cliCall.getOptionParserResultGlobal();
         if (optionParserResultGlobal.hasOption(ID_VERSION)) {
             Version version = Version.getInstance(M7rCli.class);
             System.out.println();

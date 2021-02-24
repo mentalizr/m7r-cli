@@ -1,12 +1,11 @@
 package org.mentalizr.cli.backup;
 
 import org.mentalizr.cli.CliContext;
-import org.mentalizr.cli.RESTCallContextFactory;
-import org.mentalizr.client.RESTCallContext;
 import org.mentalizr.client.restService.userAdmin.ProgramGetAllService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
-import org.mentalizr.serviceObjects.userManagement.*;
+import org.mentalizr.serviceObjects.userManagement.ProgramCollectionSO;
+import org.mentalizr.serviceObjects.userManagement.ProgramSO;
 
 import java.util.List;
 

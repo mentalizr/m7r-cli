@@ -1,38 +1,35 @@
 package org.mentalizr.cli;
 
-import de.arthurpicht.cli.CommandExecutorException;
-import de.arthurpicht.cli.CommandLineInterface;
-import de.arthurpicht.cli.CommandLineInterfaceBuilder;
-import de.arthurpicht.cli.ParserResult;
+import de.arthurpicht.cli.*;
 import de.arthurpicht.cli.command.CommandSequenceBuilder;
 import de.arthurpicht.cli.command.Commands;
 import de.arthurpicht.cli.command.DefaultCommand;
 import de.arthurpicht.cli.command.DefaultCommandBuilder;
 import de.arthurpicht.cli.common.UnrecognizedArgumentException;
-import de.arthurpicht.cli.option.OptionBuilder;
-import de.arthurpicht.cli.option.OptionParserResult;
-import de.arthurpicht.cli.option.Options;
+import de.arthurpicht.cli.option.*;
 import org.mentalizr.cli.commands.*;
 import org.mentalizr.cli.commands.backup.BackupCommand;
 import org.mentalizr.cli.commands.backup.RecoverCommand;
 import org.mentalizr.cli.commands.program.ProgramAddCommand;
 import org.mentalizr.cli.commands.program.ProgramDeleteCommand;
 import org.mentalizr.cli.commands.program.ProgramShowCommand;
-import org.mentalizr.cli.commands.sessionManagement.*;
+import org.mentalizr.cli.commands.sessionManagement.LoginCommandExecutor;
+import org.mentalizr.cli.commands.sessionManagement.LogoutCommandExecutor;
+import org.mentalizr.cli.commands.sessionManagement.NoopCommandExecutor;
+import org.mentalizr.cli.commands.sessionManagement.StatusCommandExecutor;
 import org.mentalizr.cli.commands.user.accessKey.AccessKeyCreateCommand;
 import org.mentalizr.cli.commands.user.accessKey.AccessKeyDeleteCommand;
 import org.mentalizr.cli.commands.user.accessKey.AccessKeyShowCommand;
 import org.mentalizr.cli.commands.user.patient.*;
 import org.mentalizr.cli.commands.user.therapist.*;
-import org.mentalizr.cli.config.CliCallGlobalConfiguration;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceBusinessException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceServerException;
+import org.mentalizr.util.Version;
 
-import java.util.List;
 import java.util.Objects;
 
 public class M7rCli {
@@ -51,7 +48,6 @@ public class M7rCli {
     public static final String CONFIG = "config";
     public static final String EDIT = "edit";
     public static final String SHOW = "show";
-    public static final String HELP = "help";
     public static final String STATUS = "status";
     public static final String THERAPIST = "therapist";
     public static final String PATIENT = "patient";
@@ -77,23 +73,23 @@ public class M7rCli {
     public static final String CREATE = "create";
     public static final String OPTION__TO_FILE = "file";
 
+//    private static CliCallGlobalConfiguration processParserResultGlobalOptions(OptionParserResult optionParserResult) {
+//        CliCallGlobalConfiguration cliCallGlobalConfiguration = new CliCallGlobalConfiguration();
+//        if (optionParserResult.hasOption(ID_DEBUG)) cliCallGlobalConfiguration.setDebug(true);
+//        if (optionParserResult.hasOption(ID_SILENT)) cliCallGlobalConfiguration.setSilent(true);
+//        if (optionParserResult.hasOption(ID_STACKTRACE)) cliCallGlobalConfiguration.setStacktrace(true);
+//        return cliCallGlobalConfiguration;
+//    }
 
-    private static CliCallGlobalConfiguration processParserResultGlobalOptions(OptionParserResult optionParserResult) {
-        CliCallGlobalConfiguration cliCallGlobalConfiguration = new CliCallGlobalConfiguration();
-        if (optionParserResult.hasOption(ID_DEBUG)) cliCallGlobalConfiguration.setDebug(true);
-        if (optionParserResult.hasOption(ID_SILENT)) cliCallGlobalConfiguration.setSilent(true);
-        if (optionParserResult.hasOption(ID_STACKTRACE)) cliCallGlobalConfiguration.setStacktrace(true);
-        return cliCallGlobalConfiguration;
-    }
-
-    private static CommandLineInterface prepareCLI() {
+    private static Cli prepareCLI() {
 
         Options globalOptions = new Options()
+                .add(new HelpOption())
+                .add(new VersionOption())
+                .add(new ManOption())
                 .add(new OptionBuilder().withShortName('d').withLongName("debug").withDescription("debug").build(ID_DEBUG))
                 .add(new OptionBuilder().withLongName("silent").withDescription("silent").build(ID_SILENT))
-                .add(new OptionBuilder().withLongName("stacktrace").build(ID_STACKTRACE))
-                .add(new OptionBuilder().withShortName('v').withLongName("version").withDescription("show version").build(ID_VERSION))
-                .add(new OptionBuilder().withShortName('h').withLongName("help").withDescription("show help").build(ID_HELP));
+                .add(new OptionBuilder().withLongName("stacktrace").build(ID_STACKTRACE));
 
         Commands commands = new Commands();
 
@@ -105,64 +101,81 @@ public class M7rCli {
         commands.add(new CommandSequenceBuilder()
                 .addCommands(LOGIN)
                 .withSpecificOptions(new Options()
+                        .add(new HelpOption())
                         .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user").build(ID_USER))
                         .add(new OptionBuilder().withLongName("password").withShortName('p').hasArgument().withDescription("password").build(ID_PASSWORD))
                         .add(new OptionBuilder().withLongName("credential-file").withShortName('c').withDescription("use credential file").build(OPTION__CREDENTIAL_FILE)))
                 .withCommandExecutor(new LoginCommandExecutor())
+                .withDescription("Login to mentalizr server.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(LOGOUT)
+                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new LogoutCommandExecutor())
+                .withDescription("Logout from mentalizr server.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(INIT)
+                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new InitCommandExecutor())
+                .withDescription("Create local configuration files and directories.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(CONFIG, SHOW)
+                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new ShowConfigCommandExecutor())
+                .withDescription("Print configuration.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(CONFIG, EDIT)
+                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new EditConfigCommandExecutor())
-                .build());
-
-        commands.add(new CommandSequenceBuilder()
-                .addCommands(HELP)
+                .withDescription("Edit configuration.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(NOOP)
+                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new NoopCommandExecutor())
+                .withDescription("No operation except refreshing server session.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(STATUS)
+                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new StatusCommandExecutor())
+                .withDescription("Show status of connection to server.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(BACKUP)
+                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new BackupCommand())
+                .withDescription("Create backup of user database to local json files.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(RECOVER)
                 .withSpecificOptions(new Options()
-                        .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("directory").build(OPTION__DIRECTORY)))
+                        .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("directory").build(OPTION__DIRECTORY))
+                        .add(new HelpOption()))
                 .withCommandExecutor(new RecoverCommand())
+                .withDescription("Recover user database from local json files.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(WIPE)
+                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new WipeCommand())
+                .withDescription("Delete all data in user database.")
                 .build());
 
         Options specificOptionsUserAdd = new Options()
+                .add(new HelpOption())
                 .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE))
                 .add(new OptionBuilder().withLongName("show-template").withDescription("show json template").build(ID_SHOW_TEMPLATE));
 
@@ -170,40 +183,48 @@ public class M7rCli {
                 .addCommands(PATIENT, ADD)
                 .withSpecificOptions(specificOptionsUserAdd)
                 .withCommandExecutor(new PatientAddCommand())
+                .withDescription("Add user in role patient.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(THERAPIST, ADD)
                 .withSpecificOptions(specificOptionsUserAdd)
                 .withCommandExecutor(new TherapistAddCommand())
+                .withDescription("Add user in role therapist.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ADMIN, ADD)
                 .withSpecificOptions(specificOptionsUserAdd)
+                .withDescription("Add user in role admin.")
                 .build());
 
         Options specificOptionsUserRestore = new Options()
+                .add(new HelpOption())
                 .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE));
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PATIENT, RESTORE)
                 .withSpecificOptions(specificOptionsUserRestore)
                 .withCommandExecutor(new PatientRestoreCommand())
+                .withDescription("Restore all users in role patient.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(THERAPIST, RESTORE)
                 .withSpecificOptions(specificOptionsUserRestore)
                 .withCommandExecutor(new TherapistRestoreCommand())
+                .withDescription("Restore all users in role therapist.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ADMIN, RESTORE)
                 .withSpecificOptions(specificOptionsUserRestore)
+                .withDescription("Restore all users in role admin")
                 .build());
 
         Options specificOptionsUser = new Options()
+                .add(new HelpOption())
                 .add(new OptionBuilder().withLongName("uuid").withShortName('i').hasArgument().withDescription("uuid").build(ID_UUID))
                 .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user name").build(ID_USER));
 
@@ -211,130 +232,167 @@ public class M7rCli {
                 .addCommands(PATIENT, GET)
                 .withCommandExecutor(new PatientGetCommand())
                 .withSpecificOptions(specificOptionsUser)
+                .withDescription("Show patient.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PATIENT, DELETE)
                 .withSpecificOptions(specificOptionsUser)
                 .withCommandExecutor(new PatientDeleteCommand())
+                .withDescription("Delete patient.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PATIENT, ACTIVATE)
                 .withSpecificOptions(specificOptionsUser)
+                .withDescription("Activate patient.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PATIENT, DEACTIVATE)
                 .withSpecificOptions(specificOptionsUser)
+                .withDescription("Deactivate patient.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(THERAPIST, GET)
                 .withSpecificOptions(specificOptionsUser)
                 .withCommandExecutor(new TherapistGetCommand())
+                .withDescription("Show therapist.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(THERAPIST, DELETE)
                 .withSpecificOptions(specificOptionsUser)
                 .withCommandExecutor(new TherapistDeleteCommand())
+                .withDescription("Delete therapist.")
                 .build());
 
         // TODO CommandExecutor
         commands.add(new CommandSequenceBuilder()
                 .addCommands(THERAPIST, ACTIVATE)
                 .withSpecificOptions(specificOptionsUser)
+                .withDescription("Delete therapist.")
                 .build());
 
         // TODO CommandExecutor
         commands.add(new CommandSequenceBuilder()
                 .addCommands(THERAPIST, DEACTIVATE)
                 .withSpecificOptions(specificOptionsUser)
+                .withDescription("Deactivate therapist.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ADMIN, GET)
                 .withSpecificOptions(specificOptionsUser)
+                .withDescription("Show admin.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ADMIN, DELETE)
                 .withSpecificOptions(specificOptionsUser)
+                .withDescription("Delete admin.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ADMIN, ACTIVATE)
                 .withSpecificOptions(specificOptionsUser)
+                .withDescription("Activate admin.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ADMIN, DEACTIVATE)
                 .withSpecificOptions(specificOptionsUser)
+                .withDescription("Deactivate admin.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PATIENT, SHOW)
+                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new PatientShowCommand())
+                .withDescription("Show all patient.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(THERAPIST, SHOW)
+                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new TherapistShowCommand())
+                .withDescription("Show all therapists.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ADMIN, SHOW)
+                .withSpecificOptions(new Options().add(new HelpOption()))
+                .withDescription("Show all admins.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PROGRAM, ADD)
+                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new ProgramAddCommand())
+                .withDescription("Add program.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PROGRAM, DELETE)
                 .withSpecificOptions(new Options()
+                        .add(new HelpOption())
                         .add(new OptionBuilder().withLongName("program").withShortName('p').hasArgument().withDescription("program").build(OPTION__PROGRAM)))
                 .withCommandExecutor(new ProgramDeleteCommand())
+                .withDescription("Delete program.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PROGRAM, SHOW)
+                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new ProgramShowCommand())
+                .withDescription("Show all programs.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ACCESS_KEY, CREATE)
+                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new AccessKeyCreateCommand())
+                .withDescription("Create access keys.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ACCESS_KEY, SHOW)
+                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new AccessKeyShowCommand())
+                .withDescription("Show all access keys.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ACCESS_KEY, DELETE)
                 .withSpecificOptions(new Options()
+                        .add(new HelpOption())
                         .add(new OptionBuilder().withLongName("accessKey").withShortName('a').hasArgument().withDescription("access key").build(OPTION__ACCESS_KEY)))
                 .withCommandExecutor(new AccessKeyDeleteCommand())
+                .withDescription("Delete access key.")
                 .build());
 
-        return new CommandLineInterfaceBuilder()
+        Version version = Version.getInstance(M7rCli.class);
+        CliDescription cliDescription = new CliDescriptionBuilder("m7r")
+                .withDescription("The mentalizr command line interface.\nhttps://github.com/mentalizr/m7r-cli")
+                .withVersion(version.getVersion())
+                .withDate(version.getBuild())
+                .build();
+
+        return new CliBuilder()
                 .withGlobalOptions(globalOptions)
                 .withCommands(commands)
-                .build();
+                .build(cliDescription);
     }
 
     public static void main(String[] args) {
 
-        CommandLineInterface cli = prepareCLI();
+        Cli cli = prepareCLI();
 
-        ParserResult parserResult = null;
+        CliCall cliCall = null;
 
         try {
-            parserResult = cli.parse(args);
+            cliCall = cli.parse(args);
         } catch (UnrecognizedArgumentException e) {
             System.out.println("[Error] m7r syntax error. " + e.getMessage());
             System.out.println("m7r " + e.getArgsAsString());
@@ -342,12 +400,12 @@ public class M7rCli {
             System.exit(ExitStatus.M7R_SYNTAX_ERROR);
         }
 
-        boolean showStacktrace = parserResult.getOptionParserResultGlobal().hasOption(ID_STACKTRACE);
-        boolean isDebug = parserResult.getOptionParserResultGlobal().hasOption(ID_DEBUG);
+        boolean showStacktrace = cliCall.getOptionParserResultGlobal().hasOption(ID_STACKTRACE);
+        boolean isDebug = cliCall.getOptionParserResultGlobal().hasOption(ID_DEBUG);
 
         try {
 
-            cli.execute(parserResult);
+            cli.execute(cliCall);
 
         } catch (CliException e) {
 

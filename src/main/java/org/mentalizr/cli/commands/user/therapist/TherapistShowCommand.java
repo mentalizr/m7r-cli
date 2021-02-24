@@ -1,10 +1,9 @@
 package org.mentalizr.cli.commands.user.therapist;
 
+import de.arthurpicht.cli.CliCall;
 import de.arthurpicht.cli.CommandExecutor;
 import de.arthurpicht.cli.CommandExecutorException;
-import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
-import org.mentalizr.cli.commands.AbstractCommandExecutor;
 import org.mentalizr.cli.commands.CommandExecutorHelper;
 import org.mentalizr.client.restService.userAdmin.TherapistGetAllService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
@@ -17,9 +16,9 @@ import java.util.List;
 public class TherapistShowCommand implements CommandExecutor {
 
     @Override
-    public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) throws CommandExecutorException {
+    public void execute(CliCall cliCall) throws CommandExecutorException {
 
-        CliContext cliContext = CliContext.getInstance(optionParserResultGlobal, commandList, optionParserResultSpecific);
+        CliContext cliContext = CliContext.getInstance(cliCall);
         CommandExecutorHelper.checkedInit(cliContext);
 
         List<TherapistRestoreSO> collection = callService(cliContext);

@@ -1,26 +1,25 @@
 package org.mentalizr.cli.commands.user.accessKey;
 
+import de.arthurpicht.cli.CliCall;
 import de.arthurpicht.cli.CommandExecutor;
 import de.arthurpicht.cli.CommandExecutorException;
-import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
-import org.mentalizr.cli.commands.AbstractCommandExecutor;
 import org.mentalizr.cli.commands.CommandExecutorHelper;
-import org.mentalizr.cli.config.CliCallGlobalConfiguration;
-import org.mentalizr.cli.exceptions.UserAbortedException;
 import org.mentalizr.client.restService.accessKey.AccessKeyGetAllService;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
-import org.mentalizr.serviceObjects.userManagement.*;
+import org.mentalizr.serviceObjects.userManagement.AccessKeyCollectionSO;
+import org.mentalizr.serviceObjects.userManagement.AccessKeyCollectionSOX;
+import org.mentalizr.serviceObjects.userManagement.AccessKeyRestoreSO;
 
 import java.util.List;
 
 public class AccessKeyShowCommand implements CommandExecutor {
 
     @Override
-    public void execute(OptionParserResult optionParserResultGlobal, List<String> commandList, OptionParserResult optionParserResultSpecific, List<String> parameterList) throws CommandExecutorException {
+    public void execute(CliCall cliCall) throws CommandExecutorException {
 
-        CliContext cliContext = CliContext.getInstance(optionParserResultGlobal, commandList, optionParserResultSpecific);
+        CliContext cliContext = CliContext.getInstance(cliCall);
         CommandExecutorHelper.checkedInit(cliContext);
 
         AccessKeyCollectionSO accessKeyCollectionSO =  callService(cliContext);
