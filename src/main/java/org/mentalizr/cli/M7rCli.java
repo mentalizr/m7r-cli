@@ -3,11 +3,16 @@ package org.mentalizr.cli;
 import de.arthurpicht.cli.*;
 import de.arthurpicht.cli.command.CommandSequenceBuilder;
 import de.arthurpicht.cli.command.Commands;
-import de.arthurpicht.cli.command.DefaultCommand;
-import de.arthurpicht.cli.command.DefaultCommandBuilder;
+import de.arthurpicht.cli.command.InfoDefaultCommand;
 import de.arthurpicht.cli.common.UnrecognizedArgumentException;
-import de.arthurpicht.cli.option.*;
-import org.mentalizr.cli.commands.*;
+import de.arthurpicht.cli.option.ManOption;
+import de.arthurpicht.cli.option.OptionBuilder;
+import de.arthurpicht.cli.option.Options;
+import de.arthurpicht.cli.option.VersionOption;
+import org.mentalizr.cli.commands.EditConfigCommandExecutor;
+import org.mentalizr.cli.commands.InitCommandExecutor;
+import org.mentalizr.cli.commands.ShowConfigCommandExecutor;
+import org.mentalizr.cli.commands.WipeCommand;
 import org.mentalizr.cli.commands.backup.BackupCommand;
 import org.mentalizr.cli.commands.backup.RecoverCommand;
 import org.mentalizr.cli.commands.program.ProgramAddCommand;
@@ -37,8 +42,6 @@ public class M7rCli {
     public static final String ID_DEBUG = "debug";
     public static final String ID_STACKTRACE = "stacktrace";
     public static final String ID_SILENT = "silent";
-    public static final String ID_VERSION = "version";
-    public static final String ID_HELP = "help";
     public static final String ID_USER = "login";
     public static final String ID_PASSWORD = "password";
     public static final String LOGIN = "login";
@@ -73,18 +76,9 @@ public class M7rCli {
     public static final String CREATE = "create";
     public static final String OPTION__TO_FILE = "file";
 
-//    private static CliCallGlobalConfiguration processParserResultGlobalOptions(OptionParserResult optionParserResult) {
-//        CliCallGlobalConfiguration cliCallGlobalConfiguration = new CliCallGlobalConfiguration();
-//        if (optionParserResult.hasOption(ID_DEBUG)) cliCallGlobalConfiguration.setDebug(true);
-//        if (optionParserResult.hasOption(ID_SILENT)) cliCallGlobalConfiguration.setSilent(true);
-//        if (optionParserResult.hasOption(ID_STACKTRACE)) cliCallGlobalConfiguration.setStacktrace(true);
-//        return cliCallGlobalConfiguration;
-//    }
-
     private static Cli prepareCLI() {
 
         Options globalOptions = new Options()
-                .add(new HelpOption())
                 .add(new VersionOption())
                 .add(new ManOption())
                 .add(new OptionBuilder().withShortName('d').withLongName("debug").withDescription("debug").build(ID_DEBUG))
@@ -93,15 +87,11 @@ public class M7rCli {
 
         Commands commands = new Commands();
 
-        DefaultCommand defaultCommand = new DefaultCommandBuilder()
-                .withCommandExecutor(new DefaultCommandExecutor())
-                .build();
-        commands.setDefaultCommand(defaultCommand);
+        commands.setDefaultCommand(new InfoDefaultCommand());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(LOGIN)
                 .withSpecificOptions(new Options()
-                        .add(new HelpOption())
                         .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user").build(ID_USER))
                         .add(new OptionBuilder().withLongName("password").withShortName('p').hasArgument().withDescription("password").build(ID_PASSWORD))
                         .add(new OptionBuilder().withLongName("credential-file").withShortName('c').withDescription("use credential file").build(OPTION__CREDENTIAL_FILE)))
@@ -111,49 +101,42 @@ public class M7rCli {
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(LOGOUT)
-                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new LogoutCommandExecutor())
                 .withDescription("Logout from mentalizr server.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(INIT)
-                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new InitCommandExecutor())
                 .withDescription("Create local configuration files and directories.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(CONFIG, SHOW)
-                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new ShowConfigCommandExecutor())
                 .withDescription("Print configuration.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(CONFIG, EDIT)
-                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new EditConfigCommandExecutor())
                 .withDescription("Edit configuration.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(NOOP)
-                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new NoopCommandExecutor())
                 .withDescription("No operation except refreshing server session.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(STATUS)
-                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new StatusCommandExecutor())
                 .withDescription("Show status of connection to server.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(BACKUP)
-                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new BackupCommand())
                 .withDescription("Create backup of user database to local json files.")
                 .build());
@@ -161,21 +144,18 @@ public class M7rCli {
         commands.add(new CommandSequenceBuilder()
                 .addCommands(RECOVER)
                 .withSpecificOptions(new Options()
-                        .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("directory").build(OPTION__DIRECTORY))
-                        .add(new HelpOption()))
+                        .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("directory").build(OPTION__DIRECTORY)))
                 .withCommandExecutor(new RecoverCommand())
                 .withDescription("Recover user database from local json files.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(WIPE)
-                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new WipeCommand())
                 .withDescription("Delete all data in user database.")
                 .build());
 
         Options specificOptionsUserAdd = new Options()
-                .add(new HelpOption())
                 .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE))
                 .add(new OptionBuilder().withLongName("show-template").withDescription("show json template").build(ID_SHOW_TEMPLATE));
 
@@ -200,7 +180,6 @@ public class M7rCli {
                 .build());
 
         Options specificOptionsUserRestore = new Options()
-                .add(new HelpOption())
                 .add(new OptionBuilder().withLongName("from-file").withShortName('f').hasArgument().withDescription("from file (json)").build(ID_FROM_FILE));
 
         commands.add(new CommandSequenceBuilder()
@@ -224,7 +203,6 @@ public class M7rCli {
                 .build());
 
         Options specificOptionsUser = new Options()
-                .add(new HelpOption())
                 .add(new OptionBuilder().withLongName("uuid").withShortName('i').hasArgument().withDescription("uuid").build(ID_UUID))
                 .add(new OptionBuilder().withLongName("user").withShortName('u').hasArgument().withDescription("user name").build(ID_USER));
 
@@ -308,27 +286,23 @@ public class M7rCli {
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PATIENT, SHOW)
-                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new PatientShowCommand())
                 .withDescription("Show all patient.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(THERAPIST, SHOW)
-                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new TherapistShowCommand())
                 .withDescription("Show all therapists.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ADMIN, SHOW)
-                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withDescription("Show all admins.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PROGRAM, ADD)
-                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new ProgramAddCommand())
                 .withDescription("Add program.")
                 .build());
@@ -336,7 +310,6 @@ public class M7rCli {
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PROGRAM, DELETE)
                 .withSpecificOptions(new Options()
-                        .add(new HelpOption())
                         .add(new OptionBuilder().withLongName("program").withShortName('p').hasArgument().withDescription("program").build(OPTION__PROGRAM)))
                 .withCommandExecutor(new ProgramDeleteCommand())
                 .withDescription("Delete program.")
@@ -344,21 +317,18 @@ public class M7rCli {
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(PROGRAM, SHOW)
-                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new ProgramShowCommand())
                 .withDescription("Show all programs.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ACCESS_KEY, CREATE)
-                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new AccessKeyCreateCommand())
                 .withDescription("Create access keys.")
                 .build());
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ACCESS_KEY, SHOW)
-                .withSpecificOptions(new Options().add(new HelpOption()))
                 .withCommandExecutor(new AccessKeyShowCommand())
                 .withDescription("Show all access keys.")
                 .build());
@@ -366,22 +336,22 @@ public class M7rCli {
         commands.add(new CommandSequenceBuilder()
                 .addCommands(ACCESS_KEY, DELETE)
                 .withSpecificOptions(new Options()
-                        .add(new HelpOption())
                         .add(new OptionBuilder().withLongName("accessKey").withShortName('a').hasArgument().withDescription("access key").build(OPTION__ACCESS_KEY)))
                 .withCommandExecutor(new AccessKeyDeleteCommand())
                 .withDescription("Delete access key.")
                 .build());
 
         Version version = Version.getInstance(M7rCli.class);
-        CliDescription cliDescription = new CliDescriptionBuilder("m7r")
+        CliDescription cliDescription = new CliDescriptionBuilder()
                 .withDescription("The mentalizr command line interface.\nhttps://github.com/mentalizr/m7r-cli")
                 .withVersion(version.getVersion())
                 .withDate(version.getBuild())
-                .build();
+                .build("m7r");
 
         return new CliBuilder()
                 .withGlobalOptions(globalOptions)
                 .withCommands(commands)
+                .withAutoHelp()
                 .build(cliDescription);
     }
 
@@ -395,8 +365,8 @@ public class M7rCli {
             cliCall = cli.parse(args);
         } catch (UnrecognizedArgumentException e) {
             System.out.println("[Error] m7r syntax error. " + e.getMessage());
-            System.out.println("m7r " + e.getArgsAsString());
-            System.out.println("    " + e.getArgumentPointerString());
+            System.out.println(e.getCallString());
+            System.out.println(e.getCallPointerString());
             System.exit(ExitStatus.M7R_SYNTAX_ERROR);
         }
 
@@ -470,7 +440,6 @@ public class M7rCli {
                 }
             }
         }
-
     }
 
 }
