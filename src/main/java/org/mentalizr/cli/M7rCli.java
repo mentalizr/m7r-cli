@@ -344,8 +344,7 @@ public class M7rCli {
         Version version = Version.getInstance(M7rCli.class);
         CliDescription cliDescription = new CliDescriptionBuilder()
                 .withDescription("The mentalizr command line interface.\nhttps://github.com/mentalizr/m7r-cli")
-                .withVersion(version.getVersion())
-                .withDate(version.getBuild())
+                .withVersionByTag(version.getVersion(), version.getBuild())
                 .build("m7r");
 
         return new CliBuilder()
