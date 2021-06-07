@@ -11,7 +11,10 @@ import java.nio.file.StandardOpenOption;
  * Simple functionality for reading and writing a string to/from a file.
  * Implementation is thread save as long all file operations are processed
  * using the identical instance of that class.
+ *
+ * Deprecated use SingleValueFile from utils-io
  */
+@Deprecated
 public class StringFilePersister {
 
     private Path path;
