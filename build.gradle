@@ -64,4 +64,8 @@ task fatJar(type: Jar, dependsOn: extractDependencies) {
     destinationDirectory.set(file("$buildDir/fatjar"))
 }
 
+task nativeImage(type: Exec, dependsOn: fatJar) {
+    mkdir "$buildDir/native"
+    commandLine "/man/java/graalvm/bin/native-image", "-jar", "$buildDir/fatjar/prompt-java-1.0-SNAPSHOT.jar", "$buildDir/native/prompt"
+}
 
