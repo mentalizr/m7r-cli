@@ -64,8 +64,11 @@ task fatJar(type: Jar, dependsOn: extractDependencies) {
     destinationDirectory.set(file("$buildDir/fatjar"))
 }
 
+// TODO does not work:
+// * UnresolvedElementException: Discovered unresolved type during parsing: javax.enterprise.inject.spi.BeanManager (--allow-incomplete-classpath)
+// * RuntimeException: Error on initialization of version info.
 task nativeImage(type: Exec, dependsOn: fatJar) {
     mkdir "$buildDir/native"
-    commandLine "/man/java/graalvm/bin/native-image", "-jar", "$buildDir/fatjar/prompt-java-1.0-SNAPSHOT.jar", "$buildDir/native/prompt"
+    commandLine "/man/java/graalvm/bin/native-image", "-H:+ReportExceptionStackTraces", "--no-fallback", "--allow-incomplete-classpath", "-jar", "$buildDir/fatjar/m7r-cli-0.0.1-SNAPSHOT.jar", "$buildDir/native/m7r"
 }
 
