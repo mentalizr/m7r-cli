@@ -75,6 +75,7 @@ public class M7rCli {
     public static final String ACCESS_KEY = "accesskey";
     public static final String CREATE = "create";
     public static final String OPTION__TO_FILE = "file";
+    public static final String OPTION__ARCHIVE = "archive";
 
     private static Cli prepareCLI() {
 
@@ -137,6 +138,9 @@ public class M7rCli {
 
         commands.add(new CommandSequenceBuilder()
                 .addCommands(BACKUP)
+                .withSpecificOptions(new Options()
+                        .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("destination directory. optional.").build(OPTION__DIRECTORY))
+                        .add(new OptionBuilder().withLongName("archive").withShortName('a').withDescription("create zip archive").build(OPTION__ARCHIVE)))
                 .withCommandExecutor(new BackupCommand())
                 .withDescription("Create backup of user database to local json files.")
                 .build());

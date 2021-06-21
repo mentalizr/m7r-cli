@@ -1,5 +1,6 @@
 package org.mentalizr.cli.backup;
 
+import org.mentalizr.cli.commands.backup.BackupSpecificOptions;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.serviceObjects.userManagement.*;
 
@@ -11,10 +12,12 @@ import java.nio.file.StandardOpenOption;
 
 public class BackupFS {
 
+    private final BackupSpecificOptions backupSpecificOptions;
     private final BackupFileLocation backupFileLocation;
 
-    public BackupFS() {
-        this.backupFileLocation = new BackupFileLocation();
+    public BackupFS(BackupSpecificOptions backupSpecificOptions) {
+        this.backupSpecificOptions = backupSpecificOptions;
+        this.backupFileLocation = new BackupFileLocation(this.backupSpecificOptions);
     }
 
     public String getBackupDirAsString() {

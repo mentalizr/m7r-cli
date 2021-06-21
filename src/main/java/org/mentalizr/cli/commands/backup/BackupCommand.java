@@ -17,7 +17,9 @@ public class BackupCommand implements CommandExecutor {
         CliContext cliContext = CliContext.getInstance(cliCall);
         CommandExecutorHelper.checkedInit(cliContext);
 
-        BackupFS backupFS = new BackupFS();
+        BackupSpecificOptions backupSpecificOptions = new BackupSpecificOptions(cliCall.getOptionParserResultSpecific());
+
+        BackupFS backupFS = new BackupFS(backupSpecificOptions);
 
         System.out.println("Creating backup to [" + backupFS.getBackupDirAsString() + "].");
 
