@@ -31,6 +31,12 @@ public class BackupCommand implements CommandExecutor {
         } catch (RestServiceHttpException | RestServiceConnectionException e) {
             throw new CommandExecutorException(e);
         }
+
+        if (backupSpecificOptions.isArchive()) {
+
+        }
+
+
     }
 
 }

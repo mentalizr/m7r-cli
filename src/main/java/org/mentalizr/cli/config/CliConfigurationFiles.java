@@ -8,6 +8,7 @@ public class CliConfigurationFiles {
     private static final String CONFIG_DIR_CLI = "cli";
     private static final String BACKUP_DIR = "backup";
     private static final String CREATE_DIR = "create";
+    private static final String TEMP_DIR = "temp";
     private static final String CONFIG_FILE = "cli.config";
 
     public static File getDefaultConfigFileCLI() {
@@ -30,5 +31,9 @@ public class CliConfigurationFiles {
         return new File(backupDirAsString);
     }
 
+    public static File getTempDir() {
+        String backupDirAsString = System.getProperty("user.home") + "/" + CONFIG_DIR_M7R + "/" + TEMP_DIR;
+        return new File(backupDirAsString);
+    }
 
 }

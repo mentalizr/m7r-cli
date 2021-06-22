@@ -25,7 +25,9 @@ public class BackupFileLocation {
     public BackupFileLocation(BackupSpecificOptions backupSpecificOptions) {
 
         Path backupRootDir;
-        if (backupSpecificOptions.hasDirectory()) {
+        if (backupSpecificOptions.isArchive()) {
+            backupRootDir = CliConfigurationFiles.getTempDir().toPath();
+        } else if (backupSpecificOptions.hasDirectory()) {
             backupRootDir = backupSpecificOptions.getDirectory();
         } else {
             backupRootDir = CliConfigurationFiles.getDefaultBackupRootDir().toPath();
