@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 
 public class FileLocator {
 
-    private URI uri;
+    private final URI uri;
 
     public FileLocator(URI uri) {
         AssertMethodPrecondition.parameterNotNull("uri", uri);
@@ -29,7 +29,6 @@ public class FileLocator {
         } catch (URISyntaxException e) {
             throw new FileLocatorException(e);
         }
-
     }
 
     public static FileLocator fromClasspath(String filename) throws FileLocatorException {
@@ -85,8 +84,5 @@ public class FileLocator {
             throw new FileLocatorException(e);
         }
     }
-
-
-
 
 }

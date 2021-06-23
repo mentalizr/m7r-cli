@@ -1,12 +1,12 @@
 package org.mentalizr.util;
 
 import de.arthurpicht.utils.core.strings.Strings;
+import de.arthurpicht.utils.io.file.SingleValueFile;
 import org.mentalizr.cli.M7rCli;
 import org.mentalizr.util.fileLocator.FileLocator;
 import org.mentalizr.util.fileLocator.FileLocatorException;
 import org.mentalizr.util.fileLocator.FileNotLocalizedException;
 import org.mentalizr.util.manifestReader.ManifestReader;
-import org.mentalizr.util.stringFilePersister.StringFilePersister;
 
 import java.io.IOException;
 
@@ -48,7 +48,7 @@ public class Version {
 
         try {
             FileLocator fileLocator = FileLocator.fromFileSystem("version");
-            String version = new StringFilePersister(fileLocator.asPath()).read();
+            String version = new SingleValueFile(fileLocator.asPath()).read();
             if (Strings.isNullOrEmpty(version))
                 throw new RuntimeException("Error on initialization of version info: No valid data found in local version file.");
             return new Version(version, UNKNOWN);

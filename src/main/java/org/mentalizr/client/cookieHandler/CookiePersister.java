@@ -1,8 +1,8 @@
 package org.mentalizr.client.cookieHandler;
 
+import de.arthurpicht.utils.io.file.SingleValueFile;
 import org.mentalizr.cli.ConfFiles;
 import org.mentalizr.cli.exceptions.CliException;
-import org.mentalizr.util.stringFilePersister.StringFilePersister;
 
 import java.io.IOException;
 import java.net.HttpCookie;
@@ -11,19 +11,19 @@ import java.nio.file.Files;
 
 public class CookiePersister {
 
-    private StringFilePersister cookieNamePersister;
-    private StringFilePersister cookieValuePersister;
-    private StringFilePersister cookieServerPersister;
-    private StringFilePersister cookiePathPersister;
+    private final SingleValueFile cookieNamePersister;
+    private final SingleValueFile cookieValuePersister;
+    private final SingleValueFile cookieServerPersister;
+    private final SingleValueFile cookiePathPersister;
 
     public CookiePersister() {
 
         assertSessionDirExists();
 
-        this.cookieNamePersister = new StringFilePersister(ConfFiles.getCookieNameFile());
-        this.cookieValuePersister = new StringFilePersister(ConfFiles.getCookieValueFile());
-        this.cookieServerPersister = new StringFilePersister(ConfFiles.getCookieServerFile());
-        this.cookiePathPersister = new StringFilePersister(ConfFiles.getCookiePathFile());
+        this.cookieNamePersister = new SingleValueFile(ConfFiles.getCookieNameFile());
+        this.cookieValuePersister = new SingleValueFile(ConfFiles.getCookieValueFile());
+        this.cookieServerPersister = new SingleValueFile(ConfFiles.getCookieServerFile());
+        this.cookiePathPersister = new SingleValueFile(ConfFiles.getCookiePathFile());
     }
 
     private void assertSessionDirExists() {
@@ -32,7 +32,7 @@ public class CookiePersister {
 
     public boolean hasCookie(URI uri) {
         if (!Files.exists(ConfFiles.getCookieDir())) return false;
-        String server = null;
+        String server;
         try {
             server = this.cookieServerPersister.read();
         } catch (IOException e) {
