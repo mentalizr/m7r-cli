@@ -1,5 +1,6 @@
 package org.mentalizr.cli.backup;
 
+import org.mentalizr.cli.commands.backup.BackupSpecificOptions;
 import org.mentalizr.cli.config.CliConfigurationFiles;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.serviceObjects.userManagement.AccessKeyRestoreSO;
@@ -21,13 +22,18 @@ public class BackupFileLocation {
 
     private final Path backupDir;
 
-    public BackupFileLocation() {
+    public BackupFileLocation(BackupSpecificOptions backupSpecificOptions) {
 
-        Path backupRootDir = CliConfigurationFiles.getBackupRootDir().toPath();
+        Path backupRootDir;
+        if (backupSpecificOptions.isArchive()) {
+            backupRootDir = CliConfigurationFiles.getTempDir().toPath();
+        } else if (backupSpecificOptions.hasDirectory()) {
+            backupRootDir = backupSpecificOptions.getDirectory();
+        } else {
+            backupRootDir = CliConfigurationFiles.getDefaultBackupRootDir().toPath();
+        }
+        this.backupDir = backupRootDir.resolve(getTimeStampedBackupDirName());
 
-        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-
-        this.backupDir = backupRootDir.resolve(timestamp);
         try {
             Files.createDirectories(this.backupDir);
             Files.createDirectories(this.backupDir.resolve(SUB_DIR_THERAPIST));
@@ -37,6 +43,14 @@ public class BackupFileLocation {
         } catch (IOException e) {
             throw new CliException("Could not create backup directory [" + this.backupDir.toAbsolutePath() + "] " + e.getMessage(), e);
         }
+    }
+
+    public String getTimeStampedBackupDirName() {
+        return getTimestamp() + "-m7r-userdb-backup";
+    }
+
+    private String getTimestamp() {
+        return new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
     }
 
     public Path getBackupDir() {

@@ -3,9 +3,7 @@ package org.mentalizr.cli.commands.backup;
 import de.arthurpicht.cli.CliCall;
 import de.arthurpicht.cli.CommandExecutor;
 import de.arthurpicht.cli.CommandExecutorException;
-import de.arthurpicht.cli.option.OptionParserResult;
 import org.mentalizr.cli.CliContext;
-import org.mentalizr.cli.M7rCli;
 import org.mentalizr.cli.backup.*;
 import org.mentalizr.cli.commands.CommandExecutorHelper;
 import org.mentalizr.cli.exceptions.CliException;
@@ -20,9 +18,7 @@ import org.mentalizr.serviceObjects.userManagement.PatientRestoreSO;
 import org.mentalizr.serviceObjects.userManagement.ProgramSO;
 import org.mentalizr.serviceObjects.userManagement.TherapistRestoreSO;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.IOException;
 import java.util.List;
 
 public class RecoverCommand implements CommandExecutor {
@@ -33,19 +29,21 @@ public class RecoverCommand implements CommandExecutor {
         CliContext cliContext = CliContext.getInstance(cliCall);
         CommandExecutorHelper.checkedInit(cliContext);
 
-        OptionParserResult optionParserResultSpecific = cliCall.getOptionParserResultSpecific();
-        if (!optionParserResultSpecific.hasOption(M7rCli.OPTION__DIRECTORY))
-            throw new CliException("Option --directory not specified.");
-        String directoryOptionValue = optionParserResultSpecific.getValue(M7rCli.OPTION__DIRECTORY);
-        Path backupDirectory = Paths.get(directoryOptionValue);
-        if (!Files.exists(backupDirectory))
-            throw new CliException("Specified directory [" + backupDirectory.toAbsolutePath() + "] not found.");
+        RecoverSpecificOptions recoverSpecificOptions
+                = new RecoverSpecificOptions(cliCall.getOptionParserResultSpecific());
 
-        RecoverFileLocation recoverFileLocation = new RecoverFileLocation(backupDirectory);
+        RecoverFileLocation recoverFileLocation;
+        try {
+            recoverFileLocation = new RecoverFileLocation(recoverSpecificOptions);
+        } catch (IOException e) {
+            throw new CommandExecutorException("IO-Error: " + e.getMessage(), e);
+        }
 
         assertDBisEmpty(cliContext);
 
         executeRecover(recoverFileLocation, cliContext);
+
+        recoverFileLocation.clean();
 
         System.out.println("[OK] Recovered from backup.");
     }

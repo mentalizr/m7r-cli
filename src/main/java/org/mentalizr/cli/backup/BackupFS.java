@@ -1,5 +1,8 @@
 package org.mentalizr.cli.backup;
 
+import de.arthurpicht.utils.io.compress.Zip;
+import de.arthurpicht.utils.io.nio2.FileUtils;
+import org.mentalizr.cli.commands.backup.BackupSpecificOptions;
 import org.mentalizr.cli.exceptions.CliException;
 import org.mentalizr.serviceObjects.userManagement.*;
 
@@ -7,14 +10,17 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 public class BackupFS {
 
+    private final BackupSpecificOptions backupSpecificOptions;
     private final BackupFileLocation backupFileLocation;
 
-    public BackupFS() {
-        this.backupFileLocation = new BackupFileLocation();
+    public BackupFS(BackupSpecificOptions backupSpecificOptions) {
+        this.backupSpecificOptions = backupSpecificOptions;
+        this.backupFileLocation = new BackupFileLocation(this.backupSpecificOptions);
     }
 
     public String getBackupDirAsString() {
@@ -77,5 +83,16 @@ public class BackupFS {
         }
     }
 
+    public void createArchive() throws IOException {
+        Path destinationDir;
+        if (this.backupSpecificOptions.hasDirectory()) {
+            destinationDir = this.backupSpecificOptions.getDirectory();
+        } else {
+            destinationDir = Paths.get(".").normalize().toAbsolutePath();
+        }
+        Path destination = destinationDir.resolve(this.backupFileLocation.getTimeStampedBackupDirName() + ".zip");
+        Zip.zip(this.backupFileLocation.getBackupDir(), destination, true);
+        FileUtils.rmDir(this.backupFileLocation.getBackupDir());
+    }
 
 }

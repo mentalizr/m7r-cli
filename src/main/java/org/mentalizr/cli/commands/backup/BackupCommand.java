@@ -9,6 +9,8 @@ import org.mentalizr.cli.commands.CommandExecutorHelper;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
+import java.io.IOException;
+
 public class BackupCommand implements CommandExecutor {
 
     @Override
@@ -17,7 +19,9 @@ public class BackupCommand implements CommandExecutor {
         CliContext cliContext = CliContext.getInstance(cliCall);
         CommandExecutorHelper.checkedInit(cliContext);
 
-        BackupFS backupFS = new BackupFS();
+        BackupSpecificOptions backupSpecificOptions = new BackupSpecificOptions(cliCall.getOptionParserResultSpecific());
+
+        BackupFS backupFS = new BackupFS(backupSpecificOptions);
 
         System.out.println("Creating backup to [" + backupFS.getBackupDirAsString() + "].");
 
@@ -28,6 +32,14 @@ public class BackupCommand implements CommandExecutor {
             BackupAccessKeys.exec(backupFS, cliContext);
         } catch (RestServiceHttpException | RestServiceConnectionException e) {
             throw new CommandExecutorException(e);
+        }
+
+        if (backupSpecificOptions.isArchive()) {
+            try {
+                backupFS.createArchive();
+            } catch (IOException e) {
+                throw new CommandExecutorException("Error creating backup archive: " + e.getMessage(), e);
+            }
         }
     }
 
