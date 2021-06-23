@@ -45,12 +45,12 @@ public class BackupFileLocation {
         }
     }
 
-    private String getTimeStampedBackupDirName() {
+    public String getTimeStampedBackupDirName() {
         return getTimestamp() + "-m7r-userdb-backup";
     }
 
     private String getTimestamp() {
-        return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        return new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
     }
 
     public Path getBackupDir() {

@@ -139,7 +139,7 @@ public class M7rCli {
         commands.add(new CommandSequenceBuilder()
                 .addCommands(BACKUP)
                 .withSpecificOptions(new Options()
-                        .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("destination directory. optional.").build(OPTION__DIRECTORY))
+                        .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("destination directory (optional)").build(OPTION__DIRECTORY))
                         .add(new OptionBuilder().withLongName("archive").withShortName('a').withDescription("create zip archive").build(OPTION__ARCHIVE)))
                 .withCommandExecutor(new BackupCommand())
                 .withDescription("Create backup of user database to local json files.")
@@ -148,7 +148,8 @@ public class M7rCli {
         commands.add(new CommandSequenceBuilder()
                 .addCommands(RECOVER)
                 .withSpecificOptions(new Options()
-                        .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("directory").build(OPTION__DIRECTORY)))
+                        .add(new OptionBuilder().withLongName("directory").withShortName('d').hasArgument().withDescription("backup directory to recover from").build(OPTION__DIRECTORY))
+                        .add(new OptionBuilder().withLongName("archive").withShortName('a').hasArgument().withArgumentName("archive").withDescription("archive to recover from").build(OPTION__ARCHIVE)))
                 .withCommandExecutor(new RecoverCommand())
                 .withDescription("Recover user database from local json files.")
                 .build());
@@ -435,12 +436,10 @@ public class M7rCli {
                 System.exit(ExitStatus.USER_ABORT);
 
             } else {
-                System.out.println("Unknown error type.");
                 Throwable cause = e.getCause();
                 System.out.println("[ERROR] " + Objects.requireNonNullElse(cause, e).getMessage());
-                if (showStacktrace) {
-                    e.printStackTrace();
-                }
+                if (showStacktrace) e.printStackTrace();
+                System.exit(ExitStatus.INTERNAL_ERROR);
             }
         }
     }

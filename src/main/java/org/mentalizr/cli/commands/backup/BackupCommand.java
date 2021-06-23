@@ -9,6 +9,8 @@ import org.mentalizr.cli.commands.CommandExecutorHelper;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceConnectionException;
 import org.mentalizr.client.restServiceCaller.exception.RestServiceHttpException;
 
+import java.io.IOException;
+
 public class BackupCommand implements CommandExecutor {
 
     @Override
@@ -33,10 +35,12 @@ public class BackupCommand implements CommandExecutor {
         }
 
         if (backupSpecificOptions.isArchive()) {
-
+            try {
+                backupFS.createArchive();
+            } catch (IOException e) {
+                throw new CommandExecutorException("Error creating backup archive: " + e.getMessage(), e);
+            }
         }
-
-
     }
 
 }
