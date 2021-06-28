@@ -20,6 +20,7 @@ public class BackupFileLocation {
     private static final String SUB_DIR_ACCESS_KEY = "accessKey";
     private static final String SUB_DIR_PROGRAM = "program";
 
+    private final String timestamp;
     private final Path backupDir;
 
     public BackupFileLocation(BackupSpecificOptions backupSpecificOptions) {
@@ -32,6 +33,7 @@ public class BackupFileLocation {
         } else {
             backupRootDir = CliConfigurationFiles.getDefaultBackupRootDir().toPath();
         }
+        this.timestamp = createTimestamp();
         this.backupDir = backupRootDir.resolve(getTimeStampedBackupDirName());
 
         try {
@@ -46,10 +48,10 @@ public class BackupFileLocation {
     }
 
     public String getTimeStampedBackupDirName() {
-        return getTimestamp() + "-m7r-userdb-backup";
+        return this.timestamp + "-m7r-userdb-backup";
     }
 
-    private String getTimestamp() {
+    private String createTimestamp() {
         return new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
     }
 
